@@ -9,11 +9,13 @@ namespace GGJ.InGame.Player
     public class PlayerMovement
     {
         [SerializeField] private float moveSpeed = 5f;
-
         /// <summary>
         /// 入力に基づいてプレイヤーを移動させる
         /// </summary>
-        public void Move(Vector2 input, Rigidbody2D rb) => 
-            rb.velocity = input * moveSpeed;
+        public void Move(Vector2 input, Rigidbody2D rb)
+        {
+            Vector2 velocity = input * moveSpeed;
+            rb.velocity = velocity;
+        }
     }
 }
