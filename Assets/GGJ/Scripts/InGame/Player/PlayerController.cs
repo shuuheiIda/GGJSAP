@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace GGJ.InGame.Player
 {
@@ -7,23 +6,18 @@ namespace GGJ.InGame.Player
     {
         [SerializeField] private PlayerMovement movement;
 
-        private PlayerInput playerInput;
-        private Rigidbody2D rb;
         private PlayerInputManager inputManager;
+        private Rigidbody2D rb;
 
         private void Start()
         {
-            playerInput = GetComponent<PlayerInput>();
+            inputManager = GetComponent<PlayerInputManager>();
             rb = GetComponent<Rigidbody2D>();
-            
-            inputManager = new PlayerInputManager();
-            inputManager.Initialize(playerInput);
         }
 
         private void Update()
         {
-            Vector2 input = inputManager.GetMoveInput();
-            movement.Move(input, rb);
+            movement.Move(inputManager.MoveInput, rb);
         }
     }
 }

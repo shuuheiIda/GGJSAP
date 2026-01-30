@@ -10,7 +10,7 @@ namespace GGJ.InGame.Player
         public void Move(Vector2 input, Rigidbody2D rb)
         {
             Vector2 velocity = input * moveSpeed;
-            rb.velocity = new Vector2(velocity.x, rb.velocity.y);
+            rb.velocity = velocity;
         }
     }
 }
