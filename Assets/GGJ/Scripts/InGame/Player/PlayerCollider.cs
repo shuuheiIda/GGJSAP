@@ -11,16 +11,16 @@ namespace GGJ.InGame.Player
     {
         public List<Collider2D> ObjectsInRange { get; private set; } = new List<Collider2D>();
 
-        private void OnTriggerEnter2D(Collider2D other)
+        private void OnCollisionEnter2D(Collision2D collision)
         {
-            if (other.CompareTag(Tags.NPC) && !ObjectsInRange.Contains(other))
-                ObjectsInRange.Add(other);
+            if (collision.collider.CompareTag(Tags.NPC) && !ObjectsInRange.Contains(collision.collider))
+                ObjectsInRange.Add(collision.collider);
         }
 
-        private void OnTriggerExit2D(Collider2D other)
+        private void OnCollisionExit2D(Collision2D collision)
         {
-            if (other.CompareTag(Tags.NPC) && ObjectsInRange.Contains(other))
-                ObjectsInRange.Remove(other);
+            if (collision.collider.CompareTag(Tags.NPC) && ObjectsInRange.Contains(collision.collider))
+                ObjectsInRange.Remove(collision.collider);
         }
 
         /// <summary>
