@@ -4,39 +4,39 @@ using System.Collections.Generic;
 
 namespace GGJ.Editor
 {
+    /// <summary>
+    /// 特定のスクリプトがアタッチされたオブジェクトを検索するエディタウィンドウ
+    /// </summary>
     public class FindScriptObjectsWindow : EditorWindow
     {
-        private MonoScript targetScript; // 検索対象のスクリプト
-        private List<GameObject> foundObjects = new List<GameObject>(); // 見つかったオブジェクトのリスト
+        private const float RESULT_LIST_SPACING = 10f;
 
+        private MonoScript targetScript;
+        private List<GameObject> foundObjects = new List<GameObject>();
+
+        /// <summary>
+        /// ウィンドウを開く
+        /// </summary>
         [MenuItem("Tools/Find Script Objects")]
-        public static void OpenWindow()
-        {
+        public static void OpenWindow() =>
             GetWindow<FindScriptObjectsWindow>("Find Script Objects");
-        }
 
         private void OnGUI()
         {
             GUILayout.Label("Find Objects with Script", EditorStyles.boldLabel);
 
-            // スクリプトを選択するフィールド
             targetScript = (MonoScript)EditorGUILayout.ObjectField("Script", targetScript, typeof(MonoScript), false);
 
             if (GUILayout.Button("Find"))
             {
                 if (targetScript != null)
-                {
                     FindObjectsWithScript();
-                }
                 else
-                {
                     Debug.LogWarning("Please select a script to search for.");
-                }
             }
 
-            GUILayout.Space(10);
+            GUILayout.Space(RESULT_LIST_SPACING);
 
-            // 検索結果のリスト表示
             if (foundObjects.Count > 0)
             {
                 GUILayout.Label($"Found {foundObjects.Count} objects:", EditorStyles.boldLabel);
@@ -44,9 +44,7 @@ namespace GGJ.Editor
                 foreach (GameObject obj in foundObjects)
                 {
                     if (GUILayout.Button(obj.name))
-                    {
-                        Selection.activeGameObject = obj; // オブジェクトを選択
-                    }
+                        Selection.activeGameObject = obj;
                 }
             }
         }
@@ -55,7 +53,6 @@ namespace GGJ.Editor
         {
             foundObjects.Clear();
 
-            // スクリプトの型を取得
             System.Type scriptType = targetScript.GetClass();
             if (scriptType == null || !typeof(MonoBehaviour).IsAssignableFrom(scriptType))
             {
@@ -63,18 +60,13 @@ namespace GGJ.Editor
                 return;
             }
 
-            // シーン内の全てのGameObjectを検索
             GameObject[] allObjects = FindObjectsByType<GameObject>(FindObjectsSortMode.None);
 
             foreach (GameObject obj in allObjects)
             {
                 if (obj.GetComponent(scriptType) != null)
-                {
                     foundObjects.Add(obj);
-                }
             }
-
-            Debug.Log($"Found {foundObjects.Count} objects with the script {targetScript.name}.");
         }
     }
 }

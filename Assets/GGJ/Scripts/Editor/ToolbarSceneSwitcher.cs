@@ -57,34 +57,32 @@ namespace GGJ.Editor
         /// </summary>
         private static void OnUpdate()
         {
-            if (currentToolbar == null)
+            if (currentToolbar != null) return;
+
+            var toolbars = Resources.FindObjectsOfTypeAll(ToolbarType);
+            currentToolbar = toolbars.Length > 0 ? (ScriptableObject)toolbars[0] : null;
+            
+            if (currentToolbar == null) return;
+
+            var root = currentToolbar.GetType().GetField("m_Root", BindingFlags.NonPublic | BindingFlags.Instance);
+            var rawRoot = root?.GetValue(currentToolbar);
+            var mRoot = rawRoot as VisualElement;
+            
+            if (mRoot != null)
             {
-                var toolbars = Resources.FindObjectsOfTypeAll(ToolbarType);
-                currentToolbar = toolbars.Length > 0 ? (ScriptableObject)toolbars[0] : null;
+                RegisterCallback(mRoot);
+            }
+            else
+            {
+                FieldInfo onGuiHandler = currentToolbar.GetType()
+                    .GetField("m_OnGUI", BindingFlags.NonPublic | BindingFlags.Instance);
                 
-                if (currentToolbar != null)
+                if (onGuiHandler != null)
                 {
-                    var root = currentToolbar.GetType().GetField("m_Root", BindingFlags.NonPublic | BindingFlags.Instance);
-                    var rawRoot = root?.GetValue(currentToolbar);
-                    var mRoot = rawRoot as VisualElement;
-                    
-                    if (mRoot != null)
-                    {
-                        RegisterCallback(mRoot);
-                    }
-                    else
-                    {
-                        FieldInfo onGuiHandler = currentToolbar.GetType()
-                            .GetField("m_OnGUI", BindingFlags.NonPublic | BindingFlags.Instance);
-                        
-                        if (onGuiHandler != null)
-                        {
-                            var handler = (Action)onGuiHandler.GetValue(currentToolbar);
-                            handler -= OnGUI;
-                            handler += OnGUI;
-                            onGuiHandler.SetValue(currentToolbar, handler);
-                        }
-                    }
+                    var handler = (Action)onGuiHandler.GetValue(currentToolbar);
+                    handler -= OnGUI;
+                    handler += OnGUI;
+                    onGuiHandler.SetValue(currentToolbar, handler);
                 }
             }
         }
@@ -178,9 +176,7 @@ namespace GGJ.Editor
                     foreach (var sceneInfo in folderGroup.Value)
                     {
                         if (sceneInfo.Name == currentScene.name)
-                        {
                             continue;
-                        }
                         
                         menu.AddItem(
                             new GUIContent(sceneInfo.Name),
@@ -306,18 +302,15 @@ namespace GGJ.Editor
             try
             {
                 var method = typeof(VisualElement).GetMethod("Q", new[] { typeof(string), typeof(string) });
-                if (method != null)
-                {
-                    var genericMethod = method.MakeGenericMethod(typeof(T));
-                    return (T)genericMethod.Invoke(element, new object[] { name, null });
-                }
+                if (method == null) return null;
+
+                var genericMethod = method.MakeGenericMethod(typeof(T));
+                return (T)genericMethod.Invoke(element, new object[] { name, null });
             }
             catch
             {
-                // リフレクション失敗時はnullを返す
+                return null;
             }
-            
-            return null;
         }
     }
 }
