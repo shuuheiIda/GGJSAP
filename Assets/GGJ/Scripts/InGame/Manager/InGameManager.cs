@@ -1,21 +1,63 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
+using GGJ.Core;
 
-namespace GGJ
+namespace GGJ.InGame.Manager
 {
-    public class InGameManager : MonoBehaviour
+    /// <summary>
+    /// ゲーム内を管理するクラス
+    /// </summary>
+    public class InGameManager : Singleton<InGameManager>
     {
-        // Start is called before the first frame update
-        void Start()
-        {
+        [Header("時間制限設定")]
+        [SerializeField] private float gameDuration = 60f; // 制限時間（秒）
         
+        public float RemainingTime { get; private set; }
+        public bool IsGameRunning { get; private set; }
+        
+        public event Action OnGameStart;
+        public event Action OnGameEnd;
+        public event Action<float> OnTimeUpdate;
+        
+        protected override bool UseDontDestroyOnLoad => false;
+
+        private void Start()
+        {
+            StartGame();
         }
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
-        
+            if (IsGameRunning)
+            {
+                RemainingTime -= Time.deltaTime;
+                OnTimeUpdate?.Invoke(RemainingTime);
+                
+                if (RemainingTime <= 0f)
+                {
+                    EndGame();
+                }
+            }
+        }
+
+        /// <summary>
+        /// ゲームを開始
+        /// </summary>
+        public void StartGame()
+        {
+            RemainingTime = gameDuration;
+            IsGameRunning = true;
+            OnGameStart?.Invoke();
+        }
+
+        /// <summary>
+        /// ゲームを終了
+        /// </summary>
+        private void EndGame()
+        {
+            IsGameRunning = false;
+            RemainingTime = 0f;
+            OnGameEnd?.Invoke();
         }
     }
 }
