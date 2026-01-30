@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using GGJ.Core;
 
 namespace GGJ.InGame.Player
 {
@@ -10,7 +11,7 @@ namespace GGJ.InGame.Player
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!ObjectsInRange.Contains(other))
+            if (other.CompareTag(Tags.NPC) && !ObjectsInRange.Contains(other))
             {
                 ObjectsInRange.Add(other);
             }
@@ -18,7 +19,7 @@ namespace GGJ.InGame.Player
 
         private void OnTriggerExit2D(Collider2D other)
         {
-            if (ObjectsInRange.Contains(other))
+            if (other.CompareTag(Tags.NPC) && ObjectsInRange.Contains(other))
             {
                 ObjectsInRange.Remove(other);
             }
