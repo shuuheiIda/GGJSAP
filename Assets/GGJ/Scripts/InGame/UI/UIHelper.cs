@@ -14,19 +14,10 @@ namespace GGJ.InGame.UI
         /// </summary>
         public static void SetFirstSelected(Button button)
         {
-            if (button == null)
-            {
-                Debug.LogWarning("[UIHelper] Button is null");
-                return;
-            }
-            if (EventSystem.current == null)
-            {
-                Debug.LogError("[UIHelper] EventSystem.current is null!");
-                return;
-            }
+            if (button == null) return;
+            if (EventSystem.current == null) return;
 
             EventSystem.current.SetSelectedGameObject(button.gameObject);
-            Debug.Log($"[UIHelper] Selected button: {button.name}, CurrentSelected: {EventSystem.current.currentSelectedGameObject?.name}");
         }
 
         /// <summary>

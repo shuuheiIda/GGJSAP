@@ -14,16 +14,8 @@ namespace GGJ.InGame.UI
 
         private void Start()
         {
-            Debug.Log("[DialoguePanel] Start called");
             if (closeButton != null)
-            {
                 closeButton.onClick.AddListener(OnCloseButtonClicked);
-                Debug.Log("[DialoguePanel] Close button listener registered");
-            }
-            else
-            {
-                Debug.LogError("[DialoguePanel] Close button is null!");
-            }
             
             if (panel != null)
                 panel.SetActive(false);
@@ -63,10 +55,6 @@ namespace GGJ.InGame.UI
             UIHelper.ClearSelected();
         }
 
-        private void OnCloseButtonClicked()
-        {
-            Debug.Log("[DialoguePanel] Close button clicked!");
-            GameEvents.RaiseNPCInteractionEnded();
-        }
+        private void OnCloseButtonClicked() => GameEvents.RaiseNPCInteractionEnded();
     }
 }
