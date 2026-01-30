@@ -1,0 +1,73 @@
+using System;
+using UnityEngine;
+using GGJ.Core;
+using GGJ.InGame.Events;
+
+namespace GGJ.InGame.Manager
+{
+    /// <summary>
+    /// ゲーム全体の進行と時間制限を管理するマネージャー
+    /// </summary>
+    public class InGameManager : Singleton<InGameManager>
+    {
+        private const float TIME_ZERO = 0f;
+
+        [Header("時間制限設定")]
+        [SerializeField] private float gameDuration = 60f;
+        
+        public float RemainingTime { get; private set; }
+        public bool IsGameRunning { get; private set; }
+        
+        protected override bool UseDontDestroyOnLoad => false;
+
+        protected override void Init()
+        {
+            GameEvents.OnNPCInteractionStarted += OnNPCInteractionStarted;
+            GameEvents.OnNPCInteractionEnded += OnNPCInteractionEnded;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GameEvents.OnNPCInteractionStarted -= OnNPCInteractionStarted;
+            GameEvents.OnNPCInteractionEnded -= OnNPCInteractionEnded;
+        }
+
+        private void Start() => StartGame();
+
+        private void Update()
+        {
+            if (!IsGameRunning) return;
+
+            RemainingTime -= Time.deltaTime;
+            GameEvents.RaiseTimeUpdate(RemainingTime);
+            
+            if (RemainingTime <= TIME_ZERO)
+                EndGame();
+        }
+
+        /// <summary>
+        /// ゲームを開始する
+        /// </summary>
+        public void StartGame()
+        {
+            RemainingTime = gameDuration;
+            IsGameRunning = true;
+            GameEvents.RaiseGameStart();
+        }
+
+        /// <summary>
+        /// ゲームを終了する
+        /// </summary>
+        private void EndGame()
+        {
+            IsGameRunning = false;
+            RemainingTime = TIME_ZERO;
+            GameEvents.RaiseGameEnd();
+        }
+
+        private void OnNPCInteractionStarted(GameObject npc) => IsGameRunning = false;
+
+        private void OnNPCInteractionEnded() => IsGameRunning = true;
+    }
+}
