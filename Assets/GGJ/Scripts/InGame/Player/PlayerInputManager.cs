@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -6,6 +7,7 @@ namespace GGJ.InGame.Player
     public class PlayerInputManager : MonoBehaviour
     {
         public Vector2 MoveInput { get; private set; }
+        public event Action OnInteract;
 
         private PlayerInput inputActions;
 
@@ -19,12 +21,14 @@ namespace GGJ.InGame.Player
             inputActions.Enable();
             inputActions.Player.Move.performed += OnMovePerformed;
             inputActions.Player.Move.canceled += OnMoveCanceled;
+            inputActions.Player.Interact.performed += OnInteractPerformed;
         }
 
         private void OnDisable()
         {
             inputActions.Player.Move.performed -= OnMovePerformed;
             inputActions.Player.Move.canceled -= OnMoveCanceled;
+            inputActions.Player.Interact.performed -= OnInteractPerformed;
             inputActions.Disable();
         }
 
@@ -36,6 +40,11 @@ namespace GGJ.InGame.Player
         private void OnMoveCanceled(InputAction.CallbackContext context)
         {
             MoveInput = Vector2.zero;
+        }
+
+        private void OnInteractPerformed(InputAction.CallbackContext context)
+        {
+            OnInteract?.Invoke();
         }
     }
 }
