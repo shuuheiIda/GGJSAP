@@ -20,6 +20,19 @@ namespace GGJ.InGame.Manager
         
         protected override bool UseDontDestroyOnLoad => false;
 
+        protected override void Init()
+        {
+            GameEvents.OnNPCInteractionStarted += OnNPCInteractionStarted;
+            GameEvents.OnNPCInteractionEnded += OnNPCInteractionEnded;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            GameEvents.OnNPCInteractionStarted -= OnNPCInteractionStarted;
+            GameEvents.OnNPCInteractionEnded -= OnNPCInteractionEnded;
+        }
+
         private void Start() => StartGame();
 
         private void Update()
@@ -52,5 +65,9 @@ namespace GGJ.InGame.Manager
             RemainingTime = TIME_ZERO;
             GameEvents.RaiseGameEnd();
         }
+
+        private void OnNPCInteractionStarted(GameObject npc) => IsGameRunning = false;
+
+        private void OnNPCInteractionEnded() => IsGameRunning = true;
     }
 }
