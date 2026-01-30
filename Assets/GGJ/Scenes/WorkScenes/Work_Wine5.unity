@@ -618,10 +618,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: "\u6642\u9593\u5236\u9650"
+  m_text: "\u6642\u9593\uFF1A\uFF16\uFF10"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 3c5f52db680c6974dbab0e1fa91d610d, type: 2}
-  m_sharedMaterial: {fileID: -628622316144924078, guid: 3c5f52db680c6974dbab0e1fa91d610d, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 084681285c817454bab09f9c57946166, type: 2}
+  m_sharedMaterial: {fileID: -852603762492437880, guid: 084681285c817454bab09f9c57946166, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []

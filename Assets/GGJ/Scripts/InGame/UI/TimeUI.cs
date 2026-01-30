@@ -1,6 +1,6 @@
 using UnityEngine;
 using TMPro;
-using GGJ.InGame.Manager;
+using GGJ.InGame.Events;
 
 namespace GGJ.InGame.UI
 {
@@ -9,27 +9,21 @@ namespace GGJ.InGame.UI
     /// </summary>
     public class TimeUI : MonoBehaviour
     {
+        private const float SECONDS_PER_MINUTE = 60f;
+
         [SerializeField] private TextMeshProUGUI timeText;
 
-        private void OnEnable()
-        {
-            if (InGameManager.I != null)
-                InGameManager.I.OnTimeUpdate += UpdateTimeDisplay;
-        }
+        private void OnEnable() => GameEvents.OnTimeUpdate += UpdateTimeDisplay;
 
-        private void OnDisable()
-        {
-            if (InGameManager.I != null)
-                InGameManager.I.OnTimeUpdate -= UpdateTimeDisplay;
-        }
+        private void OnDisable() => GameEvents.OnTimeUpdate -= UpdateTimeDisplay;
 
         private void UpdateTimeDisplay(float remainingTime)
         {
             if (timeText == null) return;
 
-            int minutes = Mathf.FloorToInt(remainingTime / 60f);
-            int seconds = Mathf.FloorToInt(remainingTime % 60f);
-            timeText.text = $"{minutes:00}:{seconds:00}";
+            int minutes = Mathf.FloorToInt(remainingTime / SECONDS_PER_MINUTE);
+            int seconds = Mathf.FloorToInt(remainingTime % SECONDS_PER_MINUTE);
+            timeText.text = $"時間 {minutes:00}:{seconds:00}";
         }
     }
 }

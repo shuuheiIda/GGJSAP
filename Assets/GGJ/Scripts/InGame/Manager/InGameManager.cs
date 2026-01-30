@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using GGJ.Core;
+using GGJ.InGame.Events;
 
 namespace GGJ.InGame.Manager
 {
@@ -17,10 +18,6 @@ namespace GGJ.InGame.Manager
         public float RemainingTime { get; private set; }
         public bool IsGameRunning { get; private set; }
         
-        public event Action OnGameStart;
-        public event Action OnGameEnd;
-        public event Action<float> OnTimeUpdate;
-        
         protected override bool UseDontDestroyOnLoad => false;
 
         private void Start() => StartGame();
@@ -30,7 +27,7 @@ namespace GGJ.InGame.Manager
             if (!IsGameRunning) return;
 
             RemainingTime -= Time.deltaTime;
-            OnTimeUpdate?.Invoke(RemainingTime);
+            GameEvents.RaiseTimeUpdate(RemainingTime);
             
             if (RemainingTime <= TIME_ZERO)
                 EndGame();
@@ -43,7 +40,7 @@ namespace GGJ.InGame.Manager
         {
             RemainingTime = gameDuration;
             IsGameRunning = true;
-            OnGameStart?.Invoke();
+            GameEvents.RaiseGameStart();
         }
 
         /// <summary>
@@ -53,7 +50,7 @@ namespace GGJ.InGame.Manager
         {
             IsGameRunning = false;
             RemainingTime = TIME_ZERO;
-            OnGameEnd?.Invoke();
+            GameEvents.RaiseGameEnd();
         }
     }
 }
