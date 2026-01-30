@@ -5,12 +5,14 @@ using GGJ.Core;
 namespace GGJ.InGame.Manager
 {
     /// <summary>
-    /// ゲーム内を管理するクラス
+    /// ゲーム全体の進行と時間制限を管理するマネージャー
     /// </summary>
     public class InGameManager : Singleton<InGameManager>
     {
+        private const float TIME_ZERO = 0f;
+
         [Header("時間制限設定")]
-        [SerializeField] private float gameDuration = 60f; // 制限時間（秒）
+        [SerializeField] private float gameDuration = 60f;
         
         public float RemainingTime { get; private set; }
         public bool IsGameRunning { get; private set; }
@@ -21,27 +23,21 @@ namespace GGJ.InGame.Manager
         
         protected override bool UseDontDestroyOnLoad => false;
 
-        private void Start()
-        {
-            StartGame();
-        }
+        private void Start() => StartGame();
 
         private void Update()
         {
-            if (IsGameRunning)
-            {
-                RemainingTime -= Time.deltaTime;
-                OnTimeUpdate?.Invoke(RemainingTime);
-                
-                if (RemainingTime <= 0f)
-                {
-                    EndGame();
-                }
-            }
+            if (!IsGameRunning) return;
+
+            RemainingTime -= Time.deltaTime;
+            OnTimeUpdate?.Invoke(RemainingTime);
+            
+            if (RemainingTime <= TIME_ZERO)
+                EndGame();
         }
 
         /// <summary>
-        /// ゲームを開始
+        /// ゲームを開始する
         /// </summary>
         public void StartGame()
         {
@@ -51,12 +47,12 @@ namespace GGJ.InGame.Manager
         }
 
         /// <summary>
-        /// ゲームを終了
+        /// ゲームを終了する
         /// </summary>
         private void EndGame()
         {
             IsGameRunning = false;
-            RemainingTime = 0f;
+            RemainingTime = TIME_ZERO;
             OnGameEnd?.Invoke();
         }
     }
