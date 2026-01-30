@@ -4,6 +4,9 @@ using UnityEngine.InputSystem;
 
 namespace GGJ.InGame.Player
 {
+    /// <summary>
+    /// プレイヤー入力を管理し、Input Systemからのイベントを変換する
+    /// </summary>
     public class PlayerInputManager : MonoBehaviour
     {
         public Vector2 MoveInput { get; private set; }
@@ -32,19 +35,13 @@ namespace GGJ.InGame.Player
             inputActions.Disable();
         }
 
-        private void OnMovePerformed(InputAction.CallbackContext context)
-        {
+        private void OnMovePerformed(InputAction.CallbackContext context) => 
             MoveInput = context.ReadValue<Vector2>();
-        }
 
-        private void OnMoveCanceled(InputAction.CallbackContext context)
-        {
+        private void OnMoveCanceled(InputAction.CallbackContext context) => 
             MoveInput = Vector2.zero;
-        }
 
-        private void OnInteractPerformed(InputAction.CallbackContext context)
-        {
+        private void OnInteractPerformed(InputAction.CallbackContext context) => 
             OnInteract?.Invoke();
-        }
     }
 }
