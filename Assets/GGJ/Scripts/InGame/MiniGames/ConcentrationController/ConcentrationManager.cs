@@ -210,7 +210,7 @@ namespace GGJ.InGame.MiniGames {
                     // 当たり判定あり
                     if (hit2d.collider != null &&
                         hit2d.collider.CompareTag("Card")) {
-                        Debug.Log("カードを選択");
+                        // Debug.Log("カードを選択");
                         return hit2d.collider.GetComponent<CardController>();
                     }
                 }
@@ -238,14 +238,14 @@ namespace GGJ.InGame.MiniGames {
             canOpenCard = false;
 
             if (!firstCard) {
-                Debug.Log("first");
+                // Debug.Log("first");
 
                 selectCard.OpenCard();
                 // フィールド保持
                 firstCard = selectCard;
             }
             else {
-                Debug.Log("second");
+                // Debug.Log("second");
 
                 selectCard.OpenCard();
 

@@ -19,11 +19,15 @@ namespace GGJ.InGame.NPC
         [Header("セリフデータ")]
         [SerializeField] private DialogueData dialogueData;
         
+        // 各NPCに割り当てられたセリフインデックス（ゲーム内で固定）
+        private Dictionary<INpc, int> npcDialogueIndices = new Dictionary<INpc, int>();
+        
         protected override bool UseDontDestroyOnLoad => true;
         
         protected override void Init()
         {
             allNpcs.Clear();
+            npcDialogueIndices.Clear();
             GameEvents.OnGameStart += OnGameStart;
         }
         
@@ -62,6 +66,13 @@ namespace GGJ.InGame.NPC
             
             allNpcs.Add(npc);
             
+            // このNPCに登録順のインデックスを割り当て（ゲーム内で固定）
+            if (!npcDialogueIndices.ContainsKey(npc))
+            {
+                // 登録された順番（0から始まる）をインデックスとして使用
+                npcDialogueIndices[npc] = allNpcs.Count - 1;
+            }
+            
             if (GetCriminal() == null && allNpcs.Count > 0)
                 RandomizeCriminal();
         }
@@ -85,7 +96,9 @@ namespace GGJ.InGame.NPC
             bool isCriminal = npc.IsCriminal();
             bool hasHint = npc.HasReceivedHint();
             bool isAccused = npc.IsAccused();
-            int npcIndex = allNpcs.IndexOf(npc);
+            
+            // このNPCに割り当てられた固定インデックスを使用
+            int npcIndex = npcDialogueIndices.ContainsKey(npc) ? npcDialogueIndices[npc] : 0;
             
             var criminal = GetCriminal();
             if (criminal == null)

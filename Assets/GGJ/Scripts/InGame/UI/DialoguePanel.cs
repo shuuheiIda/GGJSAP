@@ -185,6 +185,38 @@ namespace GGJ.InGame.UI
                 return;
             }
             
+            // タイプライター効果が実行中の場合は完了を待つ
+            if (typewriterCoroutine != null)
+            {
+                StartCoroutine(WaitForTypewriterAndStartMiniGame());
+            }
+            else
+            {
+                // タイプライターがない場合は即座に起動
+                StartMiniGame();
+            }
+        }
+        
+        /// <summary>
+        /// タイプライター完了後にミニゲームを起動
+        /// </summary>
+        private IEnumerator WaitForTypewriterAndStartMiniGame()
+        {
+            // タイプライターの完了を待つ
+            if (typewriterCoroutine != null)
+                yield return typewriterCoroutine;
+            
+            // 0.3秒待ってからミニゲーム起動（読み終わる時間を与える）
+            yield return new WaitForSeconds(0.3f);
+            
+            StartMiniGame();
+        }
+        
+        /// <summary>
+        /// ミニゲームを起動
+        /// </summary>
+        private void StartMiniGame()
+        {
             // ミニゲームを起動（MainGameUIの切り替えで会話パネルも自動的に非表示になる）
             MiniGameManager.I.StartRandomMiniGame();
         }
