@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using GGJ.InGame.Audio;
 using GGJ.Manager;
 
@@ -11,15 +12,24 @@ namespace GGJ.UI
     /// </summary>
     public class TitleUI : MonoBehaviour
     {
-        [Header("UI References")]
+        [Header("UI参照")]
         [SerializeField] private SettingsUI settingsUI; // 設定UIの参照
         [SerializeField] private Button audioSettingsButton; // Audio設定を開くボタン
         [SerializeField] private Button startGameButton; // ゲーム開始ボタン
         [SerializeField] private Button exitButton; // 終了ボタン
 
+        [Header("コントローラーナビゲーション")]
+        [SerializeField] private GameObject firstSelectedButton; // 最初に選択されるボタン（通常はStartButton）
+
         private void Start()
         {
             InitializeButtons();
+            SetFirstSelected();
+        }
+
+        private void OnEnable()
+        {
+            SetFirstSelected();
         }
 
         /// <summary>
@@ -27,27 +37,20 @@ namespace GGJ.UI
         /// </summary>
         private void InitializeButtons()
         {
-            // Audio設定ボタンの設定
             if (audioSettingsButton != null && settingsUI != null)
             {
                 audioSettingsButton.onClick.AddListener(() =>
                 {
-                    PlayButtonSound();
+                    AudioManager.I?.PlaySE(SEType.ButtonClick);
                     settingsUI.OpenSettings();
                 });
             }
 
-            // ゲーム開始ボタンの設定
             if (startGameButton != null)
-            {
                 startGameButton.onClick.AddListener(OnStartGameClicked);
-            }
 
-            // 終了ボタンの設定
             if (exitButton != null)
-            {
                 exitButton.onClick.AddListener(OnExitClicked);
-            }
         }
 
         /// <summary>
@@ -55,11 +58,10 @@ namespace GGJ.UI
         /// </summary>
         public void OpenAudioSettings()
         {
-            if (settingsUI != null)
-            {
-                PlayButtonSound();
-                settingsUI.OpenSettings();
-            }
+            if (settingsUI == null) return;
+            
+            AudioManager.I?.PlaySE(SEType.ButtonClick);
+            settingsUI.OpenSettings();
         }
 
         /// <summary>
@@ -67,10 +69,7 @@ namespace GGJ.UI
         /// </summary>
         private void OnStartGameClicked()
         {
-            PlayButtonSound();
-            
-            // TODO: Scene管理クラスを使用してゲームシーンに遷移
-            Debug.Log("ゲーム開始 - Scene管理クラスで実装予定");
+            AudioManager.I?.PlaySE(SEType.ButtonClick);
         }
 
         /// <summary>
@@ -78,7 +77,7 @@ namespace GGJ.UI
         /// </summary>
         private void OnExitClicked()
         {
-            PlayButtonSound();
+            AudioManager.I?.PlaySE(SEType.ButtonClick);
             
             if (GameManager.I != null)
             {
@@ -97,19 +96,20 @@ namespace GGJ.UI
         }
 
         /// <summary>
-        /// ボタンクリック音を再生
+        /// コントローラー用：最初に選択されるボタンを設定
         /// </summary>
-        private void PlayButtonSound()
+        private void SetFirstSelected()
         {
-            if (AudioManager.I != null)
-            {
-                AudioManager.I.PlaySE(SEType.ButtonClick);
-            }
+            GameObject targetButton = firstSelectedButton != null ? firstSelectedButton : startGameButton?.gameObject;
+            
+            if (targetButton == null || EventSystem.current == null) return;
+            
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(targetButton);
         }
 
         private void OnDestroy()
         {
-            // イベントの解除
             if (audioSettingsButton != null)
                 audioSettingsButton.onClick.RemoveAllListeners();
 
