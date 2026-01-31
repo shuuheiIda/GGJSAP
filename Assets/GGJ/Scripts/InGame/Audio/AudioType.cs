@@ -6,6 +6,7 @@ namespace GGJ.InGame.Audio
     public enum SEType
     {
         None,
+        ButtonClick
     }
 
     /// <summary>
@@ -16,6 +17,7 @@ namespace GGJ.InGame.Audio
         None,
         Title,
         InGame,
-        Result,
+        GoodEnd,
+        BadEnd,
     }
 }
