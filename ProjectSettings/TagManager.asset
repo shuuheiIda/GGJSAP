@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Npc
   - Card
+  - Feet
   layers:
   - Default
   - TransparentFX
