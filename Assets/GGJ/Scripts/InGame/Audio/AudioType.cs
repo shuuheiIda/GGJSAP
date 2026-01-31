@@ -17,6 +17,7 @@ namespace GGJ.InGame.Audio
         None,
         Title,
         InGame,
-        Result,
+        GoodEnd,
+        BadEnd,
     }
 }
