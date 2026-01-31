@@ -169,21 +169,15 @@ namespace GGJ.InGame.NPC
         {
             if (isCriminal)
             {
-                if (isAccused)
-                    return "な、何を言ってるんだ...！";
-                else if (hasReceivedHint)
-                    return "そんなこと知りませんよ...";
-                else
-                    return "さあ...どうでしょうね。";
+                if (isAccused) return "な、何を言ってるんだ...！";
+                if (hasReceivedHint) return "そんなこと知りませんよ...";
+                return "さあ...どうでしょうね。";
             }
             else
             {
-                if (isAccused)
-                    return "えっ？私が犯人？そんなわけないでしょう！";
-                else if (hasReceivedHint)
-                    return "特に気になることはありませんでしたね。";
-                else
-                    return "私は何も知りませんよ。";
+                if (isAccused) return "えっ？私が犯人？そんなわけないでしょう！";
+                if (hasReceivedHint) return "特に気になることはありませんでしたね。";
+                return "私は何も知りませんよ。";
             }
         }
     }

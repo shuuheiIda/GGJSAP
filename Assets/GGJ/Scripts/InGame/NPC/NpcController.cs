@@ -26,13 +26,7 @@ namespace GGJ.InGame.NPC
             
             // NpcManagerに自動登録
             if (NpcManager.I != null)
-            {
                 NpcManager.I.RegisterNpc(this);
-            }
-            else
-            {
-                Debug.LogWarning($"[NpcController] NpcManagerが見つかりません: {gameObject.name}");
-            }
         }
         
         private void InitializeNpc()
@@ -44,7 +38,6 @@ namespace GGJ.InGame.NPC
         private void ApplyAppearance()
         {
             if (NpcData == null) return;
-            
             if (spriteRenderer != null && NpcData.npcSprite != null)
                 spriteRenderer.sprite = NpcData.npcSprite;
         }

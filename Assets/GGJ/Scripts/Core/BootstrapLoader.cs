@@ -42,12 +42,10 @@ namespace GGJ.Core
             }
             
             // Managerシーンがロードされていない場合、Additiveでロード
-            Debug.Log($"[Bootstrap] {MANAGER_SCENE_NAME}シーンをロードします");
             
             try
             {
                 SceneManager.LoadScene(MANAGER_SCENE_NAME, LoadSceneMode.Additive);
-                Debug.Log($"[Bootstrap] {MANAGER_SCENE_NAME}シーンのロードを開始しました");
             }
             catch (System.Exception e)
             {
