@@ -24,16 +24,7 @@ namespace GGJ.InGame.Manager
             if (GameManager.I != null)
                 GameManager.I.StartGame();
         }
-        
-        /// <summary>
-        /// ゲームを開始する（GameManagerに委譲）
-        /// </summary>
-        public void StartGame()
-        {
-            if (GameManager.I != null)
-                GameManager.I.StartGame();
-        }
-        
+                
         /// <summary>
         /// ゲームを終了する（GameManagerに委譲）
         /// </summary>

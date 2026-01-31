@@ -13,17 +13,9 @@ namespace GGJ.Manager
     public class GameManager : Singleton<GameManager>
     {
         private const float TIME_ZERO = 0f;
-
-        [Header("ゲーム設定")]
-        [SerializeField] private bool enableDebugMode = false;
         
         [Header("時間制限設定")]
         [SerializeField] private float gameDuration = 60f;
-
-        /// <summary>
-        /// デバッグモードの有効/無効
-        /// </summary>
-        public bool IsDebugMode => enableDebugMode;
         
         /// <summary>
         /// 残り時間
@@ -48,8 +40,6 @@ namespace GGJ.Manager
             // イベント購読
             GameEvents.OnNPCInteractionStarted += OnNPCInteractionStarted;
             GameEvents.OnNPCInteractionEnded += OnNPCInteractionEnded;
-            
-            LogInfo("GameManager initialized successfully.");
         }
 
         #region アプリケーション制御
@@ -59,7 +49,6 @@ namespace GGJ.Manager
         /// </summary>
         public void QuitApplication()
         {
-            LogInfo("Application quit requested.");
             OnApplicationQuit();
 
             #if UNITY_EDITOR
@@ -78,8 +67,6 @@ namespace GGJ.Manager
             
             if (AudioManager.I != null)
                 AudioManager.I.StopBGM();
-            
-            LogInfo("Application quit preparations completed.");
         }
 
         #endregion
@@ -99,7 +86,6 @@ namespace GGJ.Manager
             }
 
             PlayerPrefs.Save();
-            LogInfo("User settings saved.");
         }
 
         /// <summary>
@@ -117,8 +103,6 @@ namespace GGJ.Manager
                 AudioManager.I.SetBGMVolume(bgmVolume);
                 AudioManager.I.SetSEVolume(seVolume);
             }
-
-            LogInfo("User settings loaded.");
         }
 
         #endregion
@@ -135,7 +119,6 @@ namespace GGJ.Manager
             if (!pauseStatus) return;
             
             SaveUserSettings();
-            LogInfo("Application paused - settings saved.");
         }
 
         private void OnApplicationFocus(bool hasFocus)
@@ -143,7 +126,6 @@ namespace GGJ.Manager
             if (hasFocus) return;
             
             SaveUserSettings();
-            LogInfo("Application focus lost - settings saved.");
         }
 
         #endregion
@@ -169,13 +151,12 @@ namespace GGJ.Manager
             RemainingTime = gameDuration;
             IsGameRunning = true;
             IsGameEnded = false;
-            
+
             // InGameBGMを再生
             if (AudioManager.I != null)
                 AudioManager.I.PlayBGM(BGMType.InGame, true);
                 
             GameEvents.RaiseGameStart();
-            LogInfo($"Game started with {gameDuration} seconds duration.");
         }
 
         /// <summary>
@@ -188,7 +169,6 @@ namespace GGJ.Manager
             RemainingTime = TIME_ZERO;
             
             GameEvents.RaiseGameEnd();
-            LogInfo("Game ended due to time limit.");
         }
         
         /// <summary>
@@ -197,7 +177,6 @@ namespace GGJ.Manager
         public void PauseGame()
         {
             IsGameRunning = false;
-            LogInfo("Game paused.");
         }
         
         /// <summary>
@@ -208,44 +187,7 @@ namespace GGJ.Manager
             if (!IsGameEnded)
             {
                 IsGameRunning = true;
-                LogInfo("Game resumed.");
             }
-        }
-        
-        /// <summary>
-        /// タイトルBGMを再生
-        /// </summary>
-        public void PlayTitleBGM()
-        {
-            if (AudioManager.I != null)
-                AudioManager.I.PlayBGM(BGMType.Title, true);
-        }
-        
-        /// <summary>
-        /// グッドエンドBGMを再生
-        /// </summary>
-        public void PlayGoodEndBGM()
-        {
-            if (AudioManager.I != null)
-                AudioManager.I.PlayBGM(BGMType.GoodEnd, true);
-        }
-        
-        /// <summary>
-        /// バッドエンドBGMを再生
-        /// </summary>
-        public void PlayBadEndBGM()
-        {
-            if (AudioManager.I != null)
-                AudioManager.I.PlayBGM(BGMType.BadEnd, true);
-        }
-        
-        /// <summary>
-        /// ボタンクリックSEを再生
-        /// </summary>
-        public void PlayButtonClickSE()
-        {
-            if (AudioManager.I != null)
-                AudioManager.I.PlaySE(SEType.ButtonClick);
         }
         
         private void OnNPCInteractionStarted(GameObject npc)
@@ -258,24 +200,15 @@ namespace GGJ.Manager
             ResumeGame();
         }
         
-        #endregion
-
-        #region デバッグ・ログ出力
-
         /// <summary>
-        /// 情報ログを出力
+        /// ボタンクリックSEを再生
         /// </summary>
-        private void LogInfo(string message)
+        public void PlayButtonClickSE()
         {
-            if (enableDebugMode)
-                Debug.Log($"[GameManager] {message}");
+            if (AudioManager.I != null)
+                AudioManager.I.PlaySE(SEType.ButtonClick);
         }
-
-        /// <summary>
-        /// エラーログを出力
-        /// </summary>
-        private void LogError(string message) => Debug.LogError($"[GameManager] {message}");
-
+        
         #endregion
         
         protected override void OnDestroy()
