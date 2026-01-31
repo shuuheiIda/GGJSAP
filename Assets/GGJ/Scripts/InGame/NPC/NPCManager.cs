@@ -27,12 +27,22 @@ namespace GGJ.InGame.NPC
         {
             allNpcs.Clear();
             
+            // デバッグ：npcReferencesの内容を確認
+            Debug.Log($"[NpcManager.Init] npcReferencesの数: {npcReferences.Count}");
+            for (int i = 0; i < npcReferences.Count; i++)
+            {
+                var npc = npcReferences[i];
+                Debug.Log($"[NpcManager.Init] npcReferences[{i}]: {(npc != null ? npc.name : "null")} (IsDestroyed: {npc == null})");
+            }
+            
             // アタッチされたNPCを登録
             foreach (var npc in npcReferences)
             {
                 if (npc != null)
                     RegisterNpc(npc);
             }
+            
+            Debug.Log($"[NpcManager.Init] 登録完了後のallNpcs数: {allNpcs.Count}");
             
             // ヒント取得イベントを購読
             GameEvents.OnHintReceived += OnHintReceived;

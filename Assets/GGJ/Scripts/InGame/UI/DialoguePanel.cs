@@ -4,6 +4,8 @@ using TMPro;
 using GGJ.Core;
 using GGJ.InGame.Events;
 using GGJ.InGame.NPC;
+using GGJ.Scene;
+using System.Collections;
 
 namespace GGJ.InGame.UI
 {
@@ -21,6 +23,9 @@ namespace GGJ.InGame.UI
         [Header("タイプライター設定")]
         [SerializeField] private bool useTypewriterEffect = true;
         [SerializeField] private float characterDelay = 0.05f;
+        
+        [Header("シーン遷移設定")]
+        [SerializeField] private float delayBeforeSceneTransition = 2.0f;
         
         private INpc currentNpc;
         private Coroutine typewriterCoroutine;
@@ -153,6 +158,54 @@ namespace GGJ.InGame.UI
             currentNpc.SetAccused(true);
             DisplayNpcInfo(currentNpc);
             UpdateHintButton();
+            
+            // 犯人かどうかをチェックしてシーン遷移
+            StartCoroutine(CheckAccusationAndTransition());
+        }
+        
+        /// <summary>
+        /// 告発結果をチェックしてシーン遷移
+        /// </summary>
+        private IEnumerator CheckAccusationAndTransition()
+        {
+            // セリフ表示を待つ
+            yield return new WaitForSeconds(delayBeforeSceneTransition);
+            
+            if (currentNpc == null)
+            {
+                Debug.LogError("[DialoguePanel] currentNpcがnullです");
+                yield break;
+            }
+            
+            // 犯人を正しく告発したか確認
+            bool isCriminal = currentNpc.IsCriminal();
+            
+            if (isCriminal)
+            {
+                // 犯人を見つけた！ → GoodEnd
+                Debug.Log("[DialoguePanel] 犯人を見つけました！GoodEndへ遷移します");
+                if (SceneController.I != null)
+                {
+                    SceneController.I.LoadScene(SceneName.GoodEnd);
+                }
+                else
+                {
+                    Debug.LogError("[DialoguePanel] SceneControllerが見つかりません");
+                }
+            }
+            else
+            {
+                // 間違った人を告発した → BadEnd
+                Debug.Log("[DialoguePanel] 間違った人を告発しました！BadEndへ遷移します");
+                if (SceneController.I != null)
+                {
+                    SceneController.I.LoadScene(SceneName.BadEnd);
+                }
+                else
+                {
+                    Debug.LogError("[DialoguePanel] SceneControllerが見つかりません");
+                }
+            }
         }
         
         /// <summary>
