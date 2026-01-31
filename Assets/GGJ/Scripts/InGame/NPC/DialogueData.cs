@@ -77,20 +77,24 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// セリフを取得（背景情報で挿入）
         /// </summary>
-        public string GetDialogue(bool isCriminal, bool hasReceivedHint, int index, NpcAppearance criminalAppearance, Gender npcGender)
+        public string GetDialogue(bool isCriminal, bool hasReceivedHint, bool isAccused, int index, NpcAppearance criminalAppearance, Gender npcGender)
         {
             List<string> targetList;
             
             if (isCriminal)
             {
-                if (hasReceivedHint)
+                if (isAccused)
                     targetList = npcGender == Gender.Female ? criminalAccusedResponsesFemale : criminalAccusedResponsesMale;
+                else if (hasReceivedHint)
+                    targetList = npcGender == Gender.Female ? criminalHintsFemale : criminalHintsMale;
                 else
                     targetList = npcGender == Gender.Female ? criminalInquiryResponsesFemale : criminalInquiryResponsesMale;
             }
             else
             {
-                if (hasReceivedHint)
+                if (isAccused)
+                    targetList = npcGender == Gender.Female ? innocentAccusedResponsesFemale : innocentAccusedResponsesMale;
+                else if (hasReceivedHint)
                     targetList = npcGender == Gender.Female ? innocentHintsFemale : innocentHintsMale;
                 else
                     targetList = npcGender == Gender.Female ? innocentInquiryResponsesFemale : innocentInquiryResponsesMale;

@@ -13,6 +13,7 @@ namespace GGJ.InGame.NPC
         
         [Header("状態")]
         [SerializeField] private bool hasReceivedHint = false;
+        [SerializeField] private bool isAccused = false;
         
         /// <summary>実行時の犯人フラグ（動的に変更可能）</summary>
         private bool isCriminalRuntime = false;
@@ -65,6 +66,10 @@ namespace GGJ.InGame.NPC
         public void SetCriminal(bool isCriminal) => isCriminalRuntime = isCriminal;
         
         public bool IsCriminal() => isCriminalRuntime;
+        
+        public void SetAccused(bool accused) => isAccused = accused;
+        
+        public bool IsAccused() => isAccused;
         
         #endregion
     }

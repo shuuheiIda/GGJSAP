@@ -20,6 +20,12 @@ namespace GGJ.InGame.NPC
         /// <summary>繝偵Φ繝医ｒ蜿励￠蜿悶▲縺溘°縺ｩ縺・°</summary>
         bool HasReceivedHint();
         
+        /// <summary>告発された状態を設定</summary>
+        void SetAccused(bool accused);
+        
+        /// <summary>告発されたかどうか</summary>
+        bool IsAccused();
+        
         /// <summary>Npcの位置を取得・/summary>
         Vector3 GetPosition();
         

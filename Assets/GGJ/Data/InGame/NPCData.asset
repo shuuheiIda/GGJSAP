@@ -19,6 +19,6 @@ MonoBehaviour:
     hairColor: {r: 1, g: 1, b: 1, a: 1}
     hatColor: {r: 1, g: 1, b: 1, a: 1}
     shoeColor: {r: 1, g: 1, b: 1, a: 1}
-    gender: 0
-    positionFromCenter: 0
+    gender: 1
+    positionFromCenter: 3
   npcSprite: {fileID: 0}

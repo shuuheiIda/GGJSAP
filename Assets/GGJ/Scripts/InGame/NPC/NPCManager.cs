@@ -101,6 +101,7 @@ namespace GGJ.InGame.NPC
             
             bool isCriminal = npc.IsCriminal();
             bool hasHint = npc.HasReceivedHint();
+            bool isAccused = npc.IsAccused();
             
             // Npcのインデックスを使ってバリエーションを提供
             int npcIndex = allNpcs.IndexOf(npc);
@@ -112,7 +113,7 @@ namespace GGJ.InGame.NPC
             NpcAppearance criminalAppearance = criminal?.GetNpcData()?.appearance;
             Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Female;
             
-            return dialogueData.GetDialogue(isCriminal, hasHint, npcIndex, criminalAppearance, npcGender);
+            return dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
         }
         
         /// <summary>

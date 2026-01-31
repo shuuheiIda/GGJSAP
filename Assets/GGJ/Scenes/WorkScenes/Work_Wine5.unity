@@ -850,9 +850,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   panel: {fileID: 797911398}
-  closeButton: {fileID: 1472886692}
+  accuseButton: {fileID: 2047255539}
   hintButton: {fileID: 1219830761}
-  accuseButton: {fileID: 0}
+  closeButton: {fileID: 1472886692}
   dialogueText: {fileID: 1886657913}
   useTypewriterEffect: 1
   characterDelay: 0.05
@@ -2238,6 +2238,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 103690719}
     m_Modifications:
+    - target: {fileID: 3950334548280750539, guid: 450c0efdad7fc1f42a8fc0217886c959, type: 3}
+      propertyPath: NpcData
+      value: 
+      objectReference: {fileID: 11400000, guid: 025a8229105c83d488a5059a45b3585b, type: 2}
     - target: {fileID: 6597587451494095451, guid: 450c0efdad7fc1f42a8fc0217886c959, type: 3}
       propertyPath: m_Name
       value: NPC

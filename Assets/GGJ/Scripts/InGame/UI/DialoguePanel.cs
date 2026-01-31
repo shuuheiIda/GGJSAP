@@ -149,7 +149,8 @@ namespace GGJ.InGame.UI
         {
             if (currentNpc == null) return;
             
-            currentNpc.SetHintReceived(true);
+            // 告発フラグを立てる
+            currentNpc.SetAccused(true);
             DisplayNpcInfo(currentNpc);
             UpdateHintButton();
         }
