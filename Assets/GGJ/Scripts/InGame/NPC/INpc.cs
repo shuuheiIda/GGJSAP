@@ -9,7 +9,7 @@ namespace GGJ.InGame.NPC
     public interface INpc
     {
         /// <summary>NPC縺ｮ繝・・繧ｿ繧貞叙蠕・/summary>
-        NpcData GetNpcData();
+        NPCData GetNpcData();
         
         /// <summary>迴ｾ蝨ｨ縺ｮ迥ｶ諷九↓蠢懊§縺滉ｼ夊ｩｱ繝・く繧ｹ繝医ｒ蜿門ｾ・/summary>
         string GetCurrentDialogue();

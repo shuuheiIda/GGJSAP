@@ -75,7 +75,7 @@ namespace GGJ.InGame.NPC
     /// NPCの基本データ（ScriptableObject）
     /// </summary>
     [CreateAssetMenu(fileName = "NpcData", menuName = "GGJ/NpcData", order = 0)]
-    public class NpcData : ScriptableObject
+    public class NPCData : ScriptableObject
     {
         [Header("基本情報")]
         [Tooltip("NPCの名前")]

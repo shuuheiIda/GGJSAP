@@ -9,7 +9,7 @@ namespace GGJ.InGame.NPC
     public class NpcController : MonoBehaviour, INpc
     {
         [Header("NPCデータ")]
-        [SerializeField] private NpcData NpcData;
+        [SerializeField] private NPCData NpcData;
         
         [Header("状態")]
         [SerializeField] private bool hasReceivedHint = false;
@@ -41,7 +41,7 @@ namespace GGJ.InGame.NPC
         
         #region INpc実装
         
-        public NpcData GetNpcData() => NpcData;
+        public NPCData GetNpcData() => NpcData;
         
         public string GetCurrentDialogue()
         {
