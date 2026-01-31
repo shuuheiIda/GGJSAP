@@ -23,6 +23,16 @@ namespace GGJ.InGame.NPC
         private void Start()
         {
             InitializeNpc();
+            
+            // NpcManagerに自動登録
+            if (NpcManager.I != null)
+            {
+                NpcManager.I.RegisterNpc(this);
+            }
+            else
+            {
+                Debug.LogWarning($"[NpcController] NpcManagerが見つかりません: {gameObject.name}");
+            }
         }
         
         private void InitializeNpc()

@@ -41,6 +41,22 @@ namespace GGJ.InGame.NPC
             GameEvents.OnGameStart += OnGameStart;
         }
         
+        private void Start()
+        {
+            // 全NPCが登録されるのを待ってから犯人を決定
+            // (NpcControllerのStartはこの後に実行される)
+            Invoke(nameof(InitializeCriminalIfNeeded), 0.1f);
+        }
+        
+        private void InitializeCriminalIfNeeded()
+        {
+            if (GetCriminal() == null && allNpcs.Count > 0)
+            {
+                Debug.Log($"[NpcManager] 全NPCが登録されました。犯人を決定します (合計: {allNpcs.Count}体)");
+                RandomizeCriminal();
+            }
+        }
+        
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -94,9 +110,7 @@ namespace GGJ.InGame.NPC
             if (allNpcs.Contains(npc)) return;
             
             allNpcs.Add(npc);
-            
-            if (GetCriminal() == null && allNpcs.Count > 0)
-                RandomizeCriminal();
+            Debug.Log($"[NpcManager] NPCを登録しました: {npc.GetNpcData()?.npcName ?? "不明"} (合計: {allNpcs.Count}体)");
         }
         
         /// <summary>
@@ -122,14 +136,22 @@ namespace GGJ.InGame.NPC
             // Npcのインデックスを使ってバリエーションを提供
             int npcIndex = allNpcs.IndexOf(npc);
             
+            // 性別ごとにインデックスを計算（同性のNPC間で一意にする）
+            Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Woman;
+            int genderSpecificIndex = 0;
+            for (int i = 0; i < npcIndex; i++)
+            {
+                if (allNpcs[i].GetNpcData()?.appearance.gender == npcGender)
+                    genderSpecificIndex++;
+            }
+            
             var criminal = GetCriminal();
             if (criminal == null)
                 Debug.LogError("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
             
             NpcAppearance criminalAppearance = criminal?.GetNpcData()?.appearance;
-            Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Woman;
             
-            return dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
+            return dialogueData.GetDialogue(isCriminal, hasHint, isAccused, genderSpecificIndex, criminalAppearance, npcGender);
         }
         
         /// <summary>

@@ -5,71 +5,79 @@ namespace GGJ.InGame.NPC
 {
     /// <summary>
     /// セリフ・セットを管理するScriptableObject
+    /// レベルデザイン担当者向け：ゲーム内で表示される全てのセリフを管理します
     /// </summary>
     [CreateAssetMenu(fileName = "DialogueData", menuName = "GGJ/DialogueData", order = 1)]
     public class DialogueData : ScriptableObject
     {
-        [Header("ストーリーテキスト")]
-        [Tooltip("開始直後のストーリー")]
+        [Header("■ ストーリーテキスト")]
+        [Space(5)]
+        [Tooltip("ゲーム開始時に表示されるストーリー文章")]
         [TextArea(3, 10)]
         public string openingStory = "";
         
-        [Tooltip("犯人を捕まえた時のストーリー")]
+        [Space(5)]
+        [Tooltip("犯人を正しく告発した時のエンディング文章")]
         [TextArea(3, 10)]
         public string victoryStory = "";
         
-        [Tooltip("犯人を捕まえられなかった時のストーリー")]
+        [Space(5)]
+        [Tooltip("犯人を見つけられなかった時のバッドエンド文章")]
         [TextArea(3, 10)]
         public string defeatStory = "";
         
-        [Header("犯人用のセリフ")]
-        [Tooltip("聞き込みへの応答（犯人・女性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Header("■ 犯人用のセリフ（ヒント前：聞き込み時）")]
+        [Space(5)]
+        [Tooltip("【重要】ヒント前は曖昧な返答にしてください（例：よく覚えていません）\n女性7人分のセリフを用意してください。各NPCは異なるセリフを使用します。")]
         public List<string> criminalInquiryResponsesFemale = new List<string>();
         
-        [Tooltip("聞き込みへの応答（犯人・男性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Space(5)]
+        [Tooltip("【重要】ヒント前は曖昧な返答にしてください（例：よく覚えていません）\n男性7人分のセリフを用意してください。各NPCは異なるセリフを使用します。")]
         public List<string> criminalInquiryResponsesMale = new List<string>();
         
-        [Tooltip("犯人と言われた時の反応（実際に犯人・女性）")]
-        [TextArea(2, 5)]
+        [Header("■ 犯人用のセリフ（告発時：犯人が正解の場合）")]
+        [Space(5)]
+        [Tooltip("犯人NPCに「あなたが犯人ですね？」と告発した時の反応（女性）\n観念する、白状する、驚くなどのセリフ")]
         public List<string> criminalAccusedResponsesFemale = new List<string>();
         
-        [Tooltip("犯人と言われた時の反応（実際に犯人・男性）")]
-        [TextArea(2, 5)]
+        [Space(5)]
+        [Tooltip("犯人NPCに「あなたが犯人ですね？」と告発した時の反応（男性）\n観念する、白状する、驚くなどのセリフ")]
         public List<string> criminalAccusedResponsesMale = new List<string>();
         
-        [Tooltip("ヒント（犯人・女性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Header("■ 犯人用のセリフ（ヒント後：詳細情報）")]
+        [Space(5)]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n例：「犯人は{CLOTHES_COLOR}の服を着ていました」")]
         public List<string> criminalHintsFemale = new List<string>();
         
-        [Tooltip("ヒント（犯人・男性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Space(5)]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n例：「犯人は{MASK_COLOR}のマスクをしていたぜ」")]
         public List<string> criminalHintsMale = new List<string>();
         
-        [Header("無実のNPC用のセリフ")]
-        [Tooltip("聞き込みへの応答（無実・女性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Header("■ 無実のNPC用のセリフ（ヒント前：聞き込み時）")]
+        [Space(5)]
+        [Tooltip("【重要】ヒント前は曖昧な返答にしてください（例：何も知りません）\n女性7人分のセリフを用意してください。各NPCは異なるセリフを使用します。")]
         public List<string> innocentInquiryResponsesFemale = new List<string>();
         
-        [Tooltip("聞き込みへの応答（無実・男性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Space(5)]
+        [Tooltip("【重要】ヒント前は曖昧な返答にしてください（例：何も知りません）\n男性6人分のセリフを用意してください。各NPCは異なるセリフを使用します。")]
         public List<string> innocentInquiryResponsesMale = new List<string>();
         
-        [Tooltip("犯人と言われた時の反応（実際は無実・女性）")]
-        [TextArea(2, 5)]
+        [Header("■ 無実のNPC用のセリフ（告発時：冤罪の場合）")]
+        [Space(5)]
+        [Tooltip("無実のNPCに「あなたが犯人ですね？」と間違って告発した時の反応（女性）\n怒る、困惑する、否定するなどのセリフ")]
         public List<string> innocentAccusedResponsesFemale = new List<string>();
         
-        [Tooltip("犯人と言われた時の反応（実際は無実・男性）")]
-        [TextArea(2, 5)]
+        [Space(5)]
+        [Tooltip("無実のNPCに「あなたが犯人ですね？」と間違って告発した時の反応（男性）\n怒る、困惑する、否定するなどのセリフ")]
         public List<string> innocentAccusedResponsesMale = new List<string>();
         
-        [Tooltip("ヒント（無実・女性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Header("■ 無実のNPC用のセリフ（ヒント後：詳細情報）")]
+        [Space(5)]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n無実のNPCは虚偽の情報を言うこともあります\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色")]
         public List<string> innocentHintsFemale = new List<string>();
         
-        [Tooltip("ヒント（無実・男性） {COLOR}で色を挿入")]
-        [TextArea(2, 5)]
+        [Space(5)]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n無実のNPCは虚偽の情報を言うこともあります\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色")]
         public List<string> innocentHintsMale = new List<string>();
         
         /// <summary>
@@ -106,7 +114,9 @@ namespace GGJ.InGame.NPC
                 string genderName = npcGender == Gender.Woman ? "Female" : "Male";
                 string criminalStatus = isCriminal ? "Criminal" : "Innocent";
                 Debug.LogError($"[DialogueData] セリフリストが空です: {criminalStatus}{listName}{genderName} (犯人:{isCriminal}, ヒント:{hasReceivedHint}, 告発:{isAccused}, 性別:{genderName})");
-                return "...";
+                
+                // デフォルトのセリフを返す
+                return GetDefaultDialogue(isCriminal, isAccused, hasReceivedHint);
             }
             
             if (index < 0 || index >= targetList.Count)
@@ -150,6 +160,31 @@ namespace GGJ.InGame.NPC
                 NpcColor.Black => "黒色",
                 _ => "不明な色"
             };
+        }
+        
+        /// <summary>
+        /// デフォルトのセリフを返す（リストが空の場合）
+        /// </summary>
+        private string GetDefaultDialogue(bool isCriminal, bool isAccused, bool hasReceivedHint)
+        {
+            if (isCriminal)
+            {
+                if (isAccused)
+                    return "な、何を言ってるんだ...！";
+                else if (hasReceivedHint)
+                    return "そんなこと知りませんよ...";
+                else
+                    return "さあ...どうでしょうね。";
+            }
+            else
+            {
+                if (isAccused)
+                    return "えっ？私が犯人？そんなわけないでしょう！";
+                else if (hasReceivedHint)
+                    return "特に気になることはありませんでしたね。";
+                else
+                    return "私は何も知りませんよ。";
+            }
         }
     }
 }
