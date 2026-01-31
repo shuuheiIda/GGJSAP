@@ -10,10 +10,10 @@ namespace GGJ.InGame.NPC
     public class NpcAppearance
     {
         [Header("外見の色")]
-        public NpcColor clothesColor = NpcColor.White;
-        public NpcColor maskColor = NpcColor.White;
-        public NpcColor hairColor = NpcColor.White;
         public NpcColor hatColor = NpcColor.White;
+        public NpcColor hairColor = NpcColor.White;
+        public NpcColor maskColor = NpcColor.White;
+        public NpcColor clothesColor = NpcColor.White;
         public NpcColor shoeColor = NpcColor.White;
 
         [Header("その他の特徴")]

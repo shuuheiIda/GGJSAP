@@ -64,7 +64,10 @@ namespace GGJ.InGame.NPC
         public void RandomizeCriminal()
         {
             if (allNpcs.Count == 0)
+            {
+                Debug.LogWarning("[NpcManager] NPCが登録されていないため、犯人を設定できません");
                 return;
+            }
             
             // 全Npcの犯人フラグをリセット
             foreach (var npc in allNpcs)
@@ -72,9 +75,14 @@ namespace GGJ.InGame.NPC
                 npc.SetCriminal(false);
             }
             
-            // 繝ｩ繝ｳ繝繝縺ｫ1菴薙ｒ驕ｸ繧薙〒迥ｯ莠ｺ縺ｫ縺吶ｋ
+            // 繝ｩ繝ｳ繝繝縺ｫ1菴薙ｒ驕ｸ繧薙〒迥ｯ莠ｺ縺ｫ縺吶ｋ
             int randomIndex = Random.Range(0, allNpcs.Count);
             allNpcs[randomIndex].SetCriminal(true);
+            
+            // デバッグログ
+            var criminalData = allNpcs[randomIndex].GetNpcData();
+            string criminalName = criminalData != null ? criminalData.npcName : "不明";
+            Debug.Log($"[NpcManager] 犯人が決定しました: {criminalName} (Index: {randomIndex}, 合計NPC数: {allNpcs.Count})");
         }
         
         /// <summary>

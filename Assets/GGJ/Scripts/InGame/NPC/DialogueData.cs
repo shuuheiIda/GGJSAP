@@ -99,7 +99,15 @@ namespace GGJ.InGame.NPC
             }
             
             if (targetList == null || targetList.Count == 0)
+            {
+                string listName = isCriminal ? 
+                    (isAccused ? "AccusedResponses" : hasReceivedHint ? "Hints" : "InquiryResponses") :
+                    (isAccused ? "AccusedResponses" : hasReceivedHint ? "Hints" : "InquiryResponses");
+                string genderName = npcGender == Gender.Woman ? "Female" : "Male";
+                string criminalStatus = isCriminal ? "Criminal" : "Innocent";
+                Debug.LogError($"[DialogueData] セリフリストが空です: {criminalStatus}{listName}{genderName} (犯人:{isCriminal}, ヒント:{hasReceivedHint}, 告発:{isAccused}, 性別:{genderName})");
                 return "...";
+            }
             
             if (index < 0 || index >= targetList.Count)
                 index = Random.Range(0, targetList.Count);
