@@ -15,16 +15,13 @@ namespace GGJ.InGame.NPC
         [SerializeField] private bool hasReceivedHint = false;
         [SerializeField] private bool isAccused = false;
         
-        /// <summary>実行時の犯人フラグ（動的に変更可能）</summary>
         private bool isCriminalRuntime = false;
-        
         private SpriteRenderer spriteRenderer;
         
         private void Start()
         {
             InitializeNpc();
             
-            // NpcManagerに自動登録
             if (NpcManager.I != null)
                 NpcManager.I.RegisterNpc(this);
         }

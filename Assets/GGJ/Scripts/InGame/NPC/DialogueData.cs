@@ -107,17 +107,7 @@ namespace GGJ.InGame.NPC
             }
             
             if (targetList == null || targetList.Count == 0)
-            {
-                string listName = isCriminal ? 
-                    (isAccused ? "AccusedResponses" : hasReceivedHint ? "Hints" : "InquiryResponses") :
-                    (isAccused ? "AccusedResponses" : hasReceivedHint ? "Hints" : "InquiryResponses");
-                string genderName = npcGender == Gender.Woman ? "Female" : "Male";
-                string criminalStatus = isCriminal ? "Criminal" : "Innocent";
-                Debug.LogError($"[DialogueData] セリフリストが空です: {criminalStatus}{listName}{genderName} (犯人:{isCriminal}, ヒント:{hasReceivedHint}, 告発:{isAccused}, 性別:{genderName})");
-                
-                // デフォルトのセリフを返す
                 return GetDefaultDialogue(isCriminal, isAccused, hasReceivedHint);
-            }
             
             if (index < 0 || index >= targetList.Count)
                 index = Random.Range(0, targetList.Count);
@@ -130,9 +120,6 @@ namespace GGJ.InGame.NPC
             return dialogue;
         }
         
-        /// <summary>
-        /// プレースホルダーを実際の色情報で挿入
-        /// </summary>
         private string ReplacePlaceholders(string text, NpcAppearance appearance)
         {
             text = text.Replace("{CLOTHES_COLOR}", ColorToJapanese(appearance.clothesColor));
@@ -145,9 +132,6 @@ namespace GGJ.InGame.NPC
             return text;
         }
         
-        /// <summary>
-        /// Colorを日本語の色名に変換（主要6色のみ）
-        /// </summary>
         private string ColorToJapanese(NpcColor color)
         {
             return color switch
@@ -162,9 +146,6 @@ namespace GGJ.InGame.NPC
             };
         }
         
-        /// <summary>
-        /// デフォルトのセリフを返す（リストが空の場合）
-        /// </summary>
         private string GetDefaultDialogue(bool isCriminal, bool isAccused, bool hasReceivedHint)
         {
             if (isCriminal)
