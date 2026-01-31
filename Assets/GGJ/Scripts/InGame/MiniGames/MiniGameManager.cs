@@ -46,6 +46,7 @@ namespace GGJ.InGame.MiniGames
                 }
             }
 
+            // 利用可能なミニゲームがない場合は警告
             if (availableMiniGames.Count == 0)
             {
                 Debug.LogError("[MiniGameManager] 利用可能なミニゲームがありません！");
@@ -121,12 +122,7 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         private void OnMiniGameCleared()
         {
-            Debug.Log("[MiniGameManager] ミニゲームクリア！ヒントを獲得しました");
-
-            // ヒント獲得イベントを発火
-            GameEvents.RaiseHintReceived();
-
-            // メインゲームに戻る
+            // メインゲームに戻る（ヒント表示はメインゲーム復帰後に行う）
             StartCoroutine(ReturnToMainGameAfterDelay(1.5f));
         }
 
@@ -137,6 +133,10 @@ namespace GGJ.InGame.MiniGames
         {
             yield return new WaitForSeconds(delay);
             ReturnToMainGame();
+            
+            // MainGameUI復帰後にヒント獲得イベントを発火（DialoguePanelがアクティブになった後）
+            yield return null; // 1フレーム待つ
+            GameEvents.RaiseHintReceived();
         }
 
         /// <summary>
@@ -154,8 +154,6 @@ namespace GGJ.InGame.MiniGames
             SwitchToMainGame();
 
             isMiniGameActive = false;
-
-            Debug.Log("[MiniGameManager] メインゲームに戻りました");
         }
 
         /// <summary>

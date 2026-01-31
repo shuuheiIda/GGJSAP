@@ -94,7 +94,6 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         protected virtual void OnMiniGameStart()
         {
-            Debug.Log($"[{GetType().Name}] ミニゲーム開始");
         }
 
         /// <summary>
@@ -102,7 +101,6 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         protected virtual void OnMiniGameStop()
         {
-            Debug.Log($"[{GetType().Name}] ミニゲーム停止");
         }
 
         /// <summary>
@@ -110,7 +108,6 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         protected virtual void OnMiniGameReset()
         {
-            Debug.Log($"[{GetType().Name}] ミニゲームリセット");
         }
 
         /// <summary>
@@ -119,7 +116,6 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         protected void OnMiniGameCleared()
         {
-            Debug.Log($"[{GetType().Name}] クリア！");
             isActive = false;
             onClearCallback?.Invoke();
         }

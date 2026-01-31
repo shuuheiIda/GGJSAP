@@ -24,14 +24,12 @@ namespace GGJ.InGame.NPC
         protected override void Init()
         {
             allNpcs.Clear();
-            GameEvents.OnHintReceived += OnHintReceived;
             GameEvents.OnGameStart += OnGameStart;
         }
         
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            GameEvents.OnHintReceived -= OnHintReceived;
             GameEvents.OnGameStart -= OnGameStart;
         }
         
@@ -39,11 +37,6 @@ namespace GGJ.InGame.NPC
         /// ゲーム開始時の処理
         /// </summary>
         private void OnGameStart() => RandomizeCriminal();
-        
-        /// <summary>
-        /// ヒント取得時の処理
-        /// </summary>
-        private void OnHintReceived() => SetAllHintsReceived(true);
         
         /// <summary>
         /// ランダムにNpcを1体選んで犯人にする

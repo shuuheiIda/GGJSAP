@@ -31,6 +31,14 @@ namespace GGJ.InGame.UI
         private INpc currentNpc;
         private Coroutine typewriterCoroutine;
 
+        private void Awake()
+        {
+            // イベントリスナーを登録（Awakeで登録することで、MainGameUI非表示時も維持される）
+            GameEvents.OnNpcInteractionStarted += OnNpcInteractionStarted;
+            GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;
+            GameEvents.OnHintReceived += OnHintReceived;
+        }
+
         private void Start()
         {
             if (closeButton != null)
@@ -46,22 +54,13 @@ namespace GGJ.InGame.UI
                 panel.SetActive(false);
         }
 
-        private void OnEnable()
+        private void OnDestroy()
         {
-            GameEvents.OnNpcInteractionStarted += OnNpcInteractionStarted;
-            GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;
-            GameEvents.OnHintReceived += OnHintReceived;
-        }
-
-        private void OnDisable()
-        {
+            // イベントリスナーを解除
             GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
             GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
             GameEvents.OnHintReceived -= OnHintReceived;
-        }
-
-        private void OnDestroy()
-        {
+            
             if (closeButton != null)
                 closeButton.onClick.RemoveListener(OnCloseButtonClicked);
             
@@ -91,10 +90,11 @@ namespace GGJ.InGame.UI
         /// </summary>
         private void OnHintReceived()
         {
-            // 現在会話中のNPCがいれば、情報を更新して再表示
+            // 現在会話中のNPCのみにヒントを渡す
             if (currentNpc != null && panel != null)
             {
-                Debug.Log("[DialoguePanel] ヒント獲得！NPC情報を更新します");
+                // 会話中のNPCにヒント受信フラグを設定
+                currentNpc.SetHintReceived(true);
                 
                 // パネルを再表示
                 panel.SetActive(true);
@@ -168,17 +168,11 @@ namespace GGJ.InGame.UI
         private void OnHintButtonClicked()
         {
             if (currentNpc == null)
-            {
-                Debug.LogWarning("[DialoguePanel] currentNpcがnullです");
                 return;
-            }
             
             // すでにヒントを受け取っている場合は何もしない
             if (currentNpc.HasReceivedHint())
-            {
-                Debug.Log("[DialoguePanel] すでにヒント受け取り済みです");
                 return;
-            }
             
             // MiniGameManagerが見つからない場合
             if (MiniGameManager.I == null)
@@ -190,8 +184,6 @@ namespace GGJ.InGame.UI
                 UpdateHintButton();
                 return;
             }
-            
-            Debug.Log("[DialoguePanel] ミニゲームを起動します");
             
             // ミニゲームを起動（MainGameUIの切り替えで会話パネルも自動的に非表示になる）
             MiniGameManager.I.StartRandomMiniGame();
