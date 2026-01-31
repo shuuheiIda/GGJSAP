@@ -1,73 +1,46 @@
-using System;
-using UnityEngine;
 using GGJ.Core;
-using GGJ.InGame.Events;
+using GGJ.Manager;
 
 namespace GGJ.InGame.Manager
 {
     /// <summary>
-    /// ゲーム全体の進行と時間制限を管理するマネージャー
+    /// インゲームシーン固有の処理を管理するマネージャー
+    /// 時間制限管理はGameManagerに移植済み
     /// </summary>
     public class InGameManager : Singleton<InGameManager>
     {
-        private const float TIME_ZERO = 0f;
-
-        [Header("時間制限設定")]
-        [SerializeField] private float gameDuration = 60f;
-        
-        public float RemainingTime { get; private set; }
-        public bool IsGameRunning { get; private set; }
         
         protected override bool UseDontDestroyOnLoad => false;
 
         protected override void Init()
         {
-            GameEvents.OnNPCInteractionStarted += OnNPCInteractionStarted;
-            GameEvents.OnNPCInteractionEnded += OnNPCInteractionEnded;
+            // インゲームシーン固有の初期化処理
+            // 制限時間管理はGameManagerが担当
         }
 
-        protected override void OnDestroy()
+        private void Start()
         {
-            base.OnDestroy();
-            GameEvents.OnNPCInteractionStarted -= OnNPCInteractionStarted;
-            GameEvents.OnNPCInteractionEnded -= OnNPCInteractionEnded;
+            // GameManagerにゲーム開始を委譲
+            if (GameManager.I != null)
+                GameManager.I.StartGame();
         }
-
-        private void Start() => StartGame();
-
-        private void Update()
-        {
-            if (!IsGameRunning) return;
-
-            RemainingTime -= Time.deltaTime;
-            GameEvents.RaiseTimeUpdate(RemainingTime);
-            
-            if (RemainingTime <= TIME_ZERO)
-                EndGame();
-        }
-
+        
         /// <summary>
-        /// ゲームを開始する
+        /// ゲームを開始する（GameManagerに委譲）
         /// </summary>
         public void StartGame()
         {
-            RemainingTime = gameDuration;
-            IsGameRunning = true;
-            GameEvents.RaiseGameStart();
+            if (GameManager.I != null)
+                GameManager.I.StartGame();
         }
-
+        
         /// <summary>
-        /// ゲームを終了する
+        /// ゲームを終了する（GameManagerに委譲）
         /// </summary>
-        private void EndGame()
+        public void EndGame()
         {
-            IsGameRunning = false;
-            RemainingTime = TIME_ZERO;
-            GameEvents.RaiseGameEnd();
+            if (GameManager.I != null)
+                GameManager.I.EndGame();
         }
-
-        private void OnNPCInteractionStarted(GameObject npc) => IsGameRunning = false;
-
-        private void OnNPCInteractionEnded() => IsGameRunning = true;
     }
 }
