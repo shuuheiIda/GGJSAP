@@ -73,7 +73,7 @@ namespace GGJ.Result
         fadeImage.color = c;
 
         isFading = false;
-        
+        SceneManager.LoadScene("Title");
     }
 
 }
