@@ -132,16 +132,18 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// Colorを日本語の色名に変換（主要6色のみ）
         /// </summary>
-        private string ColorToJapanese(Color color)
+        private string ColorToJapanese(NpcColor color)
         {
-            if (IsColorClose(color, Color.red)) return "赤色";
-            if (IsColorClose(color, Color.blue)) return "青色";
-            if (IsColorClose(color, Color.green)) return "緑色";
-            if (IsColorClose(color, Color.yellow)) return "黄色";
-            if (IsColorClose(color, Color.white)) return "白色";
-            if (IsColorClose(color, Color.black)) return "黒色";
-            
-            return "不明な色";
+            return color switch
+            {
+                NpcColor.Red => "赤色",
+                NpcColor.Blue => "青色",
+                NpcColor.Green => "緑色",
+                NpcColor.Yellow => "黄色",
+                NpcColor.White => "白色",
+                NpcColor.Black => "黒色",
+                _ => "不明な色"
+            };
         }
         
         /// <summary>
