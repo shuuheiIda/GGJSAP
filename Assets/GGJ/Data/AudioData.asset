@@ -12,8 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4a2c3d7c525f7d43b62759f4aa3e1a9, type: 3}
   m_Name: AudioData
   m_EditorClassIdentifier: 
-  seAudioDataList: []
+  seAudioDataList:
+  - seType: 0
+    audioClip: {fileID: 0}
+    volumeMultiplier: 0
   bgmAudioDataList:
+  - bgmType: 0
+    audioClip: {fileID: 0}
+    volumeMultiplier: 0
+    loop: 0
+    useFadeIn: 0
+    fadeInDuration: 0
+    useFadeOut: 0
+    fadeOutDuration: 0
   - bgmType: 0
     audioClip: {fileID: 0}
     volumeMultiplier: 0
