@@ -19,6 +19,9 @@ namespace GGJ.InGame.Events
         public static event Action<GameObject> OnNPCInteractionStarted;
         /// <summary>NPC会話終了時に発火</summary>
         public static event Action OnNPCInteractionEnded;
+        
+        /// <summary>ミニゲームクリア時、ヒント取得時に発火</summary>
+        public static event Action OnHintReceived;
 
 
         /// <summary>ゲーム開始イベントを発火</summary>
@@ -31,5 +34,7 @@ namespace GGJ.InGame.Events
         public static void RaiseNPCInteractionStarted(GameObject npc) => OnNPCInteractionStarted?.Invoke(npc);
         /// <summary>NPC会話終了イベントを発火</summary>
         public static void RaiseNPCInteractionEnded() => OnNPCInteractionEnded?.Invoke();
+        /// <summary>ヒント取得イベントを発火</summary>
+        public static void RaiseHintReceived() => OnHintReceived?.Invoke();
     }
 }
