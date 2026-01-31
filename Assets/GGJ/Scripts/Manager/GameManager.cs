@@ -200,15 +200,6 @@ namespace GGJ.Manager
             ResumeGame();
         }
         
-        /// <summary>
-        /// ボタンクリックSEを再生
-        /// </summary>
-        public void PlayButtonClickSE()
-        {
-            if (AudioManager.I != null)
-                AudioManager.I.PlaySE(SEType.ButtonClick);
-        }
-        
         #endregion
         
         protected override void OnDestroy()

@@ -87,37 +87,6 @@ namespace GGJ.InGame.MiniGames
         }
 
         /// <summary>
-        /// 特定のミニゲームを開始する（デバッグ・テスト用）
-        /// </summary>
-        public void StartSpecificMiniGame(int index)
-        {
-            if (index < 0 || index >= availableMiniGames.Count)
-            {
-                Debug.LogError($"[MiniGameManager] 無効なインデックス: {index}");
-                return;
-            }
-
-            if (isMiniGameActive)
-            {
-                Debug.LogWarning("[MiniGameManager] すでにミニゲームが実行中です");
-                return;
-            }
-
-            currentMiniGame = availableMiniGames[index];
-
-            // UI切り替え
-            SwitchToMiniGame();
-
-            // ミニゲーム開始
-            currentMiniGame.RegisterOnClearCallback(OnMiniGameCleared);
-            currentMiniGame.StartMiniGame();
-
-            isMiniGameActive = true;
-
-            Debug.Log($"[MiniGameManager] ミニゲーム開始: {currentMiniGame.GetType().Name}");
-        }
-
-        /// <summary>
         /// ミニゲームクリア時のコールバック
         /// </summary>
         private void OnMiniGameCleared()
@@ -179,15 +148,5 @@ namespace GGJ.InGame.MiniGames
             if (miniGameCanvas != null)
                 miniGameCanvas.enabled = false;
         }
-
-        /// <summary>
-        /// 現在ミニゲームがアクティブかどうか
-        /// </summary>
-        public bool IsMiniGameActive() => isMiniGameActive;
-
-        /// <summary>
-        /// 利用可能なミニゲーム数を取得
-        /// </summary>
-        public int GetAvailableMiniGameCount() => availableMiniGames.Count;
     }
 }

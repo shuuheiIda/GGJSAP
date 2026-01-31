@@ -22,9 +22,7 @@ namespace GGJ.InGame.Events
         public static event Action OnNpcInteractionEnded;
         
         /// <summary>繝溘ル繧ｲ繝ｼ繝繧ｯ繝ｪ繧｢譎ゅ√ヲ繝ｳ繝亥叙蠕玲凾縺ｫ逋ｺ轣ｫ</summary>
-        public static event Action OnHintReceived;        
-        /// <summary>NPC告発時に発火</summary>
-        public static event Action<INpc> OnNpcAccused;
+        public static event Action OnHintReceived;
 
         /// <summary>繧ｲ繝ｼ繝髢句ｧ九う繝吶Φ繝医ｒ逋ｺ轣ｫ</summary>
         public static void RaiseGameStart() => OnGameStart?.Invoke();
@@ -38,7 +36,5 @@ namespace GGJ.InGame.Events
         public static void RaiseNpcInteractionEnded() => OnNpcInteractionEnded?.Invoke();
         /// <summary>繝偵Φ繝亥叙蠕励う繝吶Φ繝医ｒ逋ｺ轣ｫ</summary>
         public static void RaiseHintReceived() => OnHintReceived?.Invoke();
-        /// <summary>NPC告発イベントを発火</summary>
-        public static void RaiseNpcAccused(INpc npc) => OnNpcAccused?.Invoke(npc);
     }
 }

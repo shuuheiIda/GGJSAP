@@ -1,6 +1,6 @@
 using UnityEngine;
 using GGJ.Scene;
-using GGJ.Manager;
+using GGJ.InGame.Audio;
 
 namespace SGC2025.UI
 {
@@ -16,8 +16,8 @@ namespace SGC2025.UI
             if (SceneController.I == null) return;
             
             // ボタンクリック音を再生
-            if (GameManager.I != null)
-                GameManager.I.PlayButtonClickSE();
+            if (AudioManager.I != null)
+                AudioManager.I.PlaySE(SEType.ButtonClick);
             
             SceneController.I.LoadScene(targetScene);
         }
