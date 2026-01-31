@@ -11,7 +11,7 @@ namespace GGJ.Manager
     /// </summary>
     public class GameManager : Singleton<GameManager>
     {
-        [Header("Game Settings")]
+        [Header("ゲーム設定")]
         [SerializeField] private bool enableDebugMode = false;
 
         /// <summary>
@@ -21,12 +21,8 @@ namespace GGJ.Manager
 
         protected override void Init()
         {
-            // ターゲットフレームレートの設定
             Application.targetFrameRate = 60;
-            
-            // スクリーンスリープの無効化
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
-            
             LogInfo("GameManager initialized successfully.");
         }
 
@@ -38,8 +34,6 @@ namespace GGJ.Manager
         public void QuitApplication()
         {
             LogInfo("Application quit requested.");
-
-            // ゲーム終了前の処理
             OnApplicationQuit();
 
             #if UNITY_EDITOR
@@ -54,14 +48,10 @@ namespace GGJ.Manager
         /// </summary>
         private void OnApplicationQuit()
         {
-            // 設定の保存
             SaveUserSettings();
             
-            // BGM停止
             if (AudioManager.I != null)
-            {
                 AudioManager.I.StopBGM();
-            }
             
             LogInfo("Application quit preparations completed.");
         }
@@ -111,28 +101,23 @@ namespace GGJ.Manager
 
         private void Start()
         {
-            // 設定を読み込み
             LoadUserSettings();
         }
 
         private void OnApplicationPause(bool pauseStatus)
         {
-            // アプリケーションがバックグラウンドに移行した際の処理
-            if (pauseStatus)
-            {
-                SaveUserSettings();
-                LogInfo("Application paused - settings saved.");
-            }
+            if (!pauseStatus) return;
+            
+            SaveUserSettings();
+            LogInfo("Application paused - settings saved.");
         }
 
         private void OnApplicationFocus(bool hasFocus)
         {
-            // アプリケーションがフォーカスを失った際の処理
-            if (!hasFocus)
-            {
-                SaveUserSettings();
-                LogInfo("Application focus lost - settings saved.");
-            }
+            if (hasFocus) return;
+            
+            SaveUserSettings();
+            LogInfo("Application focus lost - settings saved.");
         }
 
         #endregion
@@ -145,18 +130,13 @@ namespace GGJ.Manager
         private void LogInfo(string message)
         {
             if (enableDebugMode)
-            {
                 Debug.Log($"[GameManager] {message}");
-            }
         }
 
         /// <summary>
         /// エラーログを出力
         /// </summary>
-        private void LogError(string message)
-        {
-            Debug.LogError($"[GameManager] {message}");
-        }
+        private void LogError(string message) => Debug.LogError($"[GameManager] {message}");
 
         #endregion
     }
