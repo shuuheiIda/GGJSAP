@@ -9,8 +9,6 @@ namespace GGJ.InGame.NPC
     [CreateAssetMenu(fileName = "DialogueData", menuName = "GGJ/DialogueData", order = 1)]
     public class DialogueData : ScriptableObject
     {
-        private const float ColorDistanceThreshold = 0.3f;
-        
         [Header("ストーリーテキスト")]
         [Tooltip("開始直後のストーリー")]
         [TextArea(3, 10)]
@@ -144,19 +142,6 @@ namespace GGJ.InGame.NPC
                 NpcColor.Black => "黒色",
                 _ => "不明な色"
             };
-        }
-        
-        /// <summary>
-        /// 色が近いかチェック
-        /// </summary>
-        private bool IsColorClose(Color a, Color b, float threshold = ColorDistanceThreshold)
-        {
-            float distance = Mathf.Sqrt(
-                Mathf.Pow(a.r - b.r, 2) +
-                Mathf.Pow(a.g - b.g, 2) +
-                Mathf.Pow(a.b - b.b, 2)
-            );
-            return distance < threshold;
         }
     }
 }

@@ -11,10 +11,11 @@ namespace GGJ.InGame.NPC
     /// </summary>
     public class NpcManager : Singleton<NpcManager>
     {
-        private const float ColorToleranceThreshold = 0.1f;
-        private const float ColorDistanceThreshold = 0.3f;
-        
         [Header("Npc管理")]
+        [Tooltip("管理するNPCをここにアタッチしてください")]
+        [SerializeField] private List<NpcController> npcReferences = new List<NpcController>();
+        
+        [Tooltip("実行時に管理されている全NPC")]
         [SerializeField] private List<INpc> allNpcs = new List<INpc>();
         
         [Header("セリフデータ")]
@@ -25,6 +26,13 @@ namespace GGJ.InGame.NPC
         protected override void Init()
         {
             allNpcs.Clear();
+            
+            // アタッチされたNPCを登録
+            foreach (var npc in npcReferences)
+            {
+                if (npc != null)
+                    RegisterNpc(npc);
+            }
             
             // ヒント取得イベントを購読
             GameEvents.OnHintReceived += OnHintReceived;
@@ -70,7 +78,7 @@ namespace GGJ.InGame.NPC
         }
         
         /// <summary>
-        /// Npcを登録（Npc側から呼ばれる）
+        /// Npcを登録
         /// </summary>
         public void RegisterNpc(INpc npc)
         {
@@ -161,13 +169,14 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// 服の色で絞り込み
         /// </summary>
-        public List<INpc> GetNpcsByClothesColor(Color color, float tolerance = ColorToleranceThreshold) =>
-            allNpcs.Where(npc =>
+        public List<INpc> GetNpcsByClothesColor(NpcColor color)
+        {
+            return allNpcs.Where(npc =>
             {
                 var data = npc.GetNpcData();
-                if (data == null) return false;
-                return ColorDistance(data.appearance.clothesColor, color) < tolerance;
+                return data != null && data.appearance.clothesColor == color;
             }).ToList();
+        }
         
         /// <summary>
         /// 全Npcにヒント受信フラグを設定
@@ -187,25 +196,14 @@ namespace GGJ.InGame.NPC
         {
             bool genderMatch = npcAppearance.gender == targetAppearance.gender;
             bool directionMatch = npcAppearance.positionFromCenter == targetAppearance.positionFromCenter;
-            bool clothesMatch = ColorDistance(npcAppearance.clothesColor, targetAppearance.clothesColor) < ColorToleranceThreshold;
-            bool maskMatch = ColorDistance(npcAppearance.maskColor, targetAppearance.maskColor) < ColorToleranceThreshold;
-            bool hairMatch = ColorDistance(npcAppearance.hairColor, targetAppearance.hairColor) < ColorToleranceThreshold;
-            bool hatMatch = ColorDistance(npcAppearance.hatColor, targetAppearance.hatColor) < ColorToleranceThreshold;
-            bool shoeMatch = ColorDistance(npcAppearance.shoeColor, targetAppearance.shoeColor) < ColorToleranceThreshold;
+            bool clothesMatch = npcAppearance.clothesColor == targetAppearance.clothesColor;
+            bool maskMatch = npcAppearance.maskColor == targetAppearance.maskColor;
+            bool hairMatch = npcAppearance.hairColor == targetAppearance.hairColor;
+            bool hatMatch = npcAppearance.hatColor == targetAppearance.hatColor;
+            bool shoeMatch = npcAppearance.shoeColor == targetAppearance.shoeColor;
             
             return genderMatch && directionMatch && clothesMatch && 
                    maskMatch && hairMatch && hatMatch && shoeMatch;
-        }
-        
-        /// <summary>
-        /// 色の距離を計算
-        /// </summary>
-        private float ColorDistance(Color a, Color b)
-        {
-            float dr = a.r - b.r;
-            float dg = a.g - b.g;
-            float db = a.b - b.b;
-            return Mathf.Sqrt(dr * dr + dg * dg + db * db);
         }
     }
 }

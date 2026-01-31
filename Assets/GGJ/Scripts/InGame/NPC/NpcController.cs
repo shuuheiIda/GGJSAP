@@ -28,10 +28,6 @@ namespace GGJ.InGame.NPC
         private void InitializeNpc()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
-            
-            if (NpcManager.I != null)
-                NpcManager.I.RegisterNpc(this);
-            
             ApplyAppearance();
         }
         
