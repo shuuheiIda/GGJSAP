@@ -50,12 +50,14 @@ namespace GGJ.InGame.UI
         {
             GameEvents.OnNpcInteractionStarted += OnNpcInteractionStarted;
             GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;
+            GameEvents.OnHintReceived += OnHintReceived;
         }
 
         private void OnDisable()
         {
             GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
             GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
+            GameEvents.OnHintReceived -= OnHintReceived;
         }
 
         private void OnDestroy()
@@ -82,6 +84,30 @@ namespace GGJ.InGame.UI
                 DisplayNpcInfo(currentNpc);
             
             UpdateHintButton();
+        }
+        
+        /// <summary>
+        /// ヒント獲得時の処理（ミニゲームクリア後）
+        /// </summary>
+        private void OnHintReceived()
+        {
+            // 現在会話中のNPCがいれば、情報を更新して再表示
+            if (currentNpc != null && panel != null)
+            {
+                Debug.Log("[DialoguePanel] ヒント獲得！NPC情報を更新します");
+                
+                // パネルを再表示
+                panel.SetActive(true);
+                
+                // 更新されたNPC情報を表示（ヒント付きの会話）
+                DisplayNpcInfo(currentNpc);
+                
+                // ヒントボタンを更新（無効化される）
+                UpdateHintButton();
+                
+                // ボタンフォーカスを設定
+                UIHelper.SetFirstSelected(closeButton);
+            }
         }
         
         /// <summary>
