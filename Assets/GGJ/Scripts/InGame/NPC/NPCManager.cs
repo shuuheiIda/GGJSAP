@@ -7,12 +7,15 @@ using GGJ.InGame.Events;
 namespace GGJ.InGame.NPC
 {
     /// <summary>
-    /// シーン上の全NPCを管理するマネージャー
+    /// シーン上の全Npcを管理するマネージャー
     /// </summary>
-    public class NPCManager : Singleton<NPCManager>
+    public class NpcManager : Singleton<NpcManager>
     {
-        [Header("NPC管理")]
-        [SerializeField] private List<INpc> allNPCs = new List<INpc>();
+        private const float ColorToleranceThreshold = 0.1f;
+        private const float ColorDistanceThreshold = 0.3f;
+        
+        [Header("Npc管理")]
+        [SerializeField] private List<INpc> allNpcs = new List<INpc>();
         
         [Header("セリフデータ")]
         [SerializeField] private DialogueData dialogueData;
@@ -21,7 +24,7 @@ namespace GGJ.InGame.NPC
         
         protected override void Init()
         {
-            allNPCs.Clear();
+            allNpcs.Clear();
             
             // ヒント取得イベントを購読
             GameEvents.OnHintReceived += OnHintReceived;
@@ -38,125 +41,93 @@ namespace GGJ.InGame.NPC
         }
         
         /// <summary>
-        /// ゲーム開始時の処理
+        /// 繧ｲ繝ｼ繝髢句ｧ区凾縺ｮ蜃ｦ逅・
         /// </summary>
-        private void OnGameStart()
-        {
-            RandomizeCriminal();
-        }
+        private void OnGameStart() => RandomizeCriminal();
         
         /// <summary>
-        /// ヒント取得時の処理
+        /// 繝偵Φ繝亥叙蠕玲凾縺ｮ蜃ｦ逅・
         /// </summary>
-        private void OnHintReceived()
-        {
-            SetAllHintsReceived(true);
-            Debug.Log("[NPCManager] 全NPCがヒントを受け取りました");
-        }
+        private void OnHintReceived() => SetAllHintsReceived(true);
         
         /// <summary>
-        /// ランダムにNPCを1体選んで犯人にする
+        /// ランダムにNpcを1体選んで犯人にする
         /// </summary>
         public void RandomizeCriminal()
         {
-            if (allNPCs.Count == 0)
-            {
-                Debug.LogWarning("[NPCManager] NPCが登録されていないため、犯人を決定できません");
+            if (allNpcs.Count == 0)
                 return;
-            }
             
-            // 全NPCの犯人フラグをリセット
-            foreach (var npc in allNPCs)
+            // 全Npcの犯人フラグをリセット
+            foreach (var npc in allNpcs)
             {
                 npc.SetCriminal(false);
             }
             
-            // ランダムに1体を選んで犯人にする
-            int randomIndex = Random.Range(0, allNPCs.Count);
-            allNPCs[randomIndex].SetCriminal(true);
-            
-            var criminalData = allNPCs[randomIndex].GetNPCData();
-            Debug.Log($"[NPCManager] 犯人決定: {criminalData?.npcName ?? "Unknown"} (Index: {randomIndex})");
+            // 繝ｩ繝ｳ繝繝縺ｫ1菴薙ｒ驕ｸ繧薙〒迥ｯ莠ｺ縺ｫ縺吶ｋ
+            int randomIndex = Random.Range(0, allNpcs.Count);
+            allNpcs[randomIndex].SetCriminal(true);
         }
         
         /// <summary>
-        /// NPCを登録（NPC側から呼ばれる）
+        /// Npcを登録（Npc側から呼ばれる）
         /// </summary>
-        public void RegisterNPC(INpc npc)
+        public void RegisterNpc(INpc npc)
         {
             if (npc == null) return;
+            if (allNpcs.Contains(npc)) return;
             
-            if (!allNPCs.Contains(npc))
-            {
-                allNPCs.Add(npc);
-                Debug.Log($"[NPCManager] NPC登録: {npc.GetNPCData()?.npcName ?? "Unknown"}");
-                
-                // テスト用：NPC登録後に犯人が未設定なら自動的にランダム化
-                if (GetCriminal() == null && allNPCs.Count > 0)
-                {
-                    Debug.Log("[NPCManager] 犯人が未設定のため、自動的にランダム化します");
-                    RandomizeCriminal();
-                }
-            }
+            allNpcs.Add(npc);
+            
+            if (GetCriminal() == null && allNpcs.Count > 0)
+                RandomizeCriminal();
         }
         
         /// <summary>
-        /// 全NPCを取得
+        /// 全Npcを取得
         /// </summary>
-        public List<INpc> GetAllNPCs() => new List<INpc>(allNPCs);
+        public List<INpc> GetAllNpcs() => new List<INpc>(allNpcs);
         
         /// <summary>
-        /// NPCのセリフを取得
+        /// Npcのセリフを取得
         /// </summary>
-        public string GetDialogueForNPC(INpc npc)
+        public string GetDialogueForNpc(INpc npc)
         {
             if (dialogueData == null)
             {
-                Debug.LogWarning("[NPCManager] DialogueDataが設定されていません！InspectorでDialogueDataを割り当ててください");
+                Debug.LogError("[NpcManager] DialogueData縺瑚ｨｭ螳壹＆繧後※縺・∪縺帙ｓ・！nspector縺ｧDialogueData繧貞牡繧雁ｽ薙※縺ｦ縺上□縺輔＞");
                 return "...";
             }
             
             bool isCriminal = npc.IsCriminal();
             bool hasHint = npc.HasReceivedHint();
             
-            // NPCのインデックスを使ってバリエーションを提供
-            int npcIndex = allNPCs.IndexOf(npc);
+            // Npcのインデックスを使ってバリエーションを提供
+            int npcIndex = allNpcs.IndexOf(npc);
             
-            // 犯人の外見情報を取得
             var criminal = GetCriminal();
             if (criminal == null)
-            {
-                Debug.LogWarning("[NPCManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
-            }
-            NPCAppearance criminalAppearance = criminal?.GetNPCData()?.appearance;
+                Debug.LogError("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
             
-            // NPCの性別を取得
-            Gender npcGender = npc.GetNPCData()?.appearance.gender ?? Gender.Female;
+            NpcAppearance criminalAppearance = criminal?.GetNpcData()?.appearance;
+            Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Female;
             
-            Debug.Log($"[NPCManager] GetDialogue: isCriminal={isCriminal}, hasHint={hasHint}, gender={npcGender}, criminalAppearance={(criminalAppearance != null ? "あり" : "なし")}");
-            
-            string dialogue = dialogueData.GetDialogue(isCriminal, hasHint, npcIndex, criminalAppearance, npcGender);
-            Debug.Log($"[NPCManager] 取得したセリフ: {dialogue}");
-            
-            return dialogue;
+            return dialogueData.GetDialogue(isCriminal, hasHint, npcIndex, criminalAppearance, npcGender);
         }
         
         /// <summary>
-        /// 犯人のNPCを取得
+        /// 犯人のNpcを取得
         /// </summary>
-        public INpc GetCriminal()
-        {
-            return allNPCs.FirstOrDefault(npc => npc.IsCriminal());
-        }
+        public INpc GetCriminal() => allNpcs.FirstOrDefault(npc => npc.IsCriminal());
         
         /// <summary>
-        /// 外見の特徴に一致するNPCリストを取得
+        /// 外見の特徴に一致するNpcリストを取得
         /// </summary>
-        public List<INpc> GetNPCsByAppearance(NPCAppearance targetAppearance)
+        public List<INpc> GetNpcsByAppearance(NpcAppearance targetAppearance)
         {
-            return allNPCs.Where(npc =>
+            return allNpcs.Where(npc =>
             {
-                var data = npc.GetNPCData();
+                var data = npc.GetNpcData();
                 if (data == null) return false;
                 return DoesAppearanceMatch(data.appearance, targetAppearance);
             }).ToList();
@@ -165,11 +136,11 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// 性別で絞り込み
         /// </summary>
-        public List<INpc> GetNPCsByGender(Gender gender)
+        public List<INpc> GetNpcsByGender(Gender gender)
         {
-            return allNPCs.Where(npc =>
+            return allNpcs.Where(npc =>
             {
-                var data = npc.GetNPCData();
+                var data = npc.GetNpcData();
                 return data != null && data.appearance.gender == gender;
             }).ToList();
         }
@@ -177,11 +148,11 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// 方向で絞り込み
         /// </summary>
-        public List<INpc> GetNPCsByDirection(Direction direction)
+        public List<INpc> GetNpcsByDirection(Direction direction)
         {
-            return allNPCs.Where(npc =>
+            return allNpcs.Where(npc =>
             {
-                var data = npc.GetNPCData();
+                var data = npc.GetNpcData();
                 return data != null && data.appearance.positionFromCenter == direction;
             }).ToList();
         }
@@ -189,22 +160,20 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// 服の色で絞り込み
         /// </summary>
-        public List<INpc> GetNPCsByClothesColor(Color color, float tolerance = 0.1f)
-        {
-            return allNPCs.Where(npc =>
+        public List<INpc> GetNpcsByClothesColor(Color color, float tolerance = ColorToleranceThreshold) =>
+            allNpcs.Where(npc =>
             {
-                var data = npc.GetNPCData();
+                var data = npc.GetNpcData();
                 if (data == null) return false;
                 return ColorDistance(data.appearance.clothesColor, color) < tolerance;
             }).ToList();
-        }
         
         /// <summary>
-        /// 全NPCにヒント受信フラグを設定
+        /// 全Npcにヒント受信フラグを設定
         /// </summary>
         public void SetAllHintsReceived(bool received)
         {
-            foreach (var npc in allNPCs)
+            foreach (var npc in allNpcs)
             {
                 npc.SetHintReceived(received);
             }
@@ -213,16 +182,15 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// 外見が一致するかチェック（ヒントベース）
         /// </summary>
-        private bool DoesAppearanceMatch(NPCAppearance npcAppearance, NPCAppearance targetAppearance)
+        private bool DoesAppearanceMatch(NpcAppearance npcAppearance, NpcAppearance targetAppearance)
         {
-            // 完全一致チェック（必要に応じて部分一致に変更可能）
             bool genderMatch = npcAppearance.gender == targetAppearance.gender;
             bool directionMatch = npcAppearance.positionFromCenter == targetAppearance.positionFromCenter;
-            bool clothesMatch = ColorDistance(npcAppearance.clothesColor, targetAppearance.clothesColor) < 0.1f;
-            bool maskMatch = ColorDistance(npcAppearance.maskColor, targetAppearance.maskColor) < 0.1f;
-            bool hairMatch = ColorDistance(npcAppearance.hairColor, targetAppearance.hairColor) < 0.1f;
-            bool hatMatch = ColorDistance(npcAppearance.hatColor, targetAppearance.hatColor) < 0.1f;
-            bool shoeMatch = ColorDistance(npcAppearance.shoeColor, targetAppearance.shoeColor) < 0.1f;
+            bool clothesMatch = ColorDistance(npcAppearance.clothesColor, targetAppearance.clothesColor) < ColorToleranceThreshold;
+            bool maskMatch = ColorDistance(npcAppearance.maskColor, targetAppearance.maskColor) < ColorToleranceThreshold;
+            bool hairMatch = ColorDistance(npcAppearance.hairColor, targetAppearance.hairColor) < ColorToleranceThreshold;
+            bool hatMatch = ColorDistance(npcAppearance.hatColor, targetAppearance.hatColor) < ColorToleranceThreshold;
+            bool shoeMatch = ColorDistance(npcAppearance.shoeColor, targetAppearance.shoeColor) < ColorToleranceThreshold;
             
             return genderMatch && directionMatch && clothesMatch && 
                    maskMatch && hairMatch && hatMatch && shoeMatch;

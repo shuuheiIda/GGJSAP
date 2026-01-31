@@ -38,8 +38,8 @@ namespace GGJ.Manager
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             
             // イベント購読
-            GameEvents.OnNPCInteractionStarted += OnNPCInteractionStarted;
-            GameEvents.OnNPCInteractionEnded += OnNPCInteractionEnded;
+            GameEvents.OnNpcInteractionStarted += OnNpcInteractionStarted;
+            GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;
         }
 
         #region アプリケーション制御
@@ -190,12 +190,12 @@ namespace GGJ.Manager
             }
         }
         
-        private void OnNPCInteractionStarted(GameObject npc)
+        private void OnNpcInteractionStarted(GameObject npc)
         {
             PauseGame();
         }
         
-        private void OnNPCInteractionEnded()
+        private void OnNpcInteractionEnded()
         {
             ResumeGame();
         }
@@ -216,8 +216,8 @@ namespace GGJ.Manager
             base.OnDestroy();
             
             // イベント購読解除
-            GameEvents.OnNPCInteractionStarted -= OnNPCInteractionStarted;
-            GameEvents.OnNPCInteractionEnded -= OnNPCInteractionEnded;
+            GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
+            GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
         }
     }
 }

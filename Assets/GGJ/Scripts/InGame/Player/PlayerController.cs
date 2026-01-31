@@ -4,7 +4,7 @@ using GGJ.InGame.Events;
 namespace GGJ.InGame.Player
 {
     /// <summary>
-    /// プレイヤーの制御を統括するコントローラー
+    /// 繝励Ξ繧､繝､繝ｼ縺ｮ蛻ｶ蠕｡繧堤ｵｱ諡ｬ縺吶ｋ繧ｳ繝ｳ繝医Ο繝ｼ繝ｩ繝ｼ
     /// </summary>
     public class PlayerController : MonoBehaviour
     {
@@ -39,7 +39,7 @@ namespace GGJ.InGame.Player
             var nearestObject = playerCollider.GetNearestObject();
             if (nearestObject == null) return;
             
-            GameEvents.RaiseNPCInteractionStarted(nearestObject.gameObject);
+            GameEvents.RaiseNpcInteractionStarted(nearestObject.gameObject);
         }
     }
 }

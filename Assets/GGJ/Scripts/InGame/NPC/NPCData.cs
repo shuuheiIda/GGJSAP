@@ -1,5 +1,5 @@
-using UnityEngine;
 using System;
+using UnityEngine;
 
 namespace GGJ.InGame.NPC
 {
@@ -7,7 +7,7 @@ namespace GGJ.InGame.NPC
     /// NPCの外見の特徴
     /// </summary>
     [Serializable]
-    public class NPCAppearance
+    public class NpcAppearance
     {
         [Header("外見の色")]
         public Color clothesColor = Color.white;
@@ -15,7 +15,7 @@ namespace GGJ.InGame.NPC
         public Color hairColor = Color.white;
         public Color hatColor = Color.white;
         public Color shoeColor = Color.white;
-        
+
         [Header("その他の特徴")]
         public Gender gender = Gender.Male;
         public Direction positionFromCenter = Direction.Up;
@@ -44,17 +44,17 @@ namespace GGJ.InGame.NPC
     /// <summary>
     /// NPCの基本データ（ScriptableObject）
     /// </summary>
-    [CreateAssetMenu(fileName = "NPCData", menuName = "GGJ/NPCData", order = 0)]
-    public class NPCData : ScriptableObject
+    [CreateAssetMenu(fileName = "NpcData", menuName = "GGJ/NpcData", order = 0)]
+    public class NpcData : ScriptableObject
     {
         [Header("基本情報")]
         [Tooltip("NPCの名前")]
-        public string npcName = "NPC";
-        
+        public string npcName = "Npc";
+
         [Header("外見の特徴")]
         [Tooltip("NPCの外見情報")]
-        public NPCAppearance appearance = new NPCAppearance();
-        
+        public NpcAppearance appearance = new NpcAppearance();
+
         [Header("UI表示用")]
         [Tooltip("NPCのスプライト画像")]
         public Sprite npcSprite;

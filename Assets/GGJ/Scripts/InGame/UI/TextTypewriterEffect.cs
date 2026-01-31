@@ -53,49 +53,31 @@ namespace GGJ.Core
             System.Func<bool> skipAction = null,
             System.Action onComplete = null)
         {
-            Debug.Log($"[TextTypewriterEffect] コルーチン開始: text={text}, length={text.Length}");
-            
             if (textComponent == null)
             {
-                Debug.LogError("[TextTypewriterEffect] textComponentがnullです");
                 onComplete?.Invoke();
                 yield break;
             }
             
-            Debug.Log($"[TextTypewriterEffect] textComponent={textComponent.name}, enabled={textComponent.enabled}, gameObject.activeInHierarchy={textComponent.gameObject.activeInHierarchy}");
-            
-            // テキストを先に空にする
             textComponent.text = "";
-            
-            // 前のフレームの入力をクリアするため、1フレーム待機
             yield return null;
-            Debug.Log("[TextTypewriterEffect] 1フレーム待機完了、タイプライター開始");
             
             bool skipped = false;
-            int charCount = 0;
             
             foreach (char c in text)
             {
-                // スキップチェック
                 if (skipAction != null && skipAction())
                 {
-                    Debug.Log("[TextTypewriterEffect] スキップが検出されました");
                     skipped = true;
                     break;
                 }
                 
                 textComponent.text += c;
-                charCount++;
                 yield return new WaitForSeconds(delayPerCharacter);
             }
             
-            Debug.Log($"[TextTypewriterEffect] 表示完了: charCount={charCount}, skipped={skipped}");
-            
-            // スキップされた場合は全文表示
             if (skipped)
-            {
                 textComponent.text = text;
-            }
             
             onComplete?.Invoke();
         }
