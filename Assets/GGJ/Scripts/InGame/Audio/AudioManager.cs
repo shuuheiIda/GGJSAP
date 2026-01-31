@@ -21,10 +21,10 @@ namespace GGJ.InGame.Audio
         [Header("フェード設定")]
         [SerializeField] private AnimationCurve fadeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
-        [Header("AudioData")]
+        [Header("オーディオデータ")]
         [SerializeField] private AudioDataSO audioData;
 
-        [Header("AudioMixer")]
+        [Header("オーディオミキサー")]
         [SerializeField] private AudioMixerGroup masterMixerGroup;
         [SerializeField] private AudioMixerGroup bgmMixerGroup;
         [SerializeField] private AudioMixerGroup seMixerGroup;
@@ -46,6 +46,7 @@ namespace GGJ.InGame.Audio
         {
             base.Awake();
             InitializeAudioSources();
+            
             if (audioData != null)
                 BuildAudioDataDictionaries();
             else
