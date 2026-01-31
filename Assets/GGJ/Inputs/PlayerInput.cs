@@ -267,6 +267,76 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""MiniGameConcentration"",
+            ""id"": ""306301a6-8dff-457c-a3f0-39d3906b0cfa"",
+            ""actions"": [
+                {
+                    ""name"": ""MoveCursor"",
+                    ""type"": ""Value"",
+                    ""id"": ""85cf7b39-4d36-4c1a-a02a-a491e98e440b"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Select"",
+                    ""type"": ""Button"",
+                    ""id"": ""e67c2a85-3134-412f-8e79-bb463016496c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""a998d1ca-d45c-458c-9be5-02bb4e8bc76b"",
+                    ""path"": ""<Gamepad>/rightStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveCursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""eb9f09f1-aea8-4533-8d98-251dee16ce1d"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveCursor"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6f95ec6f-60ba-482e-9a5b-5be7b8b2c9b5"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""996f079b-9e35-4b9f-87da-d43ed3a56997"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Select"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -281,11 +351,16 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        // MiniGameConcentration
+        m_MiniGameConcentration = asset.FindActionMap("MiniGameConcentration", throwIfNotFound: true);
+        m_MiniGameConcentration_MoveCursor = m_MiniGameConcentration.FindAction("MoveCursor", throwIfNotFound: true);
+        m_MiniGameConcentration_Select = m_MiniGameConcentration.FindAction("Select", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInput.Player.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_MiniGameConcentration.enabled, "This will cause a leak and performance issues, PlayerInput.MiniGameConcentration.Disable() has not been called.");
     }
 
     /// <summary>
@@ -464,6 +539,113 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="PlayerActions" /> instance referencing this action map.
     /// </summary>
     public PlayerActions @Player => new PlayerActions(this);
+
+    // MiniGameConcentration
+    private readonly InputActionMap m_MiniGameConcentration;
+    private List<IMiniGameConcentrationActions> m_MiniGameConcentrationActionsCallbackInterfaces = new List<IMiniGameConcentrationActions>();
+    private readonly InputAction m_MiniGameConcentration_MoveCursor;
+    private readonly InputAction m_MiniGameConcentration_Select;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "MiniGameConcentration".
+    /// </summary>
+    public struct MiniGameConcentrationActions
+    {
+        private @PlayerInput m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public MiniGameConcentrationActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "MiniGameConcentration/MoveCursor".
+        /// </summary>
+        public InputAction @MoveCursor => m_Wrapper.m_MiniGameConcentration_MoveCursor;
+        /// <summary>
+        /// Provides access to the underlying input action "MiniGameConcentration/Select".
+        /// </summary>
+        public InputAction @Select => m_Wrapper.m_MiniGameConcentration_Select;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_MiniGameConcentration; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="MiniGameConcentrationActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(MiniGameConcentrationActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="MiniGameConcentrationActions" />
+        public void AddCallbacks(IMiniGameConcentrationActions instance)
+        {
+            if (instance == null || m_Wrapper.m_MiniGameConcentrationActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_MiniGameConcentrationActionsCallbackInterfaces.Add(instance);
+            @MoveCursor.started += instance.OnMoveCursor;
+            @MoveCursor.performed += instance.OnMoveCursor;
+            @MoveCursor.canceled += instance.OnMoveCursor;
+            @Select.started += instance.OnSelect;
+            @Select.performed += instance.OnSelect;
+            @Select.canceled += instance.OnSelect;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="MiniGameConcentrationActions" />
+        private void UnregisterCallbacks(IMiniGameConcentrationActions instance)
+        {
+            @MoveCursor.started -= instance.OnMoveCursor;
+            @MoveCursor.performed -= instance.OnMoveCursor;
+            @MoveCursor.canceled -= instance.OnMoveCursor;
+            @Select.started -= instance.OnSelect;
+            @Select.performed -= instance.OnSelect;
+            @Select.canceled -= instance.OnSelect;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="MiniGameConcentrationActions.UnregisterCallbacks(IMiniGameConcentrationActions)" />.
+        /// </summary>
+        /// <seealso cref="MiniGameConcentrationActions.UnregisterCallbacks(IMiniGameConcentrationActions)" />
+        public void RemoveCallbacks(IMiniGameConcentrationActions instance)
+        {
+            if (m_Wrapper.m_MiniGameConcentrationActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="MiniGameConcentrationActions.AddCallbacks(IMiniGameConcentrationActions)" />
+        /// <seealso cref="MiniGameConcentrationActions.RemoveCallbacks(IMiniGameConcentrationActions)" />
+        /// <seealso cref="MiniGameConcentrationActions.UnregisterCallbacks(IMiniGameConcentrationActions)" />
+        public void SetCallbacks(IMiniGameConcentrationActions instance)
+        {
+            foreach (var item in m_Wrapper.m_MiniGameConcentrationActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_MiniGameConcentrationActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="MiniGameConcentrationActions" /> instance referencing this action map.
+    /// </summary>
+    public MiniGameConcentrationActions @MiniGameConcentration => new MiniGameConcentrationActions(this);
     private int m_GamePadSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -498,5 +680,27 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnInteract(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "MiniGameConcentration" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="MiniGameConcentrationActions.AddCallbacks(IMiniGameConcentrationActions)" />
+    /// <seealso cref="MiniGameConcentrationActions.RemoveCallbacks(IMiniGameConcentrationActions)" />
+    public interface IMiniGameConcentrationActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "MoveCursor" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMoveCursor(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Select" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSelect(InputAction.CallbackContext context);
     }
 }
