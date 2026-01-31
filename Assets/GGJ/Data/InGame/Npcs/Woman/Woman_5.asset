@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 71439414b01c0174b9bae0a7d2cffa7b, type: 3}
-  m_Name: NpcData
+  m_Name: Woman_5
   m_EditorClassIdentifier: 
   npcName: Npc
   appearance:
-    clothesColor: {r: 1, g: 1, b: 1, a: 1}
-    maskColor: {r: 1, g: 1, b: 1, a: 1}
-    hairColor: {r: 1, g: 1, b: 1, a: 1}
-    hatColor: {r: 1, g: 1, b: 1, a: 1}
-    shoeColor: {r: 1, g: 1, b: 1, a: 1}
-    gender: 1
-    positionFromCenter: 3
+    clothesColor: 4
+    maskColor: 4
+    hairColor: 4
+    hatColor: 4
+    shoeColor: 4
+    gender: 0
+    positionFromCenter: 0
   npcSprite: {fileID: 0}

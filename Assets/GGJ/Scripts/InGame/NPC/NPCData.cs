@@ -17,7 +17,7 @@ namespace GGJ.InGame.NPC
         public NpcColor shoeColor = NpcColor.White;
 
         [Header("その他の特徴")]
-        public Gender gender = Gender.Male;
+        public Gender gender = Gender.Man;
         public Direction positionFromCenter = Direction.Up;
 
         /// <summary>
@@ -56,8 +56,8 @@ namespace GGJ.InGame.NPC
     /// </summary>
     public enum Gender
     {
-        Male,
-        Female
+        Man,
+        Woman
     }
 
     /// <summary>

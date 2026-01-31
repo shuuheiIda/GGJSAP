@@ -119,7 +119,7 @@ namespace GGJ.InGame.NPC
                 Debug.LogError("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
             
             NpcAppearance criminalAppearance = criminal?.GetNpcData()?.appearance;
-            Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Female;
+            Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Woman;
             
             return dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
         }

@@ -82,20 +82,20 @@ namespace GGJ.InGame.NPC
             if (isCriminal)
             {
                 if (isAccused)
-                    targetList = npcGender == Gender.Female ? criminalAccusedResponsesFemale : criminalAccusedResponsesMale;
+                    targetList = npcGender == Gender.Woman ? criminalAccusedResponsesFemale : criminalAccusedResponsesMale;
                 else if (hasReceivedHint)
-                    targetList = npcGender == Gender.Female ? criminalHintsFemale : criminalHintsMale;
+                    targetList = npcGender == Gender.Woman ? criminalHintsFemale : criminalHintsMale;
                 else
-                    targetList = npcGender == Gender.Female ? criminalInquiryResponsesFemale : criminalInquiryResponsesMale;
+                    targetList = npcGender == Gender.Woman ? criminalInquiryResponsesFemale : criminalInquiryResponsesMale;
             }
             else
             {
                 if (isAccused)
-                    targetList = npcGender == Gender.Female ? innocentAccusedResponsesFemale : innocentAccusedResponsesMale;
+                    targetList = npcGender == Gender.Woman ? innocentAccusedResponsesFemale : innocentAccusedResponsesMale;
                 else if (hasReceivedHint)
-                    targetList = npcGender == Gender.Female ? innocentHintsFemale : innocentHintsMale;
+                    targetList = npcGender == Gender.Woman ? innocentHintsFemale : innocentHintsMale;
                 else
-                    targetList = npcGender == Gender.Female ? innocentInquiryResponsesFemale : innocentInquiryResponsesMale;
+                    targetList = npcGender == Gender.Woman ? innocentInquiryResponsesFemale : innocentInquiryResponsesMale;
             }
             
             if (targetList == null || targetList.Count == 0)
