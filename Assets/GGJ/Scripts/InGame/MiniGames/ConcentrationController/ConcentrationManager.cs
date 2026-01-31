@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms.Impl;
 
-namespace GGJ {
+namespace GGJ.InGame.MiniGames {
     public class ConcentrationManager : MiniGameBase {
         /// <summary>
         /// カードの数 ※変える時は偶数で
@@ -105,7 +105,7 @@ namespace GGJ {
 
         private void Awake() {
             if (CardNum % 2 != 0) {
-                Debug.LogWarning("カードの数が偶数ではありません。");
+                // Debug.LogWarning("カードの数が偶数ではありません。");
             }
 
             inputActions = new PlayerInput();
@@ -188,7 +188,7 @@ namespace GGJ {
             }
             // マウス
             else {
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(moveCursorValue);
+                Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(moveCursorValue);
                 cursor.transform.position = (worldPoint);
             }
 
@@ -286,6 +286,9 @@ namespace GGJ {
             }
 
             Debug.Log("Crear");
+            
+            // ミニゲームクリアのコールバックを呼ぶ
+            OnMiniGameCleared();
         }
     }
 }

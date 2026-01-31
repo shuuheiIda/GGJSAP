@@ -4,6 +4,7 @@ using TMPro;
 using GGJ.Core;
 using GGJ.InGame.Events;
 using GGJ.InGame.NPC;
+using GGJ.InGame.MiniGames;
 using GGJ.Scene;
 using System.Collections;
 
@@ -140,11 +141,34 @@ namespace GGJ.InGame.UI
         /// </summary>
         private void OnHintButtonClicked()
         {
-            if (currentNpc == null) return;
+            if (currentNpc == null)
+            {
+                Debug.LogWarning("[DialoguePanel] currentNpcがnullです");
+                return;
+            }
             
-            currentNpc.SetHintReceived(true);
-            DisplayNpcInfo(currentNpc);
-            UpdateHintButton();
+            // すでにヒントを受け取っている場合は何もしない
+            if (currentNpc.HasReceivedHint())
+            {
+                Debug.Log("[DialoguePanel] すでにヒント受け取り済みです");
+                return;
+            }
+            
+            // MiniGameManagerが見つからない場合
+            if (MiniGameManager.I == null)
+            {
+                Debug.LogError("[DialoguePanel] MiniGameManagerが見つかりません！シーンにMiniGameManagerを配置してください");
+                // フォールバック: 直接ヒントを渡す（デバッグ用）
+                currentNpc.SetHintReceived(true);
+                DisplayNpcInfo(currentNpc);
+                UpdateHintButton();
+                return;
+            }
+            
+            Debug.Log("[DialoguePanel] ミニゲームを起動します");
+            
+            // ミニゲームを起動（MainGameUIの切り替えで会話パネルも自動的に非表示になる）
+            MiniGameManager.I.StartRandomMiniGame();
         }
         
         /// <summary>

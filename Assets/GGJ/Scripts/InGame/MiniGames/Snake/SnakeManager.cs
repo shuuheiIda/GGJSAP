@@ -10,7 +10,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
-namespace GGJ {
+namespace GGJ.InGame.MiniGames {
     public class SnakeManager : MiniGameBase {
         /// <summary>
         /// スコア表示用テキスト
@@ -392,6 +392,9 @@ namespace GGJ {
             }
 
             Debug.Log("Crear");
+            
+            // ミニゲームクリアのコールバックを呼ぶ
+            OnMiniGameCleared();
         }
 
         /// <summary>
