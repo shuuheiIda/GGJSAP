@@ -18,7 +18,7 @@ namespace GGJ.UI
         [SerializeField] private Button startGameButton; // ゲーム開始ボタン
         [SerializeField] private Button exitButton; // 終了ボタン
 
-        [Header("コントローラーナビゲーション")]
+        [Header("コントローラーのフォーカスを最初に当てるオブジェクト")]
         [SerializeField] private GameObject firstSelectedButton; // 最初に選択されるボタン（通常はStartButton）
 
         private void Start()

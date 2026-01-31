@@ -13,39 +13,39 @@ MonoBehaviour:
   m_Name: AudioData
   m_EditorClassIdentifier: 
   seAudioDataList:
-  - seType: 0
-    audioClip: {fileID: 0}
+  - seType: 1
+    audioClip: {fileID: 8300000, guid: 6f5562754c5db3e43a3537156e4b9a13, type: 3}
     volumeMultiplier: 0
   bgmAudioDataList:
-  - bgmType: 0
-    audioClip: {fileID: 0}
-    volumeMultiplier: 0
-    loop: 0
+  - bgmType: 1
+    audioClip: {fileID: 8300000, guid: 915ce072eefc18748b6c78d23aa756c3, type: 3}
+    volumeMultiplier: 0.2
+    loop: 1
+    useFadeIn: 1
+    fadeInDuration: 1
+    useFadeOut: 0
+    fadeOutDuration: 0
+  - bgmType: 2
+    audioClip: {fileID: 8300000, guid: 0e93c64dd6afaff48a5607cc6157bff1, type: 3}
+    volumeMultiplier: 0.2
+    loop: 1
+    useFadeIn: 1
+    fadeInDuration: 2
+    useFadeOut: 0
+    fadeOutDuration: 0
+  - bgmType: 3
+    audioClip: {fileID: 8300000, guid: 7fc18968fe7fd3c4ca55f93b31f7ff7d, type: 3}
+    volumeMultiplier: 0.2
+    loop: 1
     useFadeIn: 0
     fadeInDuration: 0
     useFadeOut: 0
     fadeOutDuration: 0
-  - bgmType: 0
-    audioClip: {fileID: 0}
-    volumeMultiplier: 0
+  - bgmType: 4
+    audioClip: {fileID: 8300000, guid: d41469d9774965a439cba434a0991aff, type: 3}
+    volumeMultiplier: 0.2
     loop: 0
-    useFadeIn: 0
-    fadeInDuration: 0
-    useFadeOut: 0
-    fadeOutDuration: 0
-  - bgmType: 0
-    audioClip: {fileID: 0}
-    volumeMultiplier: 0
-    loop: 0
-    useFadeIn: 0
-    fadeInDuration: 0
-    useFadeOut: 0
-    fadeOutDuration: 0
-  - bgmType: 0
-    audioClip: {fileID: 0}
-    volumeMultiplier: 0
-    loop: 0
-    useFadeIn: 0
+    useFadeIn: 1
     fadeInDuration: 0
     useFadeOut: 0
     fadeOutDuration: 0
