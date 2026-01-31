@@ -1,0 +1,270 @@
+﻿using Cysharp.Threading.Tasks;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using TMPro;
+using UnityEngine;
+using UnityEngine.InputSystem;
+
+namespace GGJ {
+    public class ConcentrationManager : MonoBehaviour {
+        /// <summary>
+        /// プレイヤーのインプットアクション
+        /// </summary>
+        private PlayerInput inputActions;
+
+
+
+        /// <summary>
+        /// カードの数 ※変える時は偶数で
+        /// </summary>
+        private const int CardNum = 20;
+
+        /// <summary>
+        /// 画面の最大サイズ
+        /// </summary>
+        private const float MaxWindowSizeX = 8.9f, MaxWindowSizeY = 5f;
+
+
+        /// <summary>
+        /// コントローラーを使用しているか
+        /// </summary>
+        private bool IsUseControllerDevice = false;
+
+        /// <summary>
+        /// コントローラーのスティック感度
+        /// </summary>
+        private const float ControllerStickSens = 30.0f;
+
+
+        /// <summary>
+        /// カーソルのプレハブ
+        /// </summary>
+        [SerializeField] private GameObject cursorPrefab;
+        /// <summary>
+        /// カーソルのインスタンス
+        /// </summary>
+        private GameObject cursor;
+
+        /// <summary>
+        /// カードを生成する親Transform
+        /// </summary>
+        [SerializeField] private Transform cardParent;
+
+        /// <summary>
+        /// カードのプレハブ
+        /// </summary>
+        [SerializeField] private GameObject cardPrefab;
+
+        /// <summary>
+        /// カードのリスト
+        /// </summary>
+        private List<CardController> cardList = new List<CardController>();
+
+        /// <summary>
+        /// カードを開けるか
+        /// </summary>
+        private bool canOpenCard = true;
+
+        /// <summary>
+        /// 最初に開いたカード
+        /// </summary>
+        private CardController firstCard;
+
+        private void OnEnable() {
+            // Debug.Log("OnEnable");
+            inputActions.Enable();
+        }
+
+        private void OnDisable() {
+            // Debug.Log("OnDisable");
+            inputActions.Disable();
+        }
+
+        private void Awake() {
+            // Debug.Log("Awake");
+            inputActions = new PlayerInput();
+
+        }
+
+        private void Start() {
+            if (CardNum % 2 != 0) {
+                Debug.LogWarning("カードの数が偶数ではありません。");
+            }
+
+            // Debug.Log("Start");
+            CreateCard();
+
+            // カーソルがなかったら生成
+            if (cursor == null) {
+                cursor = Instantiate(cursorPrefab, Vector2.zero, Quaternion.identity, this.transform);
+            }
+        }
+
+        private void FixedUpdate() {
+
+        }
+
+        private async void Update() {
+            CursorControll();
+            try {
+                await OpenCard(this.GetCancellationTokenOnDestroy());
+            }
+            catch (Exception e) {
+                Debug.Log(e);
+                throw;
+            }
+            
+        }
+
+        /// <summary>
+        /// デバイス切替
+        /// </summary>
+        private void SwitchDevice() {
+            // コントローラーの入力検知
+            Vector2 cont = Gamepad.current.rightStick.ReadValue();
+
+            if (cont.x > 0 ||
+                cont.y > 0) {
+                IsUseControllerDevice = true;
+            }
+            else if (Input.GetMouseButtonDown(0) ||
+                     Input.GetMouseButtonDown(1)) {
+                IsUseControllerDevice = false;
+            }
+        }
+
+        /// <summary>
+        /// カードを作成しフィールドに保存
+        /// </summary>
+        private void CreateCard() {
+            for (int i = 0; i < CardNum; i++) {
+                // ランダムな位置に
+                float rndPosX = UnityEngine.Random.Range(-MaxWindowSizeX, MaxWindowSizeX);
+                float rndPosY = UnityEngine.Random.Range(-MaxWindowSizeY, MaxWindowSizeY);
+
+                Vector2 createPos = new Vector2(rndPosX, rndPosY);
+
+                // 生成し保存
+                GameObject createdCard = Instantiate(cardPrefab, createPos, Quaternion.identity, cardParent);
+                // フィールド設定
+                CardController cardCont = createdCard.GetComponent<CardController>();
+                int matchId = Mathf.FloorToInt(i / 2);
+                cardCont.SetField(i + 1, matchId);
+
+                // テキストに設定
+                createdCard.GetComponentInChildren<TextMeshProUGUI>().text = matchId.ToString();
+
+                cardList.Add(cardCont);
+            }
+        }
+
+        /// <summary>
+        /// カーソルのコントロール
+        /// </summary>
+        private void CursorControll() {
+            if (cursor == null) {
+                return;
+            }
+
+            SwitchDevice();
+
+            // デバイスの移動量取得
+            Vector2 moveCursorValue = inputActions.MiniGameConcentration.MoveCursor.ReadValue<Vector2>();
+
+            // カーソル移動
+            // コントローラー使ってたら
+            if (IsUseControllerDevice) {
+                moveCursorValue = new Vector2(moveCursorValue.x * Time.deltaTime * ControllerStickSens, moveCursorValue.y * Time.deltaTime * ControllerStickSens);
+                cursor.transform.Translate(moveCursorValue);
+            }
+            // マウス
+            else {
+                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(moveCursorValue);
+                cursor.transform.position = (worldPoint);
+            }
+
+            // 範囲外に出ないように
+            Vector2 cursorPos = cursor.transform.position;
+            cursorPos.x = Mathf.Clamp(cursorPos.x, -MaxWindowSizeX, MaxWindowSizeX);
+            cursorPos.y = Mathf.Clamp(cursorPos.y, -MaxWindowSizeY, MaxWindowSizeY);
+            cursor.transform.position = cursorPos;
+        }
+
+        /// <summary>
+        /// 選んだカード情報取得
+        /// </summary>
+        private CardController GetSelectCard() {
+            // カード選択
+            if (inputActions.MiniGameConcentration.Select.triggered) {
+                // スクリーン座標からワールド座標に変換
+                foreach (RaycastHit2D hit2d in Physics2D.RaycastAll(cursor.transform.position, Vector2.zero)) {
+                    // 当たり判定あり
+                    if (hit2d.collider != null &&
+                        hit2d.collider.CompareTag("Card")) {
+                        Debug.Log("カードを選択");
+                        return hit2d.collider.GetComponent<CardController>();
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// カードをめくる
+        /// </summary>
+        private async UniTask OpenCard(CancellationToken ct) {
+            if (!canOpenCard) {
+                return;
+            }
+
+            // カードを開く
+            CardController selectCard = GetSelectCard();
+            if (!selectCard ||
+                (firstCard &&
+                selectCard.Id == firstCard.Id)) {
+                return;
+            }
+
+            canOpenCard = false;
+
+            if (!firstCard) {
+                Debug.Log("first");
+
+                selectCard.OpenCard();
+                // フィールド保持
+                firstCard = selectCard;
+            }
+            else {
+                Debug.Log("second");
+
+                selectCard.OpenCard();
+
+                await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: ct);
+
+                // マッチidが同じか確認
+                Debug.Log($"first : {firstCard}, select : {selectCard}");
+                if (firstCard.MatchId != selectCard.MatchId) {
+                    // 違ったら二つのカードを閉じる
+                    firstCard.CloseCard();
+                    selectCard.CloseCard();
+
+                    canOpenCard = true;
+                    firstCard = null;
+                    return;
+                }
+                // 会ってたら削除
+                Destroy(firstCard.gameObject);
+                Destroy(selectCard.gameObject);
+
+                firstCard = null;
+            }
+
+            canOpenCard = true;
+        }
+    }
+}
