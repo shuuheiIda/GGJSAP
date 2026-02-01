@@ -17,6 +17,9 @@ namespace GGJ {
         /// </summary>
         [SerializeField] private TextMeshProUGUI openingText;
 
+ 
+        [SerializeField] private GameObject InGameObj;
+
         /// <summary>
         /// ダイアログデータSO
         /// </summary>
@@ -33,7 +36,7 @@ namespace GGJ {
         private const float WaitTime = 0.1f;
 
         private void Start() {
-            // ShowOpening();
+            ShowOpening();
         }
 
         /// <summary>
@@ -59,6 +62,9 @@ namespace GGJ {
                 openingText.text += chara; 
                 await UniTask.Delay(TimeSpan.FromSeconds(waitTime), cancellationToken: ct);
             }   
+
+            InGameObj.SetActive(true);
+            openingText.gameObject.SetActive(false);
         }
     }
 }
