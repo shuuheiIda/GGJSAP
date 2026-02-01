@@ -20,6 +20,7 @@ namespace GGJ.Result
     [SerializeField] public int UseHintPoint = 0;//この数字、NPCから情報を聞いた数が反映される予定。
     [SerializeField] public TMP_Text ScoreText;//経過した時間（ResultTime:）のテキストオブジェクトを格納
     [SerializeField] public TMP_Text UseHintText;//ヒントを聞いた数（UseHint:）のテキストオブジェクトを格納
+   
         void Awake()
         {
             //
@@ -37,8 +38,8 @@ namespace GGJ.Result
         {
             if(Result == true)
             {
-                Win.SetActive(true);
-                WinStoryText.SetActive(true);
+                Win.SetActive(true); 
+                WinStoryText.SetActive(true);             
                 Time.SetActive(true);
                 UseHint.SetActive(true);
                 ReturnTitle.SetActive(true);
