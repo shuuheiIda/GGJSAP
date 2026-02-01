@@ -6,7 +6,7 @@ using GGJ.InGame.Events;
 namespace GGJ.InGame.Player
 {
     /// <summary>
-    /// プレイヤー入力を管理し、Input Systemからのイベントを変換する
+    /// 繝励Ξ繧､繝､繝ｼ蜈･蜉帙ｒ邂｡逅・＠縲！nput System縺九ｉ縺ｮ繧､繝吶Φ繝医ｒ螟画鋤縺吶ｋ
     /// </summary>
     public class PlayerInputManager : MonoBehaviour
     {
@@ -19,14 +19,14 @@ namespace GGJ.InGame.Player
         private void Awake()
         {
             inputActions = new PlayerInput();
-            GameEvents.OnNPCInteractionStarted += OnNPCInteractionStarted;
-            GameEvents.OnNPCInteractionEnded += OnNPCInteractionEnded;
+            GameEvents.OnNpcInteractionStarted += OnNpcInteractionStarted;
+            GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;
         }
 
         private void OnDestroy()
         {
-            GameEvents.OnNPCInteractionStarted -= OnNPCInteractionStarted;
-            GameEvents.OnNPCInteractionEnded -= OnNPCInteractionEnded;
+            GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
+            GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
         }
 
         private void OnEnable()
@@ -60,12 +60,12 @@ namespace GGJ.InGame.Player
             OnInteract?.Invoke();
         }
 
-        private void OnNPCInteractionStarted(GameObject npc)
+        private void OnNpcInteractionStarted(GameObject npc)
         {
             isInputEnabled = false;
             MoveInput = Vector2.zero;
         }
 
-        private void OnNPCInteractionEnded() => isInputEnabled = true;
+        private void OnNpcInteractionEnded() => isInputEnabled = true;
     }
 }

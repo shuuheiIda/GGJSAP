@@ -20,5 +20,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/GGJ/Scenes/BuildScene/GoodEnd.unity
     guid: 34e986a2bbf53b44788ddde8da0bd025
+  - enabled: 1
+    path: Assets/GGJ/Scenes/BuildScene/Managers.unity
+    guid: 3515236c990b99944a3f7b66b3094331
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: e55789b41516d6d479b65af99aa833ef, type: 3}

@@ -54,8 +54,9 @@ namespace GGJ.Scene
             // 適切なBGMを再生
             PlaySceneBGM(sceneName);
             
-            // 非同期読み込み開始
-            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName.ToString());
+            // 非同期読み込み開始（Singleモードで現在のシーンを置き換え）
+            // 注意: DontDestroyOnLoadなオブジェクト（SceneController, AudioManager等）は残る
+            AsyncOperation operation = SceneManager.LoadSceneAsync(sceneName.ToString(), LoadSceneMode.Single);
             operation.allowSceneActivation = false;
             
             // 読み込み進捗を監視

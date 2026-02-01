@@ -24,14 +24,5 @@ namespace GGJ.InGame.Manager
             if (GameManager.I != null)
                 GameManager.I.StartGame();
         }
-                
-        /// <summary>
-        /// ゲームを終了する（GameManagerに委譲）
-        /// </summary>
-        public void EndGame()
-        {
-            if (GameManager.I != null)
-                GameManager.I.EndGame();
-        }
     }
 }

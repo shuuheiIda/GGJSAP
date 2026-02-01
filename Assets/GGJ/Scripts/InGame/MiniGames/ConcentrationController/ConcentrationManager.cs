@@ -8,26 +8,14 @@ using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SocialPlatforms.Impl;
 
-namespace GGJ {
-    public class ConcentrationManager : MonoBehaviour {
-        /// <summary>
-        /// プレイヤーのインプットアクション
-        /// </summary>
-        private PlayerInput inputActions;
-
-
-
+namespace GGJ.InGame.MiniGames {
+    public class ConcentrationManager : MiniGameBase {
         /// <summary>
         /// カードの数 ※変える時は偶数で
         /// </summary>
-        private const int CardNum = 20;
-
-        /// <summary>
-        /// 画面の最大サイズ
-        /// </summary>
-        private const float MaxWindowSizeX = 8.9f, MaxWindowSizeY = 5f;
-
+        private const int CardNum = 16;
 
         /// <summary>
         /// コントローラーを使用しているか
@@ -62,10 +50,10 @@ namespace GGJ {
         /// <summary>
         /// カードのリスト
         /// </summary>
-        private List<CardController> cardList = new List<CardController>();
+        public List<CardController> cardList = new List<CardController>();
 
         /// <summary>
-        /// カードを開けるか
+        /// カードを開けれるか
         /// </summary>
         private bool canOpenCard = true;
 
@@ -74,58 +62,75 @@ namespace GGJ {
         /// </summary>
         private CardController firstCard;
 
+        /// <summary>
+        /// 移動に使うCTS
+        /// </summary>
+        private CancellationTokenSource CTS = new CancellationTokenSource();
+
         private void OnEnable() {
             // Debug.Log("OnEnable");
-            inputActions.Enable();
-        }
 
-        private void OnDisable() {
-            // Debug.Log("OnDisable");
-            inputActions.Disable();
-        }
+            // 初期化
+            IsUseControllerDevice = false;
+            cardList = new List<CardController>();
+            canOpenCard = true;
+            CTS = new CancellationTokenSource();
 
-        private void Awake() {
-            // Debug.Log("Awake");
-            inputActions = new PlayerInput();
-
-        }
-
-        private void Start() {
-            if (CardNum % 2 != 0) {
-                Debug.LogWarning("カードの数が偶数ではありません。");
-            }
-
-            // Debug.Log("Start");
             CreateCard();
 
             // カーソルがなかったら生成
             if (cursor == null) {
                 cursor = Instantiate(cursorPrefab, Vector2.zero, Quaternion.identity, this.transform);
             }
+
+            inputActions.Enable();
         }
 
-        private void FixedUpdate() {
+        private void OnDisable() {
+            // Debug.Log("OnDisable");
 
+            // カードを削除
+            foreach (var card in cardList) {
+                if (card) {
+                    Destroy(card.gameObject);
+                }
+            }
+
+            // カーソルの削除
+            Destroy(cursor);
+
+            inputActions.Disable();
+            CTS.Cancel();
         }
 
-        private async void Update() {
-            CursorControll();
+        private void Awake() {
+            if (CardNum % 2 != 0) {
+                // Debug.LogWarning("カードの数が偶数ではありません。");
+            }
+
+            inputActions = new PlayerInput();
+        }
+
+        protected override async void Update() {
+            base.Update();
+            CursorControl();
             try {
-                await OpenCard(this.GetCancellationTokenOnDestroy());
+                await OpenCard(CTS.Token);
             }
-            catch (Exception e) {
-                Debug.Log(e);
-                throw;
+            catch {
+                Debug.Log("キャンセルされました");
+                return;
             }
-            
         }
 
         /// <summary>
         /// デバイス切替
         /// </summary>
         private void SwitchDevice() {
-            // コントローラーの入力検知
-            Vector2 cont = Gamepad.current.rightStick.ReadValue();
+            Vector2 cont = Vector2.zero;
+            if (isConnectiongController) {
+                cont = Gamepad.current.rightStick.ReadValue();
+            }
 
             if (cont.x > 0 ||
                 cont.y > 0) {
@@ -143,8 +148,8 @@ namespace GGJ {
         private void CreateCard() {
             for (int i = 0; i < CardNum; i++) {
                 // ランダムな位置に
-                float rndPosX = UnityEngine.Random.Range(-MaxWindowSizeX, MaxWindowSizeX);
-                float rndPosY = UnityEngine.Random.Range(-MaxWindowSizeY, MaxWindowSizeY);
+                float rndPosX = UnityEngine.Random.Range(-MaxWindowSizeX + cardPrefab.transform.lossyScale.x / 2, MaxWindowSizeX - cardPrefab.transform.lossyScale.x / 2);
+                float rndPosY = UnityEngine.Random.Range(-MaxWindowSizeY + cardPrefab.transform.lossyScale.y / 2, MaxWindowSizeY - cardPrefab.transform.lossyScale.y / 2);
 
                 Vector2 createPos = new Vector2(rndPosX, rndPosY);
 
@@ -165,7 +170,7 @@ namespace GGJ {
         /// <summary>
         /// カーソルのコントロール
         /// </summary>
-        private void CursorControll() {
+        private void CursorControl() {
             if (cursor == null) {
                 return;
             }
@@ -183,7 +188,7 @@ namespace GGJ {
             }
             // マウス
             else {
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(moveCursorValue);
+                Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(moveCursorValue);
                 cursor.transform.position = (worldPoint);
             }
 
@@ -205,7 +210,7 @@ namespace GGJ {
                     // 当たり判定あり
                     if (hit2d.collider != null &&
                         hit2d.collider.CompareTag("Card")) {
-                        Debug.Log("カードを選択");
+                        // Debug.Log("カードを選択");
                         return hit2d.collider.GetComponent<CardController>();
                     }
                 }
@@ -233,14 +238,14 @@ namespace GGJ {
             canOpenCard = false;
 
             if (!firstCard) {
-                Debug.Log("first");
+                // Debug.Log("first");
 
                 selectCard.OpenCard();
                 // フィールド保持
                 firstCard = selectCard;
             }
             else {
-                Debug.Log("second");
+                // Debug.Log("second");
 
                 selectCard.OpenCard();
 
@@ -258,13 +263,32 @@ namespace GGJ {
                     return;
                 }
                 // 会ってたら削除
+                cardList.Remove(firstCard);
+                cardList.Remove(selectCard);
                 Destroy(firstCard.gameObject);
                 Destroy(selectCard.gameObject);
 
                 firstCard = null;
+
+                // クリア時の処理
+                IsCrear();
             }
 
             canOpenCard = true;
+        }
+
+        /// <summary>
+        /// クリア処理
+        /// </summary>
+        private void IsCrear() {
+            if (cardList.Count() > 0) {
+                return;
+            }
+
+            Debug.Log("Crear");
+            
+            // ミニゲームクリアのコールバックを呼ぶ
+            OnMiniGameCleared();
         }
     }
 }
