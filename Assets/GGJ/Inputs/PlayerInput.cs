@@ -295,7 +295,7 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a998d1ca-d45c-458c-9be5-02bb4e8bc76b"",
-                    ""path"": ""<Gamepad>/rightStick"",
+                    ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -337,6 +337,89 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""MiniGameSnake"",
+            ""id"": ""b7caa7f2-d2b4-49cc-b9af-4f0e5014174f"",
+            ""actions"": [
+                {
+                    ""name"": ""Move"",
+                    ""type"": ""Value"",
+                    ""id"": ""05092b87-3712-4290-9a98-66dd27f186d5"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b28cbcd3-31c2-452a-8708-74bbfa3982ee"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""eb7df5a7-2144-4d19-af41-9bf789a89268"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""Up"",
+                    ""id"": ""13f98257-d437-45b8-801e-4bf8d5c1ed8f"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Down"",
+                    ""id"": ""63dbceaf-cd04-4812-9125-509d00cc39c1"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Left"",
+                    ""id"": ""0226e260-f9c8-4371-bf2b-b6b2be4d0caf"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Right"",
+                    ""id"": ""f61d1375-efa3-4b6f-b98c-1aaf65e09667"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                }
+            ]
         }
     ],
     ""controlSchemes"": [
@@ -355,12 +438,16 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         m_MiniGameConcentration = asset.FindActionMap("MiniGameConcentration", throwIfNotFound: true);
         m_MiniGameConcentration_MoveCursor = m_MiniGameConcentration.FindAction("MoveCursor", throwIfNotFound: true);
         m_MiniGameConcentration_Select = m_MiniGameConcentration.FindAction("Select", throwIfNotFound: true);
+        // MiniGameSnake
+        m_MiniGameSnake = asset.FindActionMap("MiniGameSnake", throwIfNotFound: true);
+        m_MiniGameSnake_Move = m_MiniGameSnake.FindAction("Move", throwIfNotFound: true);
     }
 
     ~@PlayerInput()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInput.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_MiniGameConcentration.enabled, "This will cause a leak and performance issues, PlayerInput.MiniGameConcentration.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_MiniGameSnake.enabled, "This will cause a leak and performance issues, PlayerInput.MiniGameSnake.Disable() has not been called.");
     }
 
     /// <summary>
@@ -646,6 +733,102 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="MiniGameConcentrationActions" /> instance referencing this action map.
     /// </summary>
     public MiniGameConcentrationActions @MiniGameConcentration => new MiniGameConcentrationActions(this);
+
+    // MiniGameSnake
+    private readonly InputActionMap m_MiniGameSnake;
+    private List<IMiniGameSnakeActions> m_MiniGameSnakeActionsCallbackInterfaces = new List<IMiniGameSnakeActions>();
+    private readonly InputAction m_MiniGameSnake_Move;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "MiniGameSnake".
+    /// </summary>
+    public struct MiniGameSnakeActions
+    {
+        private @PlayerInput m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public MiniGameSnakeActions(@PlayerInput wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "MiniGameSnake/Move".
+        /// </summary>
+        public InputAction @Move => m_Wrapper.m_MiniGameSnake_Move;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_MiniGameSnake; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="MiniGameSnakeActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(MiniGameSnakeActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="MiniGameSnakeActions" />
+        public void AddCallbacks(IMiniGameSnakeActions instance)
+        {
+            if (instance == null || m_Wrapper.m_MiniGameSnakeActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_MiniGameSnakeActionsCallbackInterfaces.Add(instance);
+            @Move.started += instance.OnMove;
+            @Move.performed += instance.OnMove;
+            @Move.canceled += instance.OnMove;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="MiniGameSnakeActions" />
+        private void UnregisterCallbacks(IMiniGameSnakeActions instance)
+        {
+            @Move.started -= instance.OnMove;
+            @Move.performed -= instance.OnMove;
+            @Move.canceled -= instance.OnMove;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="MiniGameSnakeActions.UnregisterCallbacks(IMiniGameSnakeActions)" />.
+        /// </summary>
+        /// <seealso cref="MiniGameSnakeActions.UnregisterCallbacks(IMiniGameSnakeActions)" />
+        public void RemoveCallbacks(IMiniGameSnakeActions instance)
+        {
+            if (m_Wrapper.m_MiniGameSnakeActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="MiniGameSnakeActions.AddCallbacks(IMiniGameSnakeActions)" />
+        /// <seealso cref="MiniGameSnakeActions.RemoveCallbacks(IMiniGameSnakeActions)" />
+        /// <seealso cref="MiniGameSnakeActions.UnregisterCallbacks(IMiniGameSnakeActions)" />
+        public void SetCallbacks(IMiniGameSnakeActions instance)
+        {
+            foreach (var item in m_Wrapper.m_MiniGameSnakeActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_MiniGameSnakeActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="MiniGameSnakeActions" /> instance referencing this action map.
+    /// </summary>
+    public MiniGameSnakeActions @MiniGameSnake => new MiniGameSnakeActions(this);
     private int m_GamePadSchemeIndex = -1;
     /// <summary>
     /// Provides access to the input control scheme.
@@ -702,5 +885,20 @@ public partial class @PlayerInput: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSelect(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "MiniGameSnake" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="MiniGameSnakeActions.AddCallbacks(IMiniGameSnakeActions)" />
+    /// <seealso cref="MiniGameSnakeActions.RemoveCallbacks(IMiniGameSnakeActions)" />
+    public interface IMiniGameSnakeActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Move" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnMove(InputAction.CallbackContext context);
     }
 }
