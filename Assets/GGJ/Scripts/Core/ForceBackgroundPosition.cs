@@ -11,7 +11,6 @@ namespace GGJ.Core
         {
             // 位置を強制的に 0 にする
             transform.position = new Vector3(0f, 0f, 0f);
-            Debug.Log($"[ForceBackgroundPosition] 背景位置を強制修正: {transform.position}");
         }
     }
 }

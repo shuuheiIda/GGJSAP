@@ -36,6 +36,9 @@ namespace GGJ {
         private const float WaitTime = 0.1f;
 
         private void Start() {
+            if(InGameObj != null) InGameObj.SetActive(false);
+            if(openingText != null) openingText.gameObject.SetActive(true);
+
             ShowOpening();
         }
 
