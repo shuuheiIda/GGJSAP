@@ -178,31 +178,6 @@ namespace GGJ.UI
                 EventSystem.current.SetSelectedGameObject(lastSelectedBeforeOpen);
         }
 
-        /// <summary>
-        /// 設定パネルの表示/非表示を切り替え（ボタンから呼び出し）
-        /// </summary>
-        public void ToggleSettings()
-        {
-            if (audioPanel != null)
-                audioPanel.SetActive(!audioPanel.activeSelf);
-        }
-
-        /// <summary>
-        /// 設定をデフォルトに戻す
-        /// </summary>
-        public void ResetToDefault()
-        {
-            if (AudioManager.I == null) return;
-            
-            AudioManager.I.SetMasterVolume(DEFAULT_MASTER_VOLUME);
-            AudioManager.I.SetBGMVolume(DEFAULT_BGM_VOLUME);
-            AudioManager.I.SetSEVolume(DEFAULT_SE_VOLUME);
-            
-            if (masterVolumeSlider != null) masterVolumeSlider.value = DEFAULT_MASTER_VOLUME;
-            if (bgmVolumeSlider != null) bgmVolumeSlider.value = DEFAULT_BGM_VOLUME;
-            if (seVolumeSlider != null) seVolumeSlider.value = DEFAULT_SE_VOLUME;
-        }
-
         private void OnDestroy()
         {
             if (masterVolumeSlider != null)

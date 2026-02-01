@@ -10,7 +10,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SocialPlatforms.Impl;
 
-namespace GGJ {
+namespace GGJ.InGame.MiniGames {
     public class ConcentrationManager : MiniGameBase {
         /// <summary>
         /// カードの数 ※変える時は偶数で
@@ -105,7 +105,7 @@ namespace GGJ {
 
         private void Awake() {
             if (CardNum % 2 != 0) {
-                Debug.LogWarning("カードの数が偶数ではありません。");
+                // Debug.LogWarning("カードの数が偶数ではありません。");
             }
 
             inputActions = new PlayerInput();
@@ -188,7 +188,7 @@ namespace GGJ {
             }
             // マウス
             else {
-                Vector2 worldPoint = Camera.main.ScreenToWorldPoint(moveCursorValue);
+                Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(moveCursorValue);
                 cursor.transform.position = (worldPoint);
             }
 
@@ -210,7 +210,7 @@ namespace GGJ {
                     // 当たり判定あり
                     if (hit2d.collider != null &&
                         hit2d.collider.CompareTag("Card")) {
-                        Debug.Log("カードを選択");
+                        // Debug.Log("カードを選択");
                         return hit2d.collider.GetComponent<CardController>();
                     }
                 }
@@ -238,14 +238,14 @@ namespace GGJ {
             canOpenCard = false;
 
             if (!firstCard) {
-                Debug.Log("first");
+                // Debug.Log("first");
 
                 selectCard.OpenCard();
                 // フィールド保持
                 firstCard = selectCard;
             }
             else {
-                Debug.Log("second");
+                // Debug.Log("second");
 
                 selectCard.OpenCard();
 
@@ -286,6 +286,9 @@ namespace GGJ {
             }
 
             Debug.Log("Crear");
+            
+            // ミニゲームクリアのコールバックを呼ぶ
+            OnMiniGameCleared();
         }
     }
 }

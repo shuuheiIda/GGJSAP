@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GGJ {
+namespace GGJ.InGame.MiniGames {
     public class SnakeController : MonoBehaviour {
         /// <summary>
         /// SnakeManagerのSnakeListのインデックス番号

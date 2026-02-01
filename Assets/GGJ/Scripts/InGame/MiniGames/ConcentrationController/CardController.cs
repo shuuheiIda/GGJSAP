@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GGJ {
+namespace GGJ.InGame.MiniGames {
     public class CardController : MonoBehaviour {
         public int Id {  get; private set; }
         public int MatchId { get; private set; }

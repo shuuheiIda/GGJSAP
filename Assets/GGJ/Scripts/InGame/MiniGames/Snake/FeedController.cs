@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace GGJ {
+namespace GGJ.InGame.MiniGames {
     public class FeedController : MonoBehaviour {
         /// <summary>
         /// 現在いるセル番号
