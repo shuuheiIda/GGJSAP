@@ -20,7 +20,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// クリアに必要なスコア
         /// </summary>
-        private const int CrearScore = 15;
+        private const int CrearScore = 10;
 
         /// <summary>
         /// スコア
@@ -72,7 +72,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// 移動クールタイム
         /// </summary>
-        private float moveCd = 1f;
+        private float moveCd = 0.6f;
 
         /// <summary>
         /// 移動クールタイマー
@@ -100,7 +100,7 @@ namespace GGJ.InGame.MiniGames {
             moveDirection = MoveDirection.Up;
             SnakeList = new List<SnakeController>();
             feedList = new List<FeedController>();
-            moveCd = 1f;
+            moveCd = 0.6f;
             moveCdTimer = 0;
             score = 0;
             scoreText.text = $"{score}/{CrearScore}";
@@ -122,6 +122,11 @@ namespace GGJ.InGame.MiniGames {
                 Destroy(snake.gameObject);
             }
 
+            // 餌の削除
+            foreach (var feed in feedList) {
+                Destroy(feed.gameObject);
+            }
+
             inputActions.Disable();
         }
 
@@ -136,10 +141,6 @@ namespace GGJ.InGame.MiniGames {
             }
         }
 
-        private void Start() {
-            
-        }
-
         protected override void Update() {
             base.Update();
             GetInputDevice();
@@ -151,6 +152,38 @@ namespace GGJ.InGame.MiniGames {
                     Debug.Log($"X : {feed.CurrentCellNumX}, Y : {feed.CurrentCellNumY}");
                 }
             }
+        }
+
+        /// <summary>
+        /// ゲームのリスタート
+        /// </summary>
+        private void ReStart() {
+            // 蛇の削除
+            foreach (var snake in SnakeList) {
+                Destroy(snake.gameObject);
+            }
+
+            // 餌の削除
+            foreach (var feed in feedList) {
+                Destroy(feed.gameObject);
+            }
+
+            // 初期化
+            moveDirection = MoveDirection.Up;
+            SnakeList = new List<SnakeController>();
+            feedList = new List<FeedController>();
+            moveCd = 0.6f;
+            moveCdTimer = 0;
+            score = 0;
+            scoreText.text = $"{score}/{CrearScore}";
+
+            // 蛇を作成しフィールドに保持
+            GameObject snakeHead = Instantiate(snakeHeadPrefab, cellList[9, 5], Quaternion.identity, snakeParent);
+            SnakeController snakeController = snakeHead.GetComponent<SnakeController>();
+            snakeController.SetUp();
+            SnakeList.Add(snakeController);
+
+            CreateFeet();
         }
 
         /// <summary>
@@ -310,6 +343,8 @@ namespace GGJ.InGame.MiniGames {
                     if (IsDestinationWall(x, y) ||
                         IsCellOverlapped(x, y, doFeed: false)) {
                         Debug.Log("GameOver");
+
+                        ReStart();
                         return;
                     }
 
