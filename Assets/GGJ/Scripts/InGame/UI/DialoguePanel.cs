@@ -77,6 +77,12 @@ namespace GGJ.InGame.UI
 
             currentNpc = npc.GetComponent<INpc>();
             panel.SetActive(true);
+            
+            // ボタンを有効化（前回の会話で無効化されている可能性があるため）
+            if (closeButton != null) closeButton.interactable = true;
+            if (hintButton != null) hintButton.interactable = true;
+            if (accuseButton != null) accuseButton.interactable = true;
+            
             UIHelper.SetFirstSelected(closeButton);
             
             if (currentNpc != null)
@@ -243,7 +249,12 @@ namespace GGJ.InGame.UI
             // 告発フラグを立てる
             currentNpc.SetAccused(true);
             DisplayNpcInfo(currentNpc);
-            UpdateHintButton();
+            
+            // 入力を即座に無効化（連打防止）
+            // UpdateHintButton()の後に実行することで、再有効化を防ぐ
+            if (closeButton != null) closeButton.interactable = false;
+            if (hintButton != null) hintButton.interactable = false;
+            if (accuseButton != null) accuseButton.interactable = false;
             
             // 犯人かどうかをチェックしてシーン遷移
             StartCoroutine(CheckAccusationAndTransition());
