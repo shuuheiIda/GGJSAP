@@ -16,7 +16,7 @@ MonoBehaviour:
   appearance:
     hatColor: 5
     hairColor: 3
-    maskColor: 5
+    maskColor: 3
     clothesColor: 5
     shoeColor: 5
     gender: 1

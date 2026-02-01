@@ -15,9 +15,9 @@ MonoBehaviour:
   npcName: Npc
   appearance:
     hatColor: 0
-    hairColor: 3
-    maskColor: 1
-    clothesColor: 2
+    hairColor: 4
+    maskColor: 0
+    clothesColor: 0
     shoeColor: 5
     gender: 1
     positionFromCenter: 0
