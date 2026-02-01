@@ -22,6 +22,9 @@ namespace GGJ.InGame.MiniGames
         [Header("UI切り替え")]
         [SerializeField] private GameObject mainGameUI; // 犯人探しのUI
         [SerializeField] private Canvas miniGameCanvas; // ミニゲーム用Canvas（任意）
+
+        [SerializeField] private GameObject mainCamera; // メインのカメラ
+        [SerializeField] private GameObject miniCamera; // ミニゲーム用のカメラ
         
         private IMiniGame currentMiniGame = null;
         private List<IMiniGame> availableMiniGames = new List<IMiniGame>();
@@ -135,6 +138,11 @@ namespace GGJ.InGame.MiniGames
 
             if (miniGameCanvas != null)
                 miniGameCanvas.enabled = true;
+
+            if (miniCamera && mainCamera) {
+                miniCamera.SetActive(true);
+                mainCamera.SetActive(false);
+            }
         }
 
         /// <summary>
@@ -147,6 +155,11 @@ namespace GGJ.InGame.MiniGames
 
             if (miniGameCanvas != null)
                 miniGameCanvas.enabled = false;
+
+            if (miniCamera && mainCamera) {
+                miniCamera.SetActive(false);
+                mainCamera.SetActive(true);
+            }
         }
     }
 }
