@@ -15,10 +15,10 @@ MonoBehaviour:
   npcName: Npc
   appearance:
     hatColor: 4
-    hairColor: 4
-    maskColor: 4
-    clothesColor: 4
-    shoeColor: 4
+    hairColor: 5
+    maskColor: 0
+    clothesColor: 1
+    shoeColor: 2
     gender: 1
     positionFromCenter: 0
   npcSprite: {fileID: 0}

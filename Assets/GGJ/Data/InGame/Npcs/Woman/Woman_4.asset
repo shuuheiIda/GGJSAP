@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcName: Npc
   appearance:
-    hatColor: 4
-    hairColor: 4
-    maskColor: 4
-    clothesColor: 4
+    hatColor: 2
+    hairColor: 1
+    maskColor: 5
+    clothesColor: 3
     shoeColor: 4
     gender: 1
     positionFromCenter: 0

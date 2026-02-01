@@ -14,11 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcName: Npc
   appearance:
-    clothesColor: 4
+    hatColor: 0
+    hairColor: 2
     maskColor: 4
-    hairColor: 4
-    hatColor: 4
-    shoeColor: 4
+    clothesColor: 1
+    shoeColor: 3
     gender: 0
     positionFromCenter: 0
   npcSprite: {fileID: 0}
