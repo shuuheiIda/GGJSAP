@@ -8,16 +8,16 @@ EditorBuildSettings:
   - enabled: 0
     path: Assets/GGJ/Scenes/SampleScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
-  - enabled: 1
+  - enabled: 0
     path: Assets/GGJ/Scenes/BuildScene/Title.unity
     guid: 7c9da6eda3b5f354d84fc116f45cca83
-  - enabled: 1
+  - enabled: 0
     path: Assets/GGJ/Scenes/BuildScene/InGame.unity
     guid: 3bc865573c8c0b4499e7f926588db465
   - enabled: 1
     path: Assets/GGJ/Scenes/BuildScene/BadEnd.unity
     guid: 0f4635ea979ce9e41af9ab8081155394
-  - enabled: 1
+  - enabled: 0
     path: Assets/GGJ/Scenes/BuildScene/GoodEnd.unity
     guid: 34e986a2bbf53b44788ddde8da0bd025
   m_configObjects:
