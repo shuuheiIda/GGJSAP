@@ -54,17 +54,6 @@ namespace GGJ.UI
         }
 
         /// <summary>
-        /// Audio設定パネルを開く
-        /// </summary>
-        public void OpenAudioSettings()
-        {
-            if (settingsUI == null) return;
-            
-            AudioManager.I?.PlaySE(SEType.ButtonClick);
-            settingsUI.OpenSettings();
-        }
-
-        /// <summary>
         /// ゲーム開始ボタンが押されたときの処理
         /// </summary>
         private void OnStartGameClicked()
