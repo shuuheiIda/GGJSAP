@@ -64,7 +64,15 @@ namespace GGJ.UI
         /// <summary>
         /// 終了ボタンが押されたときの処理
         /// </summary>
-        private void OnExitClicked()
+        public void OnExitClicked()
+        {
+            QuitGame();
+        }
+        
+        /// <summary>
+        /// アプリケーションを終了する（ボタンから直接呼べるpublicメソッド）
+        /// </summary>
+        public void QuitGame()
         {
             AudioManager.I?.PlaySE(SEType.ButtonClick);
             

@@ -19,7 +19,7 @@ MonoBehaviour:
   bgmAudioDataList:
   - bgmType: 1
     audioClip: {fileID: 8300000, guid: 915ce072eefc18748b6c78d23aa756c3, type: 3}
-    volumeMultiplier: 1
+    volumeMultiplier: 0.5
     loop: 1
     useFadeIn: 1
     fadeInDuration: 1

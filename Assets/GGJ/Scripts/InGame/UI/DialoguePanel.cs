@@ -160,13 +160,22 @@ namespace GGJ.InGame.UI
             UIHelper.ClearSelected();
         }
 
-        private void OnCloseButtonClicked() => GameEvents.RaiseNpcInteractionEnded();
+        private void OnCloseButtonClicked()
+        {
+            if (GGJ.InGame.Audio.AudioManager.I != null)
+                GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
+            
+            GameEvents.RaiseNpcInteractionEnded();
+        }
         
         /// <summary>
         /// ヒントボタンがクリックされた
         /// </summary>
         private void OnHintButtonClicked()
         {
+            if (GGJ.InGame.Audio.AudioManager.I != null)
+                GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
+            
             if (currentNpc == null)
                 return;
             
@@ -226,6 +235,9 @@ namespace GGJ.InGame.UI
         /// </summary>
         private void OnAccuseButtonClicked()
         {
+            if (GGJ.InGame.Audio.AudioManager.I != null)
+                GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
+            
             if (currentNpc == null) return;
             
             // 告発フラグを立てる

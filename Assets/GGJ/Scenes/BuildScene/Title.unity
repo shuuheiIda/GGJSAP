@@ -201,6 +201,7 @@ GameObject:
   - component: {fileID: 216856105}
   - component: {fileID: 216856109}
   - component: {fileID: 216856110}
+  - component: {fileID: 216856111}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -326,6 +327,23 @@ MonoBehaviour:
   seVolumeLabel: {fileID: 0}
   audioPanel: {fileID: 1188096756}
   firstSelected: {fileID: 0}
+--- !u!114 &216856111
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216856104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3db0f76d5667aa041b7bbd589a6dde51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  settingsUI: {fileID: 216856110}
+  audioSettingsButton: {fileID: 1289789130}
+  startGameButton: {fileID: 220615380}
+  exitButton: {fileID: 1244512471}
+  firstSelectedButton: {fileID: 220615379}
 --- !u!1 &220615379
 GameObject:
   m_ObjectHideFlags: 0
@@ -2342,9 +2360,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: GGJ.Manager.GameManager, Assembly-CSharp
-        m_MethodName: QuitApplication
+      - m_Target: {fileID: 216856111}
+        m_TargetAssemblyTypeName: GGJ.UI.TitleUI, Assembly-CSharp
+        m_MethodName: QuitGame
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
