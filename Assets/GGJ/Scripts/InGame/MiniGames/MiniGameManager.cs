@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GGJ.Core;
 using GGJ.InGame.Events;
+using GGJ.InGame.Transitions;
 
 namespace GGJ.InGame.MiniGames
 {
@@ -73,14 +74,33 @@ namespace GGJ.InGame.MiniGames
             int randomIndex = UnityEngine.Random.Range(0, availableMiniGames.Count);
             currentMiniGame = availableMiniGames[randomIndex];
 
-            // UI切り替え
-            SwitchToMiniGame();
+            // トランジション付きでUI切り替え
+            if (GridTransitionManager.I != null)
+            {
+                GridTransitionManager.I.PlayTransition(() =>
+                {
+                    SwitchToMiniGame();
+                    StartCurrentMiniGame();
+                });
+            }
+            else
+            {
+                // トランジションが無い場合は従来通り
+                SwitchToMiniGame();
+                StartCurrentMiniGame();
+            }
 
+            isMiniGameActive = true;
+        }
+
+        /// <summary>
+        /// 選択されたミニゲームを開始
+        /// </summary>
+        private void StartCurrentMiniGame()
+        {
             // ミニゲーム開始
             currentMiniGame.RegisterOnClearCallback(OnMiniGameCleared);
             currentMiniGame.StartMiniGame();
-
-            isMiniGameActive = true;
         }
 
         /// <summary>
@@ -110,16 +130,37 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         public void ReturnToMainGame()
         {
-            if (currentMiniGame != null)
+            // トランジション付きでUI切り替え
+            if (GridTransitionManager.I != null)
             {
-                currentMiniGame.StopMiniGame();
-                currentMiniGame = null;
+                GridTransitionManager.I.PlayTransition(() =>
+                {
+                    if (currentMiniGame != null)
+                    {
+                        currentMiniGame.StopMiniGame();
+                        currentMiniGame = null;
+                    }
+
+                    // UI切り替え（MainGameUIを表示すると会話パネルも自動的に表示される）
+                    SwitchToMainGame();
+
+                    isMiniGameActive = false;
+                });
             }
+            else
+            {
+                // トランジションが無い場合は従来通り
+                if (currentMiniGame != null)
+                {
+                    currentMiniGame.StopMiniGame();
+                    currentMiniGame = null;
+                }
 
-            // UI切り替え（MainGameUIを表示すると会話パネルも自動的に表示される）
-            SwitchToMainGame();
+                // UI切り替え（MainGameUIを表示すると会話パネルも自動的に表示される）
+                SwitchToMainGame();
 
-            isMiniGameActive = false;
+                isMiniGameActive = false;
+            }
         }
 
         /// <summary>
