@@ -6,7 +6,7 @@ using GGJ.InGame.Events;
 namespace GGJ.InGame.Player
 {
     /// <summary>
-    /// 繝励Ξ繧､繝､繝ｼ蜈･蜉帙ｒ邂｡逅・＠縲！nput System縺九ｉ縺ｮ繧､繝吶Φ繝医ｒ螟画鋤縺吶ｋ
+    /// プレイヤー入力を管理し、Input Systemからのイベントを変換する
     /// </summary>
     public class PlayerInputManager : MonoBehaviour
     {
