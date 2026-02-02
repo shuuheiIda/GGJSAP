@@ -1,8 +1,7 @@
 using UnityEngine;
-using GGJ.Scene;
 using GGJ.InGame.Audio;
 
-namespace SGC2025.UI
+namespace GGJ.Scene
 {
     /// <summary>
     /// ButtonのOnClickからシーンを変更するためのラッパークラス

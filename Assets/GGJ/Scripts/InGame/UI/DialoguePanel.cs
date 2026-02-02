@@ -229,11 +229,9 @@ namespace GGJ.InGame.UI
         /// </summary>
         private IEnumerator WaitForTypewriterAndStartMiniGame()
         {
-            // タイプライターの完了を待つ
             if (typewriterCoroutine != null)
                 yield return typewriterCoroutine;
             
-            // 0.3秒待ってからミニゲーム起動（読み終わる時間を与える）
             yield return new WaitForSeconds(0.3f);
             
             StartMiniGame();
@@ -242,11 +240,7 @@ namespace GGJ.InGame.UI
         /// <summary>
         /// ミニゲームを起動
         /// </summary>
-        private void StartMiniGame()
-        {
-            // ミニゲームを起動（MainGameUIの切り替えで会話パネルも自動的に非表示になる）
-            MiniGameManager.I.StartRandomMiniGame();
-        }
+        private void StartMiniGame() => MiniGameManager.I.StartRandomMiniGame();
         
         /// <summary>
         /// 犯人指定ボタンがクリックされた
@@ -277,7 +271,6 @@ namespace GGJ.InGame.UI
         /// </summary>
         private IEnumerator CheckAccusationAndTransition()
         {
-            // セリフ表示を待つ
             yield return new WaitForSeconds(delayBeforeSceneTransition);
             
             if (currentNpc == null)
@@ -286,33 +279,21 @@ namespace GGJ.InGame.UI
                 yield break;
             }
             
-            // 犯人を正しく告発したか確認
             bool isCriminal = currentNpc.IsCriminal();
             
             if (isCriminal)
             {
-                // 犯人を見つけた！ → GoodEnd
-                Debug.Log("[DialoguePanel] 犯人を見つけました！GoodEndへ遷移します");
-                if (SceneController.I != null)
-                {
-                    SceneController.I.LoadScene(SceneName.GoodEnd);
-                }
-                else
-                {
-                    Debug.LogError("[DialoguePanel] SceneControllerが見つかりません");
-                }
+                if (SceneController.I == null)
+                    throw new System.NullReferenceException("[DialoguePanel] SceneControllerがnullです");
+                    
+                SceneController.I.LoadScene(SceneName.GoodEnd);
             }
             else
             {
-                // 間違った人を告発した → BadEnd
-                if (SceneController.I != null)
-                {
-                    SceneController.I.LoadScene(SceneName.BadEnd);
-                }
-                else
-                {
-                    Debug.LogError("[DialoguePanel] SceneControllerが見つかりません");
-                }
+                if (SceneController.I == null)
+                    throw new System.NullReferenceException("[DialoguePanel] SceneControllerがnullです");
+                    
+                SceneController.I.LoadScene(SceneName.BadEnd);
             }
         }
         

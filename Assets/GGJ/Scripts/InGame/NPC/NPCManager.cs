@@ -36,10 +36,7 @@ namespace GGJ.InGame.NPC
         
         private void OnGameStart() => RandomizeCriminal();
         
-        /// <summary>
-        /// ランダムにNpcを1体選んで犯人にする
-        /// </summary>
-        public void RandomizeCriminal()
+        private void RandomizeCriminal()
         {
             if (allNpcs.Count == 0) return;
             
@@ -83,14 +80,14 @@ namespace GGJ.InGame.NPC
             
             var criminal = GetCriminal();
             if (criminal == null)
-                Debug.LogError("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
+                throw new System.Exception("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
             
-            NpcAppearance criminalAppearance = criminal?.GetNpcData()?.appearance;
+            NpcAppearance criminalAppearance = criminal.GetNpcData()?.appearance;
             Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Woman;
             
             return dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
         }
         
-        public INpc GetCriminal() => allNpcs.FirstOrDefault(npc => npc.IsCriminal());
+        private INpc GetCriminal() => allNpcs.FirstOrDefault(npc => npc.IsCriminal());
     }
 }
