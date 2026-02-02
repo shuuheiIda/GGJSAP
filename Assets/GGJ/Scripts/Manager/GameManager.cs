@@ -2,6 +2,7 @@ using UnityEngine;
 using GGJ.Core;
 using GGJ.InGame.Audio;
 using GGJ.InGame.Events;
+using GGJ.Scene;
 
 namespace GGJ.Manager
 {
@@ -162,19 +163,21 @@ namespace GGJ.Manager
         /// <summary>
         /// ゲームを終了する
         /// </summary>
-        public void EndGame()
+        private void EndGame()
         {
             IsGameRunning = false;
             IsGameEnded = true;
             RemainingTime = TIME_ZERO;
-            
-            GameEvents.RaiseGameEnd();
+                        
+            // 直接呼ぶ場合はここに記述
+            if (SceneController.I != null)
+                SceneController.I.LoadScene(SceneName.BadEnd);
         }
         
         /// <summary>
         /// ゲームを一時停止する
         /// </summary>
-        public void PauseGame()
+        private void PauseGame()
         {
             IsGameRunning = false;
         }
@@ -182,7 +185,7 @@ namespace GGJ.Manager
         /// <summary>
         /// ゲームを再開する
         /// </summary>
-        public void ResumeGame()
+        private void ResumeGame()
         {
             if (!IsGameEnded)
             {

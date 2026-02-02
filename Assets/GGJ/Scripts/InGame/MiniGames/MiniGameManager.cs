@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using GGJ.Core;
 using GGJ.InGame.Events;
@@ -21,8 +19,6 @@ namespace GGJ.InGame.MiniGames
         
         [Header("UI切り替え")]
         [SerializeField] private GameObject mainGameUI; // 犯人探しのUI
-        [SerializeField] private Canvas miniGameCanvas; // ミニゲーム用Canvas（任意）
-
         [SerializeField] private GameObject mainCamera; // メインのカメラ
         [SerializeField] private GameObject miniCamera; // ミニゲーム用のカメラ
         
@@ -85,8 +81,6 @@ namespace GGJ.InGame.MiniGames
             currentMiniGame.StartMiniGame();
 
             isMiniGameActive = true;
-
-            Debug.Log($"[MiniGameManager] ミニゲーム開始: {currentMiniGame.GetType().Name}");
         }
 
         /// <summary>
@@ -133,16 +127,16 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         private void SwitchToMiniGame()
         {
+            // 先に無効化（重複を防ぐ）
             if (mainGameUI != null)
                 mainGameUI.SetActive(false);
-
-            if (miniGameCanvas != null)
-                miniGameCanvas.enabled = true;
-
-            if (miniCamera && mainCamera) {
-                miniCamera.SetActive(true);
+            
+            if (mainCamera != null)
                 mainCamera.SetActive(false);
-            }
+            
+            // その後有効化
+            if (miniCamera != null)
+                miniCamera.SetActive(true);
         }
 
         /// <summary>
@@ -150,16 +144,16 @@ namespace GGJ.InGame.MiniGames
         /// </summary>
         private void SwitchToMainGame()
         {
+            // 先に無効化（重複を防ぐ）
+            if (miniCamera != null)
+                miniCamera.SetActive(false);
+            
+            // その後有効化
+            if (mainCamera != null)
+                mainCamera.SetActive(true);
+            
             if (mainGameUI != null)
                 mainGameUI.SetActive(true);
-
-            if (miniGameCanvas != null)
-                miniGameCanvas.enabled = false;
-
-            if (miniCamera && mainCamera) {
-                miniCamera.SetActive(false);
-                mainCamera.SetActive(true);
-            }
         }
     }
 }

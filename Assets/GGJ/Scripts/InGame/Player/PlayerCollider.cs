@@ -5,7 +5,7 @@ using GGJ.Core;
 namespace GGJ.InGame.Player
 {
     /// <summary>
-    /// 繝励Ξ繧､繝､繝ｼ縺ｮ蠖薙◆繧雁愛螳壹→蜻ｨ蝗ｲ縺ｮ繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ邂｡逅・☆繧・
+    /// プレイヤーの当たり判定と周囲のオブジェクトを管理する
     /// </summary>
     public class PlayerCollider : MonoBehaviour
     {
@@ -24,7 +24,7 @@ namespace GGJ.InGame.Player
         }
 
         /// <summary>
-        /// 遽・峇蜀・〒譛繧りｿ代＞繧ｪ繝悶ず繧ｧ繧ｯ繝医ｒ蜿門ｾ励☆繧・
+        /// 範囲内で最も近いオブジェクトを取得する
         /// </summary>
         public Collider2D GetNearestObject()
         {

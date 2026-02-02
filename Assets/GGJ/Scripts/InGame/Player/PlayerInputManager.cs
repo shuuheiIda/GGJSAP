@@ -6,7 +6,7 @@ using GGJ.InGame.Events;
 namespace GGJ.InGame.Player
 {
     /// <summary>
-    /// 繝励Ξ繧､繝､繝ｼ蜈･蜉帙ｒ邂｡逅・＠縲！nput System縺九ｉ縺ｮ繧､繝吶Φ繝医ｒ螟画鋤縺吶ｋ
+    /// プレイヤー入力を管理し、Input Systemからのイベントを変換する
     /// </summary>
     public class PlayerInputManager : MonoBehaviour
     {
@@ -64,8 +64,17 @@ namespace GGJ.InGame.Player
         {
             isInputEnabled = false;
             MoveInput = Vector2.zero;
+            
+            // Playerアクションマップを無効化（UI操作に専念）
+            inputActions.Player.Disable();
         }
 
-        private void OnNpcInteractionEnded() => isInputEnabled = true;
+        private void OnNpcInteractionEnded()
+        {
+            isInputEnabled = true;
+            
+            // Playerアクションマップを再度有効化
+            inputActions.Player.Enable();
+        }
     }
 }

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 using GGJ.Core;
 using GGJ.InGame.Events;
@@ -77,12 +78,28 @@ namespace GGJ.InGame.UI
 
             currentNpc = npc.GetComponent<INpc>();
             panel.SetActive(true);
-            UIHelper.SetFirstSelected(closeButton);
+            
+            // ボタンを有効化（前回の会話で無効化されている可能性があるため）
+            if (closeButton != null) closeButton.interactable = true;
+            if (hintButton != null) hintButton.interactable = true;
+            if (accuseButton != null) accuseButton.interactable = true;
+            
+            // 1フレーム遅延させてボタンフォーカスを設定（○ボタンの入力が残っているのを防ぐ）
+            StartCoroutine(SetFirstSelectedDelayed());
             
             if (currentNpc != null)
                 DisplayNpcInfo(currentNpc);
             
             UpdateHintButton();
+        }
+        
+        /// <summary>
+        /// 1フレーム遅延してボタンフォーカスを設定
+        /// </summary>
+        private IEnumerator SetFirstSelectedDelayed()
+        {
+            yield return null; // 1フレーム待つ
+            UIHelper.SetFirstSelected(closeButton);
         }
         
         /// <summary>
@@ -133,7 +150,8 @@ namespace GGJ.InGame.UI
                         dialogueText,
                         dialogue,
                         characterDelay,
-                        () => Input.anyKeyDown
+                        () => Keyboard.current.anyKey.wasPressedThisFrame || 
+                              (Gamepad.current != null && Gamepad.current.wasUpdatedThisFrame)
                     )
                 );
             }
@@ -149,7 +167,7 @@ namespace GGJ.InGame.UI
             
             currentNpc = null;
             
-            // 繧ｿ繧､繝励Λ繧､繧ｿ繝ｼ繧ｳ繝ｫ繝ｼ繝√Φ繧貞●豁｢
+            // タイプライターコルーチンを停止
             if (typewriterCoroutine != null)
             {
                 StopCoroutine(typewriterCoroutine);
@@ -243,7 +261,12 @@ namespace GGJ.InGame.UI
             // 告発フラグを立てる
             currentNpc.SetAccused(true);
             DisplayNpcInfo(currentNpc);
-            UpdateHintButton();
+            
+            // 入力を即座に無効化（連打防止）
+            // UpdateHintButton()の後に実行することで、再有効化を防ぐ
+            if (closeButton != null) closeButton.interactable = false;
+            if (hintButton != null) hintButton.interactable = false;
+            if (accuseButton != null) accuseButton.interactable = false;
             
             // 犯人かどうかをチェックしてシーン遷移
             StartCoroutine(CheckAccusationAndTransition());
@@ -282,7 +305,6 @@ namespace GGJ.InGame.UI
             else
             {
                 // 間違った人を告発した → BadEnd
-                Debug.Log("[DialoguePanel] 間違った人を告発しました！BadEndへ遷移します");
                 if (SceneController.I != null)
                 {
                     SceneController.I.LoadScene(SceneName.BadEnd);
