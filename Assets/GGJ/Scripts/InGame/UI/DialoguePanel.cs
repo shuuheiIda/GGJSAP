@@ -77,19 +77,28 @@ namespace GGJ.InGame.UI
 
             currentNpc = npc.GetComponent<INpc>();
             panel.SetActive(true);
-            Debug.Log("ここでパネルを表示");
             
             // ボタンを有効化（前回の会話で無効化されている可能性があるため）
             if (closeButton != null) closeButton.interactable = true;
             if (hintButton != null) hintButton.interactable = true;
             if (accuseButton != null) accuseButton.interactable = true;
             
-            UIHelper.SetFirstSelected(closeButton);
+            // 1フレーム遅延させてボタンフォーカスを設定（○ボタンの入力が残っているのを防ぐ）
+            StartCoroutine(SetFirstSelectedDelayed());
             
             if (currentNpc != null)
                 DisplayNpcInfo(currentNpc);
             
             UpdateHintButton();
+        }
+        
+        /// <summary>
+        /// 1フレーム遅延してボタンフォーカスを設定
+        /// </summary>
+        private IEnumerator SetFirstSelectedDelayed()
+        {
+            yield return null; // 1フレーム待つ
+            UIHelper.SetFirstSelected(closeButton);
         }
         
         /// <summary>
@@ -164,7 +173,6 @@ namespace GGJ.InGame.UI
             }
 
             panel.SetActive(false);
-            Debug.Log("非表示している");
             UIHelper.ClearSelected();
         }
 

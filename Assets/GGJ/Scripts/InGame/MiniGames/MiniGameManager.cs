@@ -81,8 +81,6 @@ namespace GGJ.InGame.MiniGames
             currentMiniGame.StartMiniGame();
 
             isMiniGameActive = true;
-
-            Debug.Log($"[MiniGameManager] ミニゲーム開始: {currentMiniGame.GetType().Name}");
         }
 
         /// <summary>
