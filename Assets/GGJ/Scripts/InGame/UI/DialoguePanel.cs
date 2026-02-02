@@ -305,7 +305,6 @@ namespace GGJ.InGame.UI
             else
             {
                 // 間違った人を告発した → BadEnd
-                Debug.Log("[DialoguePanel] 間違った人を告発しました！BadEndへ遷移します");
                 if (SceneController.I != null)
                 {
                     SceneController.I.LoadScene(SceneName.BadEnd);
