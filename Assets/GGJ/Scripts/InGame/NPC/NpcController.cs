@@ -17,6 +17,7 @@ namespace GGJ.InGame.NPC
         
         private bool isCriminalRuntime = false;
         private SpriteRenderer spriteRenderer;
+        private NpcOutlineController outlineController;
         
         private void Start()
         {
@@ -29,6 +30,14 @@ namespace GGJ.InGame.NPC
         private void InitializeNpc()
         {
             spriteRenderer = GetComponent<SpriteRenderer>();
+            
+            // アウトラインコントローラーを取得または追加
+            outlineController = GetComponent<NpcOutlineController>();
+            if (outlineController == null)
+            {
+                outlineController = gameObject.AddComponent<NpcOutlineController>();
+            }
+            
             ApplyAppearance();
         }
         
