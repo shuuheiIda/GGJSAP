@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 using TMPro;
 using GGJ.Core;
 using GGJ.InGame.Events;
@@ -149,7 +150,8 @@ namespace GGJ.InGame.UI
                         dialogueText,
                         dialogue,
                         characterDelay,
-                        () => Input.anyKeyDown
+                        () => Keyboard.current.anyKey.wasPressedThisFrame || 
+                              (Gamepad.current != null && Gamepad.current.wasUpdatedThisFrame)
                     )
                 );
             }
