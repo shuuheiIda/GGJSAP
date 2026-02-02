@@ -64,8 +64,17 @@ namespace GGJ.InGame.Player
         {
             isInputEnabled = false;
             MoveInput = Vector2.zero;
+            
+            // Playerアクションマップを無効化（UI操作に専念）
+            inputActions.Player.Disable();
         }
 
-        private void OnNpcInteractionEnded() => isInputEnabled = true;
+        private void OnNpcInteractionEnded()
+        {
+            isInputEnabled = true;
+            
+            // Playerアクションマップを再度有効化
+            inputActions.Player.Enable();
+        }
     }
 }

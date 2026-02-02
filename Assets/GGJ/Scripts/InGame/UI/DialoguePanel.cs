@@ -77,6 +77,7 @@ namespace GGJ.InGame.UI
 
             currentNpc = npc.GetComponent<INpc>();
             panel.SetActive(true);
+            Debug.Log("ここでパネルを表示");
             
             // ボタンを有効化（前回の会話で無効化されている可能性があるため）
             if (closeButton != null) closeButton.interactable = true;
@@ -155,7 +156,7 @@ namespace GGJ.InGame.UI
             
             currentNpc = null;
             
-            // 繧ｿ繧､繝励Λ繧､繧ｿ繝ｼ繧ｳ繝ｫ繝ｼ繝√Φ繧貞●豁｢
+            // タイプライターコルーチンを停止
             if (typewriterCoroutine != null)
             {
                 StopCoroutine(typewriterCoroutine);
@@ -163,6 +164,7 @@ namespace GGJ.InGame.UI
             }
 
             panel.SetActive(false);
+            Debug.Log("非表示している");
             UIHelper.ClearSelected();
         }
 
