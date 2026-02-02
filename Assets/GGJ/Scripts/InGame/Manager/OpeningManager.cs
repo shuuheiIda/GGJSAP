@@ -7,7 +7,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Linq;
 
-namespace GGJ
+namespace GGJ.InGame.Manager
 {
     public class OpeningManager : MonoBehaviour
     {
