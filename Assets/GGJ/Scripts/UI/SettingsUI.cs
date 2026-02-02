@@ -47,21 +47,20 @@ namespace GGJ.UI
                 audioPanel.SetActive(false);
         }
 
-        private void OnEnable()
-        {
-        }
+        private void OnEnable() { }
 
-        private void OnDisable()
-        {
-        }
+        private void OnDisable() { }
 
         /// <summary>
-        /// Update処理でキーボード入力をチェック（代替実装）
+        /// Escapeキー入力でパネルを閉じる
         /// </summary>
         private void Update()
         {
-            if (audioPanel != null && audioPanel.activeSelf && Input.GetKeyDown(KeyCode.Escape))
-                CloseSettings();
+            if (audioPanel != null && audioPanel.activeSelf)
+            {
+                if (Keyboard.current != null && Keyboard.current.escapeKey.wasPressedThisFrame)
+                    CloseSettings();
+            }
         }
 
         /// <summary>

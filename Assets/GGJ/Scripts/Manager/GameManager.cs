@@ -177,10 +177,7 @@ namespace GGJ.Manager
         /// <summary>
         /// ゲームを一時停止する
         /// </summary>
-        private void PauseGame()
-        {
-            IsGameRunning = false;
-        }
+        private void PauseGame() => IsGameRunning = false;
         
         /// <summary>
         /// ゲームを再開する
@@ -188,20 +185,12 @@ namespace GGJ.Manager
         private void ResumeGame()
         {
             if (!IsGameEnded)
-            {
                 IsGameRunning = true;
-            }
         }
         
-        private void OnNpcInteractionStarted(GameObject npc)
-        {
-            PauseGame();
-        }
+        private void OnNpcInteractionStarted(GameObject npc) => PauseGame();
         
-        private void OnNpcInteractionEnded()
-        {
-            ResumeGame();
-        }
+        private void OnNpcInteractionEnded() => ResumeGame();
         
         #endregion
         
