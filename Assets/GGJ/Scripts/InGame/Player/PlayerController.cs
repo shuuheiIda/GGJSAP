@@ -4,7 +4,7 @@ using GGJ.InGame.Events;
 namespace GGJ.InGame.Player
 {
     /// <summary>
-    /// 繝励Ξ繧､繝､繝ｼ縺ｮ蛻ｶ蠕｡繧堤ｵｱ諡ｬ縺吶ｋ繧ｳ繝ｳ繝医Ο繝ｼ繝ｩ繝ｼ
+    /// プレイヤーの制御を統括するコントローラー
     /// </summary>
     public class PlayerController : MonoBehaviour
     {
