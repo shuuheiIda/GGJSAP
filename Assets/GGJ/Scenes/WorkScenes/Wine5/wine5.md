@@ -25,11 +25,11 @@
 
 ### GoodEnd、BadEndともにコントローラーで操作ができない
 
+### コントローラー
+- コントローラーで操作ができない部分が一部ある
+    - タイトル画面の中の音量設定のスライダー
+
 --- 
 
 ## バグの修正
-
-### ✅ [#1 コントローラーで〇ボタンを押しても反応しない](https://github.com/shuuheiIda/GGJSAP/issues/1)
-**原因の予想**
-- InputActionsの設定が間違っている
-- デフォルトのInputActionsとPlayerのInputActionsで競合している
+- Issueにあるものすべて
