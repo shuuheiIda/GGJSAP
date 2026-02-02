@@ -43,7 +43,7 @@ Material:
     m_Floats:
     - _EnableExternalAlpha: 0
     - _Progress: 1
-    - _RandomSeed: 41.580875
+    - _RandomSeed: 21.031548
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
