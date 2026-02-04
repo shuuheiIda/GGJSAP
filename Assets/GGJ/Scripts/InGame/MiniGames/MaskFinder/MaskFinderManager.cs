@@ -238,7 +238,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         {
             yield return new WaitForSeconds(2f);
             
-            onClearCallback?.Invoke();
+            OnMiniGameCleared();
         }
         
         /// <summary>

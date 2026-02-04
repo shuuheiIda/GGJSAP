@@ -22,7 +22,8 @@ namespace GGJ.Editor
         private static readonly string[] SCENE_FOLDERS = new[]
         {
             "Assets/GGJ/Scenes/BuildScene",
-            "Assets/GGJ/Scenes/WorkScenes"
+            "Assets/GGJ/Scenes/WorkScenes",
+            "Assets/GGJ/Scenes/WorkScenes/Wine5"
         };
         private const string TOOLBAR_ZONE_LEFT_ALIGN = "ToolbarZoneLeftAlign";
         private const string SCENE_ASSET_ICON = "SceneAsset Icon";

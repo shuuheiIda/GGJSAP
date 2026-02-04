@@ -134,4 +134,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardImage: {fileID: 2935342995473256593}
-  highlightObject: {fileID: 0}
