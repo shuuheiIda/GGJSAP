@@ -1,14 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace GGJ.InGame.MiniGames {
     public class ConcentrationManager : MiniGameBase {
@@ -25,7 +22,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// コントローラーのスティック感度
         /// </summary>
-        private const float ControllerStickSens = 30.0f;
+        private const float ControllerStickSens = 10.0f;
 
 
         /// <summary>
@@ -118,7 +115,6 @@ namespace GGJ.InGame.MiniGames {
                 await OpenCard(CTS.Token);
             }
             catch {
-                Debug.Log("キャンセルされました");
                 return;
             }
         }
@@ -128,12 +124,13 @@ namespace GGJ.InGame.MiniGames {
         /// </summary>
         private void SwitchDevice() {
             Vector2 cont = Vector2.zero;
-            if (isConnectiongController) {
-                cont = Gamepad.current.rightStick.ReadValue();
+            if (isConnectiongController && Gamepad.current != null) {
+                cont = Gamepad.current.leftStick.ReadValue();
+
             }
 
-            if (cont.x > 0 ||
-                cont.y > 0) {
+            if (Mathf.Abs(cont.x) > 0.1f ||
+                Mathf.Abs(cont.y) > 0.1f) {
                 IsUseControllerDevice = true;
             }
             else if (Input.GetMouseButtonDown(0) ||
@@ -178,18 +175,19 @@ namespace GGJ.InGame.MiniGames {
             SwitchDevice();
 
             // デバイスの移動量取得
-            Vector2 moveCursorValue = inputActions.MiniGameConcentration.MoveCursor.ReadValue<Vector2>();
-
-            // カーソル移動
-            // コントローラー使ってたら
-            if (IsUseControllerDevice) {
+            Vector2 moveCursorValue = Vector2.zero;
+            
+            // コントローラー使ってたら左スティックから直接取得
+            if (IsUseControllerDevice && isConnectiongController && Gamepad.current != null) {
+                moveCursorValue = Gamepad.current.leftStick.ReadValue();
                 moveCursorValue = new Vector2(moveCursorValue.x * Time.deltaTime * ControllerStickSens, moveCursorValue.y * Time.deltaTime * ControllerStickSens);
                 cursor.transform.Translate(moveCursorValue);
             }
             // マウス
             else {
+                moveCursorValue = inputActions.MiniGameConcentration.MoveCursor.ReadValue<Vector2>();
                 Vector2 worldPoint = UnityEngine.Camera.main.ScreenToWorldPoint(moveCursorValue);
-                cursor.transform.position = (worldPoint);
+                cursor.transform.position = worldPoint;
             }
 
             // 範囲外に出ないように
@@ -252,7 +250,6 @@ namespace GGJ.InGame.MiniGames {
                 await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: ct);
 
                 // マッチidが同じか確認
-                Debug.Log($"first : {firstCard}, select : {selectCard}");
                 if (firstCard.MatchId != selectCard.MatchId) {
                     // 違ったら二つのカードを閉じる
                     firstCard.CloseCard();
@@ -284,8 +281,6 @@ namespace GGJ.InGame.MiniGames {
             if (cardList.Count() > 0) {
                 return;
             }
-
-            Debug.Log("Crear");
             
             // ミニゲームクリアのコールバックを呼ぶ
             OnMiniGameCleared();

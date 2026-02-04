@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using GGJ.Core;
 using GGJ.InGame.Events;
+using GGJ.InGame.Transitions;
 
 namespace GGJ.InGame.MiniGames
 {
@@ -14,6 +15,10 @@ namespace GGJ.InGame.MiniGames
     /// </summary>
     public class MiniGameManager : Singleton<MiniGameManager>
     {
+        // 定数定義
+        private const float MINI_GAME_CLEAR_DELAY = 1.5f; // ミニゲームクリア後のメインゲーム復帰までの遅延時間(秒)
+        private const float UI_ACTIVATION_WAIT_TIME = 0.2f; // UI有効化後の待機時間(秒)
+        
         [Header("ミニゲーム設定")]
         [SerializeField] private List<GameObject> miniGameObjects = new List<GameObject>();
         
@@ -21,6 +26,7 @@ namespace GGJ.InGame.MiniGames
         [SerializeField] private GameObject mainGameUI; // 犯人探しのUI
         [SerializeField] private GameObject mainCamera; // メインのカメラ
         [SerializeField] private GameObject miniCamera; // ミニゲーム用のカメラ
+        [SerializeField] private GameObject miniGameCanvas; // ミニゲーム専用のCanvas
         
         private IMiniGame currentMiniGame = null;
         private List<IMiniGame> availableMiniGames = new List<IMiniGame>();
@@ -73,14 +79,33 @@ namespace GGJ.InGame.MiniGames
             int randomIndex = UnityEngine.Random.Range(0, availableMiniGames.Count);
             currentMiniGame = availableMiniGames[randomIndex];
 
-            // UI切り替え
-            SwitchToMiniGame();
+            // トランジション付きでUI切り替え
+            if (GridTransitionManager.I != null)
+            {
+                GridTransitionManager.I.PlayTransition(() =>
+                {
+                    SwitchToMiniGame();
+                    StartCurrentMiniGame();
+                });
+            }
+            else
+            {
+                // トランジションが無い場合は従来通り
+                SwitchToMiniGame();
+                StartCurrentMiniGame();
+            }
 
+            isMiniGameActive = true;
+        }
+
+        /// <summary>
+        /// 選択されたミニゲームを開始
+        /// </summary>
+        private void StartCurrentMiniGame()
+        {
             // ミニゲーム開始
             currentMiniGame.RegisterOnClearCallback(OnMiniGameCleared);
             currentMiniGame.StartMiniGame();
-
-            isMiniGameActive = true;
         }
 
         /// <summary>
@@ -89,7 +114,7 @@ namespace GGJ.InGame.MiniGames
         private void OnMiniGameCleared()
         {
             // メインゲームに戻る（ヒント表示はメインゲーム復帰後に行う）
-            StartCoroutine(ReturnToMainGameAfterDelay(1.5f));
+            StartCoroutine(ReturnToMainGameAfterDelay(MINI_GAME_CLEAR_DELAY));
         }
 
         /// <summary>
@@ -98,18 +123,8 @@ namespace GGJ.InGame.MiniGames
         private IEnumerator ReturnToMainGameAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
-            ReturnToMainGame();
             
-            // MainGameUI復帰後にヒント獲得イベントを発火（DialoguePanelがアクティブになった後）
-            yield return null; // 1フレーム待つ
-            GameEvents.RaiseHintReceived();
-        }
-
-        /// <summary>
-        /// メインゲーム（犯人探し）に戻る
-        /// </summary>
-        public void ReturnToMainGame()
-        {
+            // トランジションなしで直接UI切り替え（終了時はアニメーション不要）
             if (currentMiniGame != null)
             {
                 currentMiniGame.StopMiniGame();
@@ -120,6 +135,15 @@ namespace GGJ.InGame.MiniGames
             SwitchToMainGame();
 
             isMiniGameActive = false;
+            
+            // UIが完全に有効化されるまで少し待つ
+            yield return new WaitForSeconds(UI_ACTIVATION_WAIT_TIME);
+            
+            // ヒント使用数をカウント
+            if (GGJ.Manager.GameManager.I != null)
+                GGJ.Manager.GameManager.I.IncrementHintCount();
+            
+            GameEvents.RaiseHintReceived();
         }
 
         /// <summary>
@@ -137,6 +161,9 @@ namespace GGJ.InGame.MiniGames
             // その後有効化
             if (miniCamera != null)
                 miniCamera.SetActive(true);
+            
+            if (miniGameCanvas != null)
+                miniGameCanvas.SetActive(true);
         }
 
         /// <summary>
@@ -147,6 +174,9 @@ namespace GGJ.InGame.MiniGames
             // 先に無効化（重複を防ぐ）
             if (miniCamera != null)
                 miniCamera.SetActive(false);
+            
+            if (miniGameCanvas != null)
+                miniGameCanvas.SetActive(false);
             
             // その後有効化
             if (mainCamera != null)

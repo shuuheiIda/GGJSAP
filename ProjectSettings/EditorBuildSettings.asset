@@ -18,7 +18,7 @@ EditorBuildSettings:
     path: Assets/GGJ/Scenes/BuildScene/BadEnd.unity
     guid: 0f4635ea979ce9e41af9ab8081155394
   - enabled: 1
-    path: Assets/GGJ/Scenes/BuildScene/GoodEnd.unity
+    path: Assets/GGJ/Scenes/BuildScene/Result.unity
     guid: 34e986a2bbf53b44788ddde8da0bd025
   - enabled: 1
     path: Assets/GGJ/Scenes/BuildScene/Managers.unity

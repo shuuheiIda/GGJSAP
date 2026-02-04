@@ -8,29 +8,21 @@ namespace GGJ.Manager
 {
     /// <summary>
     /// ゲーム全体を統括するマネージャー
-    /// アプリケーション制御、設定保存、制限時間管理などを管理
+    /// アプリケーション制御、設定保存、経過時間管理などを管理
     /// シーンを跨いで保持される
     /// </summary>
     public class GameManager : Singleton<GameManager>
     {
-        private const float TIME_ZERO = 0f;
+        /// <summary>ゲーム開始からの経過時間</summary>
+        public float ElapsedTime { get; private set; }
         
-        [Header("時間制限設定")]
-        [SerializeField] private float gameDuration = 60f;
+        /// <summary>使用したヒント数</summary>
+        public int HintUsedCount { get; private set; }
         
-        /// <summary>
-        /// 残り時間
-        /// </summary>
-        public float RemainingTime { get; private set; }
-        
-        /// <summary>
-        /// ゲームが実行中かどうか
-        /// </summary>
+        /// <summary>ゲームが実行中かどうか</summary>
         public bool IsGameRunning { get; private set; }
         
-        /// <summary>
-        /// ゲームが終了したかどうか
-        /// </summary>
+        /// <summary>ゲームが終了したかどうか</summary>
         public bool IsGameEnded { get; private set; }
 
         protected override void Init()
@@ -137,11 +129,8 @@ namespace GGJ.Manager
         {
             if (!IsGameRunning || IsGameEnded) return;
 
-            RemainingTime -= Time.deltaTime;
-            GameEvents.RaiseTimeUpdate(RemainingTime);
-            
-            if (RemainingTime <= TIME_ZERO)
-                EndGame();
+            ElapsedTime += Time.deltaTime;
+            GameEvents.RaiseTimeUpdate(ElapsedTime);
         }
         
         /// <summary>
@@ -149,7 +138,8 @@ namespace GGJ.Manager
         /// </summary>
         public void StartGame()
         {
-            RemainingTime = gameDuration;
+            ElapsedTime = 0f;
+            HintUsedCount = 0;
             IsGameRunning = true;
             IsGameEnded = false;
 
@@ -161,17 +151,17 @@ namespace GGJ.Manager
         }
 
         /// <summary>
+        /// ヒント使用数を増やす
+        /// </summary>
+        public void IncrementHintCount() => HintUsedCount++;
+
+        /// <summary>
         /// ゲームを終了する
         /// </summary>
-        private void EndGame()
+        public void EndGame()
         {
             IsGameRunning = false;
             IsGameEnded = true;
-            RemainingTime = TIME_ZERO;
-                        
-            // 直接呼ぶ場合はここに記述
-            if (SceneController.I != null)
-                SceneController.I.LoadScene(SceneName.BadEnd);
         }
         
         /// <summary>

@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5692469972276744001}
   - component: {fileID: 5889545753086702139}
   - component: {fileID: 3950334548280750539}
+  - component: {fileID: 316096335570708505}
   m_Layer: 0
   m_Name: NPC
   m_TagString: Npc
@@ -54,7 +55,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a97c105638bdf8b4a8650670310a4cd3, type: 2}
+  - {fileID: 2100000, guid: 4cb73b2bcfdf8284f8739073ec5247c7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -133,5 +134,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 614805d1212b08548b2b17171345eceb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  npcData: {fileID: 11400000, guid: 2e5cd34ed87584b45aef555a81433693, type: 2}
+  NpcData: {fileID: 0}
   hasReceivedHint: 0
+  isAccused: 0
+--- !u!114 &316096335570708505
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6597587451494095451}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fb7bb241a2fb5f14f8e146609d4ecd52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  outlineShader: {fileID: 4800000, guid: 27f087e9bcf1744478713f71d3777f84, type: 3}
+  outlineWidth: 1.5
+  normalColor: {r: 1, g: 1, b: 1, a: 1}
+  normalIntensity: 0.8
+  highlightColor: {r: 0, g: 1, b: 0, a: 1}
+  highlightIntensity: 2.5
+  transitionSpeed: 5
+  showDebugLogs: 0

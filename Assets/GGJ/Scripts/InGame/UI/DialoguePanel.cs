@@ -16,11 +16,17 @@ namespace GGJ.InGame.UI
     /// </summary>
     public class DialoguePanel : MonoBehaviour
     {
+        [Header("会話パートの設定")]
         [SerializeField] private GameObject panel;
         [SerializeField] private Button accuseButton;
         [SerializeField] private Button hintButton;
         [SerializeField] private Button closeButton;
         [SerializeField] private TextMeshProUGUI dialogueText;
+        
+        [Header("確認ダイアログ")]
+        [SerializeField] private GameObject confirmDialogPanel;
+        [SerializeField] private Button confirmYesButton;
+        [SerializeField] private Button confirmNoButton;
         
         [Header("タイプライター設定")]
         [SerializeField] private bool useTypewriterEffect = true;
@@ -51,13 +57,21 @@ namespace GGJ.InGame.UI
             if (accuseButton != null)
                 accuseButton.onClick.AddListener(OnAccuseButtonClicked);
             
+            if (confirmYesButton != null)
+                confirmYesButton.onClick.AddListener(OnConfirmYesClicked);
+            
+            if (confirmNoButton != null)
+                confirmNoButton.onClick.AddListener(OnConfirmNoClicked);
+            
             if (panel != null)
                 panel.SetActive(false);
+            
+            if (confirmDialogPanel != null)
+                confirmDialogPanel.SetActive(false);
         }
 
         private void OnDestroy()
         {
-            // イベントリスナーを解除
             GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
             GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
             GameEvents.OnHintReceived -= OnHintReceived;
@@ -70,6 +84,12 @@ namespace GGJ.InGame.UI
             
             if (accuseButton != null)
                 accuseButton.onClick.RemoveListener(OnAccuseButtonClicked);
+            
+            if (confirmYesButton != null)
+                confirmYesButton.onClick.RemoveListener(OnConfirmYesClicked);
+            
+            if (confirmNoButton != null)
+                confirmNoButton.onClick.RemoveListener(OnConfirmNoClicked);
         }
 
         private void OnNpcInteractionStarted(GameObject npc)
@@ -252,17 +272,36 @@ namespace GGJ.InGame.UI
             
             if (currentNpc == null) return;
             
-            // 告発フラグを立てる
+            if (confirmDialogPanel != null)
+            {
+                if (accuseButton != null) accuseButton.interactable = false;
+                if (hintButton != null) hintButton.interactable = false;
+                if (closeButton != null) closeButton.interactable = false;
+                
+                confirmDialogPanel.SetActive(true);
+                
+                UIHelper.SetFirstSelected(confirmNoButton);
+            }
+            else
+            {
+                ExecuteAccusation();
+            }
+        }
+        
+        /// <summary>
+        /// 告発処理を実行
+        /// </summary>
+        private void ExecuteAccusation()
+        {
+            if (currentNpc == null) return;
+            
             currentNpc.SetAccused(true);
             DisplayNpcInfo(currentNpc);
             
-            // 入力を即座に無効化（連打防止）
-            // UpdateHintButton()の後に実行することで、再有効化を防ぐ
             if (closeButton != null) closeButton.interactable = false;
             if (hintButton != null) hintButton.interactable = false;
             if (accuseButton != null) accuseButton.interactable = false;
             
-            // 犯人かどうかをチェックしてシーン遷移
             StartCoroutine(CheckAccusationAndTransition());
         }
         
@@ -305,6 +344,32 @@ namespace GGJ.InGame.UI
             if (hintButton == null || currentNpc == null) return;
             
             hintButton.interactable = !currentNpc.HasReceivedHint();
+        }
+        
+        private void OnConfirmYesClicked()
+        {
+            if (GGJ.InGame.Audio.AudioManager.I != null)
+                GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
+            
+            if (confirmDialogPanel != null)
+                confirmDialogPanel.SetActive(false);
+            
+            ExecuteAccusation();
+        }
+        
+        private void OnConfirmNoClicked()
+        {
+            if (GGJ.InGame.Audio.AudioManager.I != null)
+                GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
+            
+            if (confirmDialogPanel != null)
+                confirmDialogPanel.SetActive(false);
+            
+            if (accuseButton != null) accuseButton.interactable = true;
+            if (closeButton != null) closeButton.interactable = true;
+            UpdateHintButton();
+            
+            UIHelper.SetFirstSelected(accuseButton);
         }
     }
 }

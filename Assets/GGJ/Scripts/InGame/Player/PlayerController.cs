@@ -9,6 +9,7 @@ namespace GGJ.InGame.Player
     public class PlayerController : MonoBehaviour
     {
         [SerializeField] private PlayerMovement movement;
+        [SerializeField] private PlayerSpriteController spriteController;
 
         private PlayerInputManager inputManager;
         private PlayerCollider playerCollider;
@@ -19,6 +20,9 @@ namespace GGJ.InGame.Player
             inputManager = GetComponent<PlayerInputManager>();
             playerCollider = GetComponent<PlayerCollider>();
             rb = GetComponent<Rigidbody2D>();
+            
+            var spriteRenderer = GetComponent<SpriteRenderer>();
+            spriteController?.Initialize(spriteRenderer);
             
             inputManager.OnInteract += HandleInteract;
         }
@@ -31,7 +35,10 @@ namespace GGJ.InGame.Player
 
         private void Update()
         {
-            movement.Move(inputManager.MoveInput, rb);
+            Vector2 moveInput = inputManager.MoveInput;
+            
+            movement.Move(moveInput, rb);
+            spriteController?.UpdateSpriteByMovement(moveInput);
         }
 
         private void HandleInteract()
