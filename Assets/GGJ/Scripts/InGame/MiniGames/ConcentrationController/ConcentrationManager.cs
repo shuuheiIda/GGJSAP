@@ -1,14 +1,11 @@
 ﻿using Cysharp.Threading.Tasks;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace GGJ.InGame.MiniGames {
     public class ConcentrationManager : MiniGameBase {
@@ -118,7 +115,6 @@ namespace GGJ.InGame.MiniGames {
                 await OpenCard(CTS.Token);
             }
             catch {
-                Debug.Log("キャンセルされました");
                 return;
             }
         }
@@ -252,7 +248,6 @@ namespace GGJ.InGame.MiniGames {
                 await UniTask.Delay(TimeSpan.FromSeconds(1), cancellationToken: ct);
 
                 // マッチidが同じか確認
-                Debug.Log($"first : {firstCard}, select : {selectCard}");
                 if (firstCard.MatchId != selectCard.MatchId) {
                     // 違ったら二つのカードを閉じる
                     firstCard.CloseCard();
@@ -284,8 +279,6 @@ namespace GGJ.InGame.MiniGames {
             if (cardList.Count() > 0) {
                 return;
             }
-
-            Debug.Log("Crear");
             
             // ミニゲームクリアのコールバックを呼ぶ
             OnMiniGameCleared();

@@ -1,13 +1,7 @@
-﻿using Cysharp.Threading.Tasks;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.SocialPlatforms.Impl;
 using UnityEngine.UI;
 
 namespace GGJ.InGame.MiniGames {
@@ -146,12 +140,6 @@ namespace GGJ.InGame.MiniGames {
             GetInputDevice();
             MoveSnake();
             EatFeed();
-
-            if (Input.GetKeyDown(KeyCode.V)) {
-                foreach (var feed in feedList) {
-                    Debug.Log($"X : {feed.CurrentCellNumX}, Y : {feed.CurrentCellNumY}");
-                }
-            }
         }
 
         /// <summary>
@@ -342,8 +330,6 @@ namespace GGJ.InGame.MiniGames {
                     // 移動先が壁か蛇だったら
                     if (IsDestinationWall(x, y) ||
                         IsCellOverlapped(x, y, doFeed: false)) {
-                        Debug.Log("GameOver");
-
                         ReStart();
                         return;
                     }
@@ -425,8 +411,6 @@ namespace GGJ.InGame.MiniGames {
             if (score != CrearScore) {
                 return;
             }
-
-            Debug.Log("Crear");
             
             // ミニゲームクリアのコールバックを呼ぶ
             OnMiniGameCleared();
