@@ -122,6 +122,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &1210064250 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9052910908223701375, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+  m_PrefabInstance: {fileID: 719433799757082452}
+  m_PrefabAsset: {fileID: 0}
 --- !u!20 &1293982734 stripped
 Camera:
   m_CorrespondingSourceObject: {fileID: 6311454517096404205, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
@@ -312,7 +317,7 @@ Canvas:
   m_AdditionalShaderChannelsFlag: 0
   m_UpdateRectTransformForStandalone: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -100
   m_TargetDisplay: 0
 --- !u!1001 &719433799757082452
 PrefabInstance:
@@ -409,7 +414,7 @@ PrefabInstance:
     - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: miniGameObjects.Array.data[0]
       value: 
-      objectReference: {fileID: 1581920295}
+      objectReference: {fileID: 1210064250}
     - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: miniGameObjects.Array.data[1]
       value: 
@@ -466,6 +471,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6195254207852448655, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+      propertyPath: m_FontData.m_Font
+      value: 
+      objectReference: {fileID: 12800000, guid: 1716d74edbabc9940997f2ac7f9e6aaf, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects:
