@@ -12,7 +12,6 @@ namespace GGJ.Result
     public class GoodEndSceneManager : MonoBehaviour
     {
         [Header("UI要素")]
-        [SerializeField] private GameObject winPanel; // 勝利テキスト表示パネル
         [SerializeField] private TextMeshProUGUI winStoryText; // 勝利ストーリーテキスト
         [SerializeField] private TextMeshProUGUI clearTimeText; // 経過時間テキスト
         [SerializeField] private TextMeshProUGUI hintUsedText; // ヒント使用数テキスト
