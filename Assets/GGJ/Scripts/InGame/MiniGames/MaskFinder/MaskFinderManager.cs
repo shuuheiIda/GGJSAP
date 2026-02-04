@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
-using TMPro;
 
 namespace GGJ.InGame.MiniGames.MaskFinder
 {
@@ -18,6 +17,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         [SerializeField] private int totalMaskCount = 30; // 表示するマスクの総数
         [SerializeField] private int correctMaskCount = 3; // 本物のマスクの数
         [SerializeField] private float revealDuration = 1f; // マスクを表向きにする時間(秒)
+        [SerializeField] private int maxWrongAttempts = 5; // 間違えられる最大回数
         
         [Header("マスク画像")]
         [SerializeField] private List<Sprite> maskSprites = new List<Sprite>(); // すべてのマスク画像リスト(この中からランダムに正解が選ばれる)
@@ -27,21 +27,10 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         [SerializeField] private Image questionMaskImage; // お題表示用のImage
         [SerializeField] private Transform cardGridParent; // カードを配置する親Transform
         [SerializeField] private GameObject maskCardPrefab; // マスクカードのプレハブ
-        [SerializeField] private TextMeshProUGUI instructionText; // 説明テキスト
+        [SerializeField] private TMPro.TextMeshProUGUI remainingTriesText; // 残り試行回数表示用テキスト
         
         [Header("グリッド設定")]
         [SerializeField] private int gridColumns = 6; // グリッドの列数
-        [SerializeField] private int gridRows = 5; // グリッドの行数
-        [SerializeField] private float cardSpacing = 10f; // カード間のスペース
-        
-        [Header("入力設定")]
-        [SerializeField] private float cursorSpeed = 500f; // カーソル移動速度
-        
-        [Header("テキスト設定")]
-        [SerializeField] private string textRememberMasks = "マスクを覚えてください!";
-        [SerializeField] private string textFindMasks = "お題のマスクを{0}枚見つけてください";
-        [SerializeField] private string textClear = "正解!ゲームクリア!";
-        [SerializeField] private string textWrong = "不正解...もう一度挑戦!";
         
         private List<MaskCardController> allCards = new List<MaskCardController>();
         private List<MaskCardController> correctCards = new List<MaskCardController>();
@@ -50,6 +39,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         private bool isRevealing = false;
         private bool canSelect = false;
         private Sprite currentCorrectMask; // 今回のゲームで選ばれた正解のマスク
+        private int remainingTries; // 残りの試行回数
         
         private void Awake()
         {
@@ -73,6 +63,8 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         
         protected override void OnMiniGameStart()
         {
+            remainingTries = maxWrongAttempts;
+            UpdateRemainingTriesText();
             SetupGame();
             StartCoroutine(GameSequence());
         }
@@ -88,6 +80,8 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             selectedCards.Clear();
             currentCursorIndex = 0;
             canSelect = false;
+            remainingTries = maxWrongAttempts;
+            UpdateRemainingTriesText();
         }
         
         /// <summary>
@@ -188,7 +182,6 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         {
             yield return new WaitForSeconds(2f);
             
-            UpdateInstructionText(textRememberMasks);
             isRevealing = true;
             foreach (var card in allCards)
             {
@@ -205,12 +198,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             isRevealing = false;
             
             // 4. 選択開始
-            UpdateInstructionText(string.Format(textFindMasks, correctMaskCount));
             canSelect = true;
-            
-            // 最初のカードをハイライト
-            if (allCards.Count > 0)
-                allCards[0].SetHighlight(true);
         }
         
         /// <summary>
@@ -221,34 +209,25 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             if (!canSelect || isRevealing || card.IsRevealed || selectedCards.Contains(card))
                 return;
             
-            selectedCards.Add(card);
             card.Reveal();
             
-            // すべての正解カードが選ばれたかチェック
-            CheckGameClear();
-        }
-        
-        /// <summary>
-        /// ゲームクリア判定
-        /// </summary>
-        private void CheckGameClear()
-        {
-            // 正解カードがすべて選ばれたかチェック
-            bool allCorrectFound = correctCards.All(c => selectedCards.Contains(c));
-            
-            if (allCorrectFound)
+            // 正解かどうかを即座に判定
+            if (card.IsCorrectMask)
             {
-                canSelect = false;
-                StartCoroutine(ClearGame());
-            }
-            else if (selectedCards.Count >= correctMaskCount)
-            {
-                // 不正解の場合
-                bool hasWrongCard = selectedCards.Any(c => !c.IsCorrectMask);
-                if (hasWrongCard)
+                // 正解の場合、選択リストに追加して表示を維持
+                selectedCards.Add(card);
+                
+                // すべての正解カードが選ばれたかチェック
+                if (selectedCards.Count >= correctMaskCount)
                 {
-                    StartCoroutine(ShowWrongAnswer());
+                    canSelect = false;
+                    StartCoroutine(ClearGame());
                 }
+            }
+            else
+            {
+                // 不正解の場合、すぐにひっくり返す
+                StartCoroutine(ShowWrongAnswer(card));
             }
         }
         
@@ -257,7 +236,6 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// </summary>
         private IEnumerator ClearGame()
         {
-            UpdateInstructionText(textClear);
             yield return new WaitForSeconds(2f);
             
             onClearCallback?.Invoke();
@@ -266,31 +244,40 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// <summary>
         /// 不正解時の処理
         /// </summary>
-        private IEnumerator ShowWrongAnswer()
+        private IEnumerator ShowWrongAnswer(MaskCardController wrongCard)
         {
             canSelect = false;
-            UpdateInstructionText("不正解...もう一度挑戦!");
             
-            yield return new WaitForSeconds(1.5f);
+            // 残り回数を減らす
+            remainingTries--;
+            UpdateRemainingTriesText();
             
-            // 選択したカードを裏返す
-            foreach (var card in selectedCards)
+            yield return new WaitForSeconds(0.5f);
+            
+            // 不正解のカードをひっくり返す
+            wrongCard.Hide();
+            
+            // 残り回数が0になったらゲームオーバー
+            if (remainingTries <= 0)
             {
-                card.Hide();
+                yield return new WaitForSeconds(1f);
+                // ゲームオーバー処理（リセットまたは終了）
+                ResetMiniGame();
+                yield break;
             }
-            selectedCards.Clear();
             
-            UpdateInstructionText($"お題のマスクを{correctMaskCount}枚見つけてください");
             canSelect = true;
         }
         
         /// <summary>
-        /// 説明テキストを更新
+        /// 残り試行回数テキストを更新
         /// </summary>
-        private void UpdateInstructionText(string text)
+        private void UpdateRemainingTriesText()
         {
-            if (instructionText != null)
-                instructionText.text = text;
+            if (remainingTriesText != null)
+            {
+                remainingTriesText.text = $"残り回数: {remainingTries}";
+            }
         }
         
         /// <summary>
@@ -348,13 +335,6 @@ namespace GGJ.InGame.MiniGames.MaskFinder
                     currentCursorIndex = Mathf.Max(currentCursorIndex - gridColumns, 0);
                 else if (leftStick.y < -0.5f) // 下
                     currentCursorIndex = Mathf.Min(currentCursorIndex + gridColumns, allCards.Count - 1);
-                
-                // ハイライト更新
-                if (oldIndex != currentCursorIndex)
-                {
-                    allCards[oldIndex].SetHighlight(false);
-                    allCards[currentCursorIndex].SetHighlight(true);
-                }
             }
             
             // Aボタンで選択

@@ -11,11 +11,10 @@ namespace GGJ.InGame.MiniGames.MaskFinder
     /// </summary>
     [RequireComponent(typeof(Image))]
     [RequireComponent(typeof(Button))]
-    public class MaskCardController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+    public class MaskCardController : MonoBehaviour, IPointerClickHandler
     {
         [Header("UI要素")]
         [SerializeField] private Image cardImage; // カード画像
-        [SerializeField] private GameObject highlightObject; // ハイライト表示用オブジェクト
         
         private Sprite frontSprite; // 表面のスプライト
         private Sprite backSprite; // 裏面のスプライト
@@ -44,9 +43,6 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             button = GetComponent<Button>();
             if (button != null)
                 button.onClick.AddListener(OnClick);
-            
-            if (highlightObject != null)
-                highlightObject.SetActive(false);
         }
         
         /// <summary>
@@ -91,15 +87,6 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         }
         
         /// <summary>
-        /// ハイライト表示を設定
-        /// </summary>
-        public void SetHighlight(bool active)
-        {
-            if (highlightObject != null)
-                highlightObject.SetActive(active);
-        }
-        
-        /// <summary>
         /// カードがクリックされたとき
         /// </summary>
         public void OnClick()
@@ -108,19 +95,11 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         }
         
         /// <summary>
-        /// マウスがカードに入ったとき（マウス操作用）
+        /// カードがクリックされたとき（IPointerClickHandler）
         /// </summary>
-        public void OnPointerEnter(PointerEventData eventData)
+        public void OnPointerClick(PointerEventData eventData)
         {
-            SetHighlight(true);
-        }
-        
-        /// <summary>
-        /// マウスがカードから出たとき（マウス操作用）
-        /// </summary>
-        public void OnPointerExit(PointerEventData eventData)
-        {
-            SetHighlight(false);
+            OnClick();
         }
         
         private void OnDestroy()

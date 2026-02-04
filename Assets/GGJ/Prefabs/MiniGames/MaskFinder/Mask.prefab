@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2935342995473256593}
   - component: {fileID: 3557109392628684539}
   - component: {fileID: 2726382677738281834}
-  m_Layer: 0
+  m_Layer: 5
   m_Name: Mask
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,4 +134,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cardImage: {fileID: 2935342995473256593}
-  highlightObject: {fileID: 6414976013037853560}
+  highlightObject: {fileID: 0}
