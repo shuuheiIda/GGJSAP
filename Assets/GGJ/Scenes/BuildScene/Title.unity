@@ -2054,7 +2054,7 @@ MonoBehaviour:
   enableRotationEffect: 0
   waveAmplitude: 10
   waveFrequency: 2
-  waveSpeed: 1
+  waveSpeed: 2
   scaleAmplitude: 0.1
   scaleSpeed: 1
   color1: {r: 1, g: 1, b: 1, a: 1}
