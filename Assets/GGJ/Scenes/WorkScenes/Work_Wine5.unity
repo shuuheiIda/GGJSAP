@@ -409,16 +409,16 @@ PrefabInstance:
       objectReference: {fileID: 1925843888}
     - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: miniGameObjects.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: miniGameObjects.Array.data[0]
       value: 
-      objectReference: {fileID: 1210064250}
+      objectReference: {fileID: 1581920295}
     - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: miniGameObjects.Array.data[1]
       value: 
-      objectReference: {fileID: 1581920295}
+      objectReference: {fileID: 1210064250}
     - target: {fileID: 4088841175705426470, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
