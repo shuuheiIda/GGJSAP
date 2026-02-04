@@ -12,6 +12,9 @@ namespace GGJ.InGame.Player
     {
         public Vector2 MoveInput { get; private set; }
         public event Action OnInteract;
+        
+        /// <summary>ポーズリクエストの静的イベント（どこからでも購読可能）</summary>
+        public static event Action OnPauseRequested;
 
         private PlayerInput inputActions;
         private bool isInputEnabled = true;
@@ -23,18 +26,13 @@ namespace GGJ.InGame.Player
             GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;
         }
 
-        private void OnDestroy()
-        {
-            GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
-            GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
-        }
-
         private void OnEnable()
         {
             inputActions.Enable();
             inputActions.Player.Move.performed += OnMovePerformed;
             inputActions.Player.Move.canceled += OnMoveCanceled;
             inputActions.Player.Interact.performed += OnInteractPerformed;
+            inputActions.UI.Cancel.performed += OnPausePerformed;
         }
 
         private void OnDisable()
@@ -42,6 +40,7 @@ namespace GGJ.InGame.Player
             inputActions.Player.Move.performed -= OnMovePerformed;
             inputActions.Player.Move.canceled -= OnMoveCanceled;
             inputActions.Player.Interact.performed -= OnInteractPerformed;
+            inputActions.UI.Cancel.performed -= OnPausePerformed;
             inputActions.Disable();
         }
 
@@ -58,6 +57,20 @@ namespace GGJ.InGame.Player
         {
             if (!isInputEnabled) return;
             OnInteract?.Invoke();
+        }
+
+        private void OnPausePerformed(InputAction.CallbackContext context)
+        {
+            OnPauseRequested?.Invoke();
+        }
+
+        private void OnDestroy()
+        {
+            GameEvents.OnNpcInteractionStarted -= OnNpcInteractionStarted;
+            GameEvents.OnNpcInteractionEnded -= OnNpcInteractionEnded;
+            
+            // 静的イベントをクリア（メモリリーク防止）
+            OnPauseRequested = null;
         }
 
         private void OnNpcInteractionStarted(GameObject npc)
