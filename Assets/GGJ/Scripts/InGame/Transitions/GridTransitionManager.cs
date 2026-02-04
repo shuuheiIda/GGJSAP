@@ -24,13 +24,17 @@ namespace GGJ.InGame.Transitions
         [Header("カメラ設定（オプション：画面サイズ自動調整用）")]
         [SerializeField] private UnityEngine.Camera targetCamera; // 対象カメラ（設定すると画面サイズに自動調整）
         
+        private Material materialInstance; // Materialのインスタンス（元のアセットを変更しないため）
+        
         protected override bool UseDontDestroyOnLoad => false;
         
         protected override void Init()
         {
             if (transitionSprite != null)
             {
-                transitionSprite.material = transitionMaterial;
+                // Materialのインスタンスを作成して使用（元のアセットを変更しないため）
+                materialInstance = new Material(transitionMaterial);
+                transitionSprite.material = materialInstance;
                 transitionSprite.gameObject.SetActive(false);
                 
                 // カメラが設定されている場合は画面サイズに合わせてスケーリング
@@ -51,7 +55,7 @@ namespace GGJ.InGame.Transitions
         }
         
         /// <summary>
-        /// スプライトのスケールを画面サイズに合わせて調整
+        /// スプライトのスケールをカメラサイズに合わせて更新
         /// </summary>
         private void UpdateSpriteScale()
         {
@@ -95,7 +99,7 @@ namespace GGJ.InGame.Transitions
         /// </summary>
         private IEnumerator TransitionCoroutine(Action onTransitionMiddle)
         {
-            if (transitionSprite == null || transitionMaterial == null)
+            if (transitionSprite == null || materialInstance == null)
             {
                 Debug.LogError("[GridTransitionManager] トランジションを開始できません");
                 onTransitionMiddle?.Invoke();
@@ -103,15 +107,9 @@ namespace GGJ.InGame.Transitions
             }
             
             // ランダムシードを設定（毎回違うパターンにする）
-            transitionMaterial.SetFloat("_RandomSeed", UnityEngine.Random.Range(0f, 100f));
-            transitionMaterial.SetVector("_GridSize", gridSize);
-            transitionMaterial.SetColor("_TransitionColor", transitionColor);
-            
-            // カメラが設定されている場合はスケールを更新
-            if (targetCamera != null)
-            {
-                UpdateSpriteScale();
-            }
+            materialInstance.SetFloat("_RandomSeed", UnityEngine.Random.Range(0f, 100f));
+            materialInstance.SetVector("_GridSize", gridSize);
+            materialInstance.SetColor("_TransitionColor", transitionColor);
             
             // トランジション開始
             transitionSprite.gameObject.SetActive(true);
@@ -146,13 +144,13 @@ namespace GGJ.InGame.Transitions
                 float curvedT = transitionCurve.Evaluate(t);
                 float progress = Mathf.Lerp(startProgress, endProgress, curvedT);
                 
-                transitionMaterial.SetFloat("_Progress", progress);
+                materialInstance.SetFloat("_Progress", progress);
                 
                 yield return null;
             }
             
             // 最終値を確実に設定
-            transitionMaterial.SetFloat("_Progress", endProgress);
+            materialInstance.SetFloat("_Progress", endProgress);
         }
         
         /// <summary>
