@@ -20,5 +20,5 @@ MonoBehaviour:
     clothesColor: 0
     shoeColor: 5
     gender: 1
-    positionFromCenter: 0
+    positionFromCenter: 3
   npcSprite: {fileID: 0}

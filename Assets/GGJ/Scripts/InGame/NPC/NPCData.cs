@@ -84,9 +84,5 @@ namespace GGJ.InGame.NPC
         [Header("外見の特徴")]
         [Tooltip("NPCの外見情報")]
         public NpcAppearance appearance = new NpcAppearance();
-
-        [Header("UI表示用")]
-        [Tooltip("NPCのスプライト画像")]
-        public Sprite npcSprite;
     }
 }

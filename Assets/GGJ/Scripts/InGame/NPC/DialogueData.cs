@@ -46,11 +46,11 @@ namespace GGJ.InGame.NPC
         
         [Header("■ 犯人用のセリフ（ヒント後：詳細情報）")]
         [Space(5)]
-        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n例：「犯人は{CLOTHES_COLOR}の服を着ていました」")]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n{GENDER}=性別（男性/女性）\n{LOCATION}=場所（上/下/左/右）\n例：「犯人は{LOCATION}にいて{CLOTHES_COLOR}の服を着た{GENDER}でした」")]
         public List<string> criminalHintsFemale = new List<string>();
         
         [Space(5)]
-        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n例：「犯人は{MASK_COLOR}のマスクをしていたぜ」")]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n{GENDER}=性別（男性/女性）\n{LOCATION}=場所（上/下/左/右）\n例：「犯人は{LOCATION}にいて{MASK_COLOR}のマスクをしていたぜ」")]
         public List<string> criminalHintsMale = new List<string>();
         
         [Header("■ 無実のNPC用のセリフ（ヒント前：聞き込み時）")]
@@ -73,11 +73,11 @@ namespace GGJ.InGame.NPC
         
         [Header("■ 無実のNPC用のセリフ（ヒント後：詳細情報）")]
         [Space(5)]
-        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n無実のNPCは虚偽の情報を言うこともあります\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色")]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n無実のNPCは虚偽の情報を言うこともあります\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n{GENDER}=性別（男性/女性）\n{LOCATION}=場所（上/下/左/右）")]
         public List<string> innocentHintsFemale = new List<string>();
         
         [Space(5)]
-        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n無実のNPCは虚偽の情報を言うこともあります\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色")]
+        [Tooltip("【重要】ヒント後は具体的な情報を提供してください\n無実のNPCは虚偽の情報を言うこともあります\n使用可能なプレースホルダー：\n{CLOTHES_COLOR}=服の色\n{MASK_COLOR}=マスクの色\n{HAIR_COLOR}=髪の色\n{HAT_COLOR}=帽子の色\n{SHOE_COLOR}=靴の色\n{GENDER}=性別（男性/女性）\n{LOCATION}=場所（上/下/左/右）")]
         public List<string> innocentHintsMale = new List<string>();
         
         /// <summary>
@@ -128,6 +128,8 @@ namespace GGJ.InGame.NPC
             text = text.Replace("{HAT_COLOR}", ColorToJapanese(appearance.hatColor));
             text = text.Replace("{SHOE_COLOR}", ColorToJapanese(appearance.shoeColor));
             text = text.Replace("{COLOR}", ColorToJapanese(appearance.clothesColor));
+            text = text.Replace("{GENDER}", GenderToJapanese(appearance.gender));
+            text = text.Replace("{LOCATION}", LocationToJapanese(appearance.positionFromCenter));
             
             return text;
         }
@@ -143,6 +145,28 @@ namespace GGJ.InGame.NPC
                 NpcColor.White => "白色",
                 NpcColor.Black => "黒色",
                 _ => "不明な色"
+            };
+        }
+        
+        private string GenderToJapanese(Gender gender)
+        {
+            return gender switch
+            {
+                Gender.Man => "男性",
+                Gender.Woman => "女性",
+                _ => "不明な性別"
+            };
+        }
+        
+        private string LocationToJapanese(Direction direction)
+        {
+            return direction switch
+            {
+                Direction.Up => "上",
+                Direction.Down => "下",
+                Direction.Left => "左",
+                Direction.Right => "右",
+                _ => "不明な場所"
             };
         }
         
