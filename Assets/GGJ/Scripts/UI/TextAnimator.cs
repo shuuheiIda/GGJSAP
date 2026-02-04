@@ -5,11 +5,11 @@ using System.Collections;
 namespace GGJ.UI
 {
     /// <summary>
-    /// タイトル文字に動的なアニメーション効果を追加
-    /// 波打つ動き、拡大縮小、色の変化などを実装
+    /// テキストに動的なアニメーション効果を追加
+    /// 波打つ動き、拡大縮小、色の変化、回転などを実装
     /// </summary>
     [RequireComponent(typeof(TextMeshProUGUI))]
-    public class TitleTextAnimator : MonoBehaviour
+    public class TextAnimator : MonoBehaviour
     {
         [Header("アニメーション設定")]
         [SerializeField] private bool enableWaveEffect = true;
