@@ -37,6 +37,12 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         [Header("入力設定")]
         [SerializeField] private float cursorSpeed = 500f; // カーソル移動速度
         
+        [Header("テキスト設定")]
+        [SerializeField] private string textRememberMasks = "マスクを覚えてください!";
+        [SerializeField] private string textFindMasks = "お題のマスクを{0}枚見つけてください";
+        [SerializeField] private string textClear = "正解!ゲームクリア!";
+        [SerializeField] private string textWrong = "不正解...もう一度挑戦!";
+        
         private List<MaskCardController> allCards = new List<MaskCardController>();
         private List<MaskCardController> correctCards = new List<MaskCardController>();
         private List<MaskCardController> selectedCards = new List<MaskCardController>();
@@ -180,10 +186,9 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// </summary>
         private IEnumerator GameSequence()
         {
-            UpdateInstructionText("お題のマスクを覚えてください");
             yield return new WaitForSeconds(2f);
             
-            UpdateInstructionText("マスクを覚えてください!");
+            UpdateInstructionText(textRememberMasks);
             isRevealing = true;
             foreach (var card in allCards)
             {
@@ -200,7 +205,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             isRevealing = false;
             
             // 4. 選択開始
-            UpdateInstructionText($"お題のマスクを{correctMaskCount}枚見つけてください");
+            UpdateInstructionText(string.Format(textFindMasks, correctMaskCount));
             canSelect = true;
             
             // 最初のカードをハイライト
@@ -252,7 +257,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// </summary>
         private IEnumerator ClearGame()
         {
-            UpdateInstructionText("正解!ゲームクリア!");
+            UpdateInstructionText(textClear);
             yield return new WaitForSeconds(2f);
             
             onClearCallback?.Invoke();
