@@ -15,6 +15,10 @@ namespace GGJ.InGame.MiniGames
     /// </summary>
     public class MiniGameManager : Singleton<MiniGameManager>
     {
+        // 定数定義
+        private const float MINI_GAME_CLEAR_DELAY = 1.5f; // ミニゲームクリア後のメインゲーム復帰までの遅延時間(秒)
+        private const float UI_ACTIVATION_WAIT_TIME = 0.2f; // UI有効化後の待機時間(秒)
+        
         [Header("ミニゲーム設定")]
         [SerializeField] private List<GameObject> miniGameObjects = new List<GameObject>();
         
@@ -110,7 +114,7 @@ namespace GGJ.InGame.MiniGames
         private void OnMiniGameCleared()
         {
             // メインゲームに戻る（ヒント表示はメインゲーム復帰後に行う）
-            StartCoroutine(ReturnToMainGameAfterDelay(1.5f));
+            StartCoroutine(ReturnToMainGameAfterDelay(MINI_GAME_CLEAR_DELAY));
         }
 
         /// <summary>
@@ -119,54 +123,27 @@ namespace GGJ.InGame.MiniGames
         private IEnumerator ReturnToMainGameAfterDelay(float delay)
         {
             yield return new WaitForSeconds(delay);
-            ReturnToMainGame();
             
-            // MainGameUI復帰後にヒント獲得イベントを発火（DialoguePanelがアクティブになった後）
-            yield return null; // 1フレーム待つ
+            // トランジションなしで直接UI切り替え（終了時はアニメーション不要）
+            if (currentMiniGame != null)
+            {
+                currentMiniGame.StopMiniGame();
+                currentMiniGame = null;
+            }
+
+            // UI切り替え（MainGameUIを表示すると会話パネルも自動的に表示される）
+            SwitchToMainGame();
+
+            isMiniGameActive = false;
+            
+            // UIが完全に有効化されるまで少し待つ
+            yield return new WaitForSeconds(UI_ACTIVATION_WAIT_TIME);
             
             // ヒント使用数をカウント
             if (GGJ.Manager.GameManager.I != null)
                 GGJ.Manager.GameManager.I.IncrementHintCount();
             
             GameEvents.RaiseHintReceived();
-        }
-
-        /// <summary>
-        /// メインゲーム（犯人探し）に戻る
-        /// </summary>
-        public void ReturnToMainGame()
-        {
-            // トランジション付きでUI切り替え
-            if (GridTransitionManager.I != null)
-            {
-                GridTransitionManager.I.PlayTransition(() =>
-                {
-                    if (currentMiniGame != null)
-                    {
-                        currentMiniGame.StopMiniGame();
-                        currentMiniGame = null;
-                    }
-
-                    // UI切り替え（MainGameUIを表示すると会話パネルも自動的に表示される）
-                    SwitchToMainGame();
-
-                    isMiniGameActive = false;
-                });
-            }
-            else
-            {
-                // トランジションが無い場合は従来通り
-                if (currentMiniGame != null)
-                {
-                    currentMiniGame.StopMiniGame();
-                    currentMiniGame = null;
-                }
-
-                // UI切り替え（MainGameUIを表示すると会話パネルも自動的に表示される）
-                SwitchToMainGame();
-
-                isMiniGameActive = false;
-            }
         }
 
         /// <summary>

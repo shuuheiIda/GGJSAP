@@ -9,8 +9,6 @@ namespace GGJ.InGame.MiniGames.MaskFinder
     /// マスクカードの制御クラス
     /// カードの表裏切り替え、クリック検出、ハイライト表示を管理
     /// </summary>
-    [RequireComponent(typeof(Image))]
-    [RequireComponent(typeof(Button))]
     public class MaskCardController : MonoBehaviour, IPointerClickHandler
     {
         [Header("UI要素")]

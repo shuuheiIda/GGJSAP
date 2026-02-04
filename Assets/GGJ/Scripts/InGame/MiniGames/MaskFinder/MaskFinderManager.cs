@@ -13,6 +13,16 @@ namespace GGJ.InGame.MiniGames.MaskFinder
     /// </summary>
     public class MaskFinderManager : MiniGameBase
     {
+        // 定数定義
+        private const float GAME_START_DELAY = 2f; // ゲーム開始前の待機時間(秒)
+        private const float CLEAR_DELAY = 2f; // クリア時の待機時間(秒)
+        private const float WRONG_ANSWER_FLIP_DELAY = 0.5f; // 不正解カードをひっくり返すまでの時間(秒)
+        private const float GAME_OVER_DELAY = 1f; // ゲームオーバー時の待機時間(秒)
+        private const float STICK_INPUT_THRESHOLD = 0.5f; // スティック入力の閾値
+        private const float CURSOR_HIGHLIGHT_SCALE = 1.1f; // カーソル強調表示のスケール
+        private const float CURSOR_SELECTED_SCALE = 1.3f; // カーソル選択時のスケール
+        private const string REMAINING_TRIES_TEXT_FORMAT = "残り回数: {0}"; // 残り試行回数テキストのフォーマット
+        
         [Header("ゲーム設定")]
         [SerializeField] private int totalMaskCount = 30; // 表示するマスクの総数
         [SerializeField] private int correctMaskCount = 3; // 本物のマスクの数
@@ -40,15 +50,13 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         private bool canSelect = false;
         private Sprite currentCorrectMask; // 今回のゲームで選ばれた正解のマスク
         private int remainingTries; // 残りの試行回数
+        private float stickInputDelay = 0.2f; // スティック入力の遅延時間
+        private float lastStickInputTime = 0f; // 最後のスティック入力時刻
         
         private void Awake()
         {
             inputActions = new PlayerInput();
-        }
-        
-        private void Start()
-        {
-            StartMiniGame();
+            inputActions.UI.Enable();
         }
         
         private void OnEnable()
@@ -82,6 +90,13 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             canSelect = false;
             remainingTries = maxWrongAttempts;
             UpdateRemainingTriesText();
+            
+            // すべてのカードのスケールをリセット
+            foreach (var card in allCards)
+            {
+                if (card != null)
+                    card.transform.localScale = Vector3.one;
+            }
         }
         
         /// <summary>
@@ -180,7 +195,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// </summary>
         private IEnumerator GameSequence()
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(GAME_START_DELAY);
             
             isRevealing = true;
             foreach (var card in allCards)
@@ -199,6 +214,13 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             
             // 4. 選択開始
             canSelect = true;
+            
+            // コントローラー使用時、最初のカードを強調表示
+            if (isConnectiongController && allCards.Count > 0)
+            {
+                currentCursorIndex = 0;
+                allCards[0].transform.localScale = Vector3.one * CURSOR_HIGHLIGHT_SCALE;
+            }
         }
         
         /// <summary>
@@ -236,7 +258,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// </summary>
         private IEnumerator ClearGame()
         {
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(CLEAR_DELAY);
             
             OnMiniGameCleared();
         }
@@ -252,7 +274,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             remainingTries--;
             UpdateRemainingTriesText();
             
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(WRONG_ANSWER_FLIP_DELAY);
             
             // 不正解のカードをひっくり返す
             wrongCard.Hide();
@@ -260,7 +282,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             // 残り回数が0になったらゲームオーバー
             if (remainingTries <= 0)
             {
-                yield return new WaitForSeconds(1f);
+                yield return new WaitForSeconds(GAME_OVER_DELAY);
                 // ゲームオーバー処理（リセットまたは終了）
                 ResetMiniGame();
                 yield break;
@@ -276,7 +298,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         {
             if (remainingTriesText != null)
             {
-                remainingTriesText.text = $"残り回数: {remainingTries}";
+                remainingTriesText.text = string.Format(REMAINING_TRIES_TEXT_FORMAT, remainingTries);
             }
         }
         
@@ -320,27 +342,55 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         /// </summary>
         private void HandleGamepadInput()
         {
-            Vector2 leftStick = Gamepad.current.leftStick.ReadValue();
+            Vector2 navigateInput = inputActions.UI.Navigate.ReadValue<Vector2>();
             
-            // 上下左右でカーソル移動
-            if (leftStick.magnitude > 0.5f)
+            // 上下左右でカーソル移動（遅延制御付き）
+            if (navigateInput.magnitude > STICK_INPUT_THRESHOLD && Time.time - lastStickInputTime > stickInputDelay)
             {
                 int oldIndex = currentCursorIndex;
                 
-                if (leftStick.x > 0.5f) // 右
+                if (navigateInput.x > STICK_INPUT_THRESHOLD) // 右
                     currentCursorIndex = Mathf.Min(currentCursorIndex + 1, allCards.Count - 1);
-                else if (leftStick.x < -0.5f) // 左
+                else if (navigateInput.x < -STICK_INPUT_THRESHOLD) // 左
                     currentCursorIndex = Mathf.Max(currentCursorIndex - 1, 0);
-                else if (leftStick.y > 0.5f) // 上
+                else if (navigateInput.y > STICK_INPUT_THRESHOLD) // 上
                     currentCursorIndex = Mathf.Max(currentCursorIndex - gridColumns, 0);
-                else if (leftStick.y < -0.5f) // 下
+                else if (navigateInput.y < -STICK_INPUT_THRESHOLD) // 下
                     currentCursorIndex = Mathf.Min(currentCursorIndex + gridColumns, allCards.Count - 1);
+                
+                // カーソルが移動した場合、視覚的フィードバックを更新
+                if (oldIndex != currentCursorIndex)
+                {
+                    UpdateCursorVisuals(oldIndex, currentCursorIndex);
+                    lastStickInputTime = Time.time;
+                }
             }
             
-            // Aボタンで選択
-            if (Gamepad.current.buttonSouth.wasPressedThisFrame)
+            // Submitアクションで選択（Space, Enter, Gamepad Bボタン）
+            if (inputActions.UI.Submit.triggered)
             {
-                allCards[currentCursorIndex].OnClick();
+                if (currentCursorIndex >= 0 && currentCursorIndex < allCards.Count)
+                {
+                    allCards[currentCursorIndex].OnClick();
+                }
+            }
+        }
+        
+        /// <summary>
+        /// カーソル位置の視覚的フィードバックを更新
+        /// </summary>
+        private void UpdateCursorVisuals(int oldIndex, int newIndex)
+        {
+            // 前のカードを通常サイズに戻す
+            if (oldIndex >= 0 && oldIndex < allCards.Count)
+            {
+                allCards[oldIndex].transform.localScale = Vector3.one;
+            }
+            
+            // 新しいカードを少し大きくする
+            if (newIndex >= 0 && newIndex < allCards.Count)
+            {
+                allCards[newIndex].transform.localScale = Vector3.one * CURSOR_SELECTED_SCALE;
             }
         }
     }
