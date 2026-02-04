@@ -123,6 +123,11 @@ namespace GGJ.InGame.MiniGames
             
             // MainGameUI復帰後にヒント獲得イベントを発火（DialoguePanelがアクティブになった後）
             yield return null; // 1フレーム待つ
+            
+            // ヒント使用数をカウント
+            if (GGJ.Manager.GameManager.I != null)
+                GGJ.Manager.GameManager.I.IncrementHintCount();
+            
             GameEvents.RaiseHintReceived();
         }
 

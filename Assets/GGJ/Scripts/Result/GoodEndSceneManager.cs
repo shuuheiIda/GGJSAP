@@ -2,6 +2,7 @@ using UnityEngine;
 using TMPro;
 using GGJ.Core;
 using GGJ.InGame.UI;
+using GGJ.Manager;
 
 namespace GGJ.Result
 {
@@ -13,12 +14,8 @@ namespace GGJ.Result
     {
         [Header("UI要素")]
         [SerializeField] private TextMeshProUGUI winStoryText; // 勝利ストーリーテキスト
-        [SerializeField] private TextMeshProUGUI clearTimeText; // 経過時間テキスト
-        [SerializeField] private TextMeshProUGUI hintUsedText; // ヒント使用数テキスト
-        
-        [Header("ゲーム統計")]
-        [SerializeField] private int clearTime = 0; // クリア時の経過時間（秒）
-        [SerializeField] private int hintUsedCount = 0; // 使用したヒント数
+        [SerializeField] private TextMeshProUGUI clearTimeText; // 経過時間テキスト（Inspector で "クリアタイム: {0}秒" のようなフォーマット文字列を設定）
+        [SerializeField] private TextMeshProUGUI hintUsedText; // ヒント使用数テキスト（Inspector で "ヒント使用数: {0}回" のようなフォーマット文字列を設定）
         
         [Header("タイプライター設定")]
         [SerializeField] private float typeSpeed = 0.05f; // 1文字あたりの表示速度（秒）
@@ -26,9 +23,27 @@ namespace GGJ.Result
         [Header("コントローラーナビゲーション")]
         [SerializeField] private GameObject firstSelectedObject; // シーン開始時に最初に選択されるUI要素（例：タイトルに戻るボタン）
 
+        private string clearTimeFormat; // クリアタイムのフォーマット文字列
+        private string hintUsedFormat; // ヒント使用数のフォーマット文字列
+
+        private void Awake()
+        {
+            // Inspector で設定されたフォーマット文字列を保存してからテキストをクリア
+            if (clearTimeText != null)
+            {
+                clearTimeFormat = clearTimeText.text;
+                clearTimeText.text = string.Empty; // 初期表示を非表示にする
+            }
+            
+            if (hintUsedText != null)
+            {
+                hintUsedFormat = hintUsedText.text;
+                hintUsedText.text = string.Empty; // 初期表示を非表示にする
+            }
+        }
+
         private void Start()
         {
-            DisplayGameStats();
             StartCoroutine(PlayStoryTextAnimation());
             SetInitialSelection();
         }
@@ -37,13 +52,31 @@ namespace GGJ.Result
         /// <summary>
         /// ゲーム統計情報を表示
         /// </summary>
-        private void DisplayGameStats()
+        private System.Collections.IEnumerator DisplayGameStats()
         {
-            if (clearTimeText != null)
-                clearTimeText.text = $"ResultTime: {clearTime}";
+            if (GameManager.I == null)
+            {
+                Debug.LogWarning("GameManager が見つかりません");
+                yield break;
+            }
             
-            if (hintUsedText != null)
-                hintUsedText.text = $"UseHint: {hintUsedCount}";
+            // GameManagerから経過時間とヒント使用数を取得
+            float elapsedTime = GameManager.I.ElapsedTime;
+            int hintCount = GameManager.I.HintUsedCount;
+            
+            // クリアタイムをタイプライター効果で表示
+            if (clearTimeText != null && !string.IsNullOrEmpty(clearTimeFormat))
+            {
+                string formattedText = string.Format(clearTimeFormat, Mathf.FloorToInt(elapsedTime));
+                yield return TextTypewriterEffect.TypeText(clearTimeText, formattedText, typeSpeed);
+            }
+            
+            // ヒント使用数をタイプライター効果で表示
+            if (hintUsedText != null && !string.IsNullOrEmpty(hintUsedFormat))
+            {
+                string formattedText = string.Format(hintUsedFormat, hintCount);
+                yield return TextTypewriterEffect.TypeText(hintUsedText, formattedText, typeSpeed);
+            }
         }
 
         /// <summary>
@@ -62,6 +95,9 @@ namespace GGJ.Result
                     typeSpeed
                 );
             }
+            
+            // テキストアニメーション終了後にゲーム統計を表示
+            yield return DisplayGameStats();
         }
 
         /// <summary>
