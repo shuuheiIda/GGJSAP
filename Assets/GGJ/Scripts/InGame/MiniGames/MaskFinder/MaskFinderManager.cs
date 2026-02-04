@@ -97,6 +97,10 @@ namespace GGJ.InGame.MiniGames.MaskFinder
                 if (card != null)
                     card.transform.localScale = Vector3.one;
             }
+            
+            // 新しいお題でゲームを再開
+            SetupGame();
+            StartCoroutine(GameSequence());
         }
         
         /// <summary>
@@ -219,7 +223,7 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             if (isConnectiongController && allCards.Count > 0)
             {
                 currentCursorIndex = 0;
-                allCards[0].transform.localScale = Vector3.one * CURSOR_HIGHLIGHT_SCALE;
+                UpdateCursorVisuals(-1, 0); // 確実にカーソルを表示
             }
         }
         
@@ -279,12 +283,20 @@ namespace GGJ.InGame.MiniGames.MaskFinder
             // 不正解のカードをひっくり返す
             wrongCard.Hide();
             
-            // 残り回数が0になったらゲームオーバー
+            // 残り回数が0になったら新しいお題でゲームを再開
             if (remainingTries <= 0)
             {
                 yield return new WaitForSeconds(GAME_OVER_DELAY);
-                // ゲームオーバー処理（リセットまたは終了）
-                ResetMiniGame();
+                
+                // 新しいお題でリセット
+                CleanupGame();
+                selectedCards.Clear();
+                currentCursorIndex = 0;
+                remainingTries = maxWrongAttempts;
+                UpdateRemainingTriesText();
+                
+                SetupGame();
+                StartCoroutine(GameSequence());
                 yield break;
             }
             
