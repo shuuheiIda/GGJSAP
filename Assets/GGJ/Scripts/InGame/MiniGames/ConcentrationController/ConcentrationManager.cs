@@ -12,7 +12,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// カードの数 ※変える時は偶数で
         /// </summary>
-        private const int CardNum = 16;
+        private const int CardNum = 14;
 
         /// <summary>
         /// コントローラーを使用しているか
