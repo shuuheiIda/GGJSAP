@@ -37,6 +37,8 @@ namespace GGJ.InGame.UI
         
         private INpc currentNpc;
         private Coroutine typewriterCoroutine;
+        private bool canProcessClicks = false; // クリック処理可能フラグ
+        private float panelOpenTime = 0f; // パネルを開いた時刻
 
         private void Awake()
         {
@@ -99,10 +101,17 @@ namespace GGJ.InGame.UI
             currentNpc = npc.GetComponent<INpc>();
             panel.SetActive(true);
             
+            // パネルを開いた時刻を記録
+            panelOpenTime = Time.unscaledTime;
+            canProcessClicks = false;
+            
             // ボタンを有効化（前回の会話で無効化されている可能性があるため）
             if (closeButton != null) closeButton.interactable = true;
             if (hintButton != null) hintButton.interactable = true;
             if (accuseButton != null) accuseButton.interactable = true;
+            
+            // 少し遅延してクリックを有効化
+            StartCoroutine(EnableClicksAfterDelay());
             
             // 1フレーム遅延させてボタンフォーカスを設定（○ボタンの入力が残っているのを防ぐ）
             StartCoroutine(SetFirstSelectedDelayed());
@@ -111,6 +120,16 @@ namespace GGJ.InGame.UI
                 DisplayNpcInfo(currentNpc);
             
             UpdateHintButton();
+        }
+        
+        /// <summary>
+        /// 少し遅延してクリックを有効化（パネル開いた直後の誤クリックを防ぐ）
+        /// </summary>
+        private IEnumerator EnableClicksAfterDelay()
+        {
+            // 0.2秒待つ（マウスクリックのリリースを待つ）
+            yield return new WaitForSecondsRealtime(0.2f);
+            canProcessClicks = true;
         }
         
         /// <summary>
@@ -197,9 +216,50 @@ namespace GGJ.InGame.UI
             panel.SetActive(false);
             UIHelper.ClearSelected();
         }
+        
+        /// <summary>
+        /// ポーズから復帰した際にフォーカスを再設定する
+        /// </summary>
+        public void RestoreFocusAfterPause()
+        {
+            // 会話パネルが表示されていない場合は何もしない
+            if (panel == null || !panel.activeSelf) return;
+            
+            // 確認ダイアログが表示されている場合
+            if (confirmDialogPanel != null && confirmDialogPanel.activeSelf)
+            {
+                // ボタンを再度有効化
+                if (confirmYesButton != null) confirmYesButton.interactable = true;
+                if (confirmNoButton != null) confirmNoButton.interactable = true;
+                
+                UIHelper.SetFirstSelected(confirmNoButton);
+            }
+            // 通常の会話パネルの場合
+            else
+                UIHelper.SetFirstSelected(closeButton);
+        }
+        
+        /// <summary>
+        /// ポーズ時にボタンを無効化する
+        /// </summary>
+        public void DisableButtonsForPause()
+        {
+            // 会話パネルが表示されていない場合は何もしない
+            if (panel == null || !panel.activeSelf) return;
+            
+            // 確認ダイアログが表示されている場合、そのボタンを無効化
+            if (confirmDialogPanel != null && confirmDialogPanel.activeSelf)
+            {
+                if (confirmYesButton != null) confirmYesButton.interactable = false;
+                if (confirmNoButton != null) confirmNoButton.interactable = false;
+            }
+        }
 
         private void OnCloseButtonClicked()
         {
+            // パネルを開いた直後のクリックを無視
+            if (!canProcessClicks) return;
+            
             if (GGJ.InGame.Audio.AudioManager.I != null)
                 GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
             
@@ -211,6 +271,9 @@ namespace GGJ.InGame.UI
         /// </summary>
         private void OnHintButtonClicked()
         {
+            // パネルを開いた直後のクリックを無視
+            if (!canProcessClicks) return;
+            
             if (GGJ.InGame.Audio.AudioManager.I != null)
                 GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
             
@@ -267,6 +330,9 @@ namespace GGJ.InGame.UI
         /// </summary>
         private void OnAccuseButtonClicked()
         {
+            // パネルを開いた直後のクリックを無視
+            if (!canProcessClicks) return;
+            
             if (GGJ.InGame.Audio.AudioManager.I != null)
                 GGJ.InGame.Audio.AudioManager.I.PlaySE(GGJ.InGame.Audio.SEType.ButtonClick);
             

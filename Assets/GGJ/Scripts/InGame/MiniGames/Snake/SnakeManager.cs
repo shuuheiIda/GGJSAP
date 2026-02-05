@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace GGJ.InGame.MiniGames {
@@ -14,7 +13,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// クリアに必要なスコア
         /// </summary>
-        private const int CrearScore = 10;
+        [SerializeField] private int clearScore = 10;
 
         /// <summary>
         /// スコア
@@ -24,7 +23,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// セルのリスト
         /// </summary>
-        private Vector2[,] cellList = new Vector2[18, 10];
+        private Vector2[,] cellList = new Vector2[16, 10];
 
         
         /// <summary>
@@ -88,6 +87,11 @@ namespace GGJ.InGame.MiniGames {
         /// 進む向き
         /// </summary>
         private MoveDirection moveDirection = MoveDirection.Up;
+        
+        /// <summary>
+        /// ゲームクリア済みフラグ
+        /// </summary>
+        private bool isCleared = false;
 
         private void OnEnable() {
             // 初期化
@@ -97,7 +101,8 @@ namespace GGJ.InGame.MiniGames {
             moveCd = 0.6f;
             moveCdTimer = 0;
             score = 0;
-            scoreText.text = $"{score}/{CrearScore}";
+            isCleared = false;
+            scoreText.text = $"{score}/{clearScore}";
 
             // 蛇を作成しフィールドに保持
             GameObject snakeHead = Instantiate(snakeHeadPrefab, cellList[9,5], Quaternion.identity, snakeParent);
@@ -108,29 +113,37 @@ namespace GGJ.InGame.MiniGames {
             CreateFeet();
 
             inputActions.Enable();
+            // Pause入力のイベントを購読
+            inputActions.MiniGameSnake.Pause.performed += OnPausePerformed;
         }
 
         private void OnDisable() {
-            // 蛇の削除
+            // 蛇の削除（即座に削除）
             foreach (var snake in SnakeList) {
-                Destroy(snake.gameObject);
+                if (snake != null && snake.gameObject != null)
+                    DestroyImmediate(snake.gameObject);
             }
+            SnakeList.Clear();
 
-            // 餌の削除
+            // 餌の削除（即座に削除）
             foreach (var feed in feedList) {
-                Destroy(feed.gameObject);
+                if (feed != null && feed.gameObject != null)
+                    DestroyImmediate(feed.gameObject);
             }
+            feedList.Clear();
 
+            // Pause入力のイベント購読解除
+            inputActions.MiniGameSnake.Pause.performed -= OnPausePerformed;
             inputActions.Disable();
         }
 
-        private void Awake() {
+        protected override void Awake() {
             inputActions = new PlayerInput();
 
-            for (int i = 0; i < 18; i++) {
+            for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 10; j++) {
-                    // Instantiate(feetPrefab, new Vector2((-9 + i) + 0.5f, (5 - j) - 0.5f), Quaternion.identity);
-                    cellList[i,j] = new Vector2((-9 + i) + 0.5f, (5 - j) - 0.5f);
+                    // Instantiate(feetPrefab, new Vector2((-8 + i) + 0.5f, (5 - j) - 0.5f), Quaternion.identity);
+                    cellList[i,j] = new Vector2((-8 + i) + 0.5f, (5 - j) - 0.5f);
                 }
             }
         }
@@ -141,37 +154,22 @@ namespace GGJ.InGame.MiniGames {
             MoveSnake();
             EatFeed();
         }
+        
+        /// <summary>
+        /// Pause入力があった時の処理
+        /// </summary>
+        private void OnPausePerformed(UnityEngine.InputSystem.InputAction.CallbackContext context)
+        {
+            if (Manager.InGameManager.I != null)
+                Manager.InGameManager.I.PauseGame();
+        }
 
         /// <summary>
         /// ゲームのリスタート
         /// </summary>
         private void ReStart() {
-            // 蛇の削除
-            foreach (var snake in SnakeList) {
-                Destroy(snake.gameObject);
-            }
-
-            // 餌の削除
-            foreach (var feed in feedList) {
-                Destroy(feed.gameObject);
-            }
-
-            // 初期化
-            moveDirection = MoveDirection.Up;
-            SnakeList = new List<SnakeController>();
-            feedList = new List<FeedController>();
-            moveCd = 0.6f;
-            moveCdTimer = 0;
-            score = 0;
-            scoreText.text = $"{score}/{CrearScore}";
-
-            // 蛇を作成しフィールドに保持
-            GameObject snakeHead = Instantiate(snakeHeadPrefab, cellList[9, 5], Quaternion.identity, snakeParent);
-            SnakeController snakeController = snakeHead.GetComponent<SnakeController>();
-            snakeController.SetUp();
-            SnakeList.Add(snakeController);
-
-            CreateFeet();
+            gameObject.SetActive(false);
+            gameObject.SetActive(true);
         }
 
         /// <summary>
@@ -182,8 +180,9 @@ namespace GGJ.InGame.MiniGames {
             int posY;
 
             while (true) {
-                posX = UnityEngine.Random.Range(0, 18);
-                posY = UnityEngine.Random.Range(0, 10);
+                // 画面内に確実に収まるように範囲を狭める（端から1セル内側）
+                posX = UnityEngine.Random.Range(1, 15);
+                posY = UnityEngine.Random.Range(1, 9);
 
                 if (!IsCellOverlapped(posX, posY)) {
                     break;
@@ -227,6 +226,9 @@ namespace GGJ.InGame.MiniGames {
         /// デバイスの入力取得
         /// </summary>
         private void GetInputDevice() {
+            // クリア済みなら入力を受け付けない
+            if (isCleared) return;
+            
             // 入力取得
             Vector2 inputValue = inputActions.MiniGameSnake.Move.ReadValue<Vector2>();
 
@@ -296,6 +298,9 @@ namespace GGJ.InGame.MiniGames {
         /// 移動処理
         /// </summary>
         private void MoveSnake() {
+            // クリア済みなら移動しない
+            if (isCleared) return;
+            
             // 移動クールタイム
             moveCdTimer += Time.deltaTime;
             if (moveCdTimer < moveCd) {
@@ -352,7 +357,7 @@ namespace GGJ.InGame.MiniGames {
         private bool IsDestinationWall(int cellX, int cellY) {
             // Debug.Log(cellX + " : " + cellY);
 
-            if ((0 <= cellX && cellX < 18) &&
+            if ((0 <= cellX && cellX < 16) &&
                 (0 <= cellY && cellY < 10)) {
                 return false;
             }
@@ -364,6 +369,9 @@ namespace GGJ.InGame.MiniGames {
         /// 餌を食べる
         /// </summary>
         private void EatFeed() {
+            // クリア済みなら餌を食べない
+            if (isCleared) return;
+            
             // 餌があるか
             int x = SnakeList.First().CurrentCellNumX;
             int y = SnakeList.First().CurrentCellNumY;
@@ -408,9 +416,12 @@ namespace GGJ.InGame.MiniGames {
         /// クリア処理
         /// </summary>
         private void IsCrear() {
-            if (score != CrearScore) {
+            if (score != clearScore) {
                 return;
             }
+            
+            // クリア済みフラグを立てる
+            isCleared = true;
             
             // ミニゲームクリアのコールバックを呼ぶ
             OnMiniGameCleared();
@@ -422,7 +433,7 @@ namespace GGJ.InGame.MiniGames {
         private void AddScore() {
             score++;
 
-            scoreText.text = $"{score}/{CrearScore}";
+            scoreText.text = $"{score}/{clearScore}";
         }
     }
 }

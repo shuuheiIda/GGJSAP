@@ -30,6 +30,10 @@ namespace GGJ.Manager
             Application.targetFrameRate = 60;
             Screen.sleepTimeout = SleepTimeout.NeverSleep;
             
+            // マウスカーソルを非表示にする（ゲーム全体で）
+            Cursor.visible = false;
+            Cursor.lockState = CursorLockMode.Locked;
+            
             // イベント購読
             GameEvents.OnNpcInteractionStarted += OnNpcInteractionStarted;
             GameEvents.OnNpcInteractionEnded += OnNpcInteractionEnded;

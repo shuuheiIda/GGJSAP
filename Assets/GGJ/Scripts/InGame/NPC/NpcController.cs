@@ -38,14 +38,7 @@ namespace GGJ.InGame.NPC
                 outlineController = gameObject.AddComponent<NpcOutlineController>();
             }
             
-            ApplyAppearance();
-        }
-        
-        private void ApplyAppearance()
-        {
-            if (NpcData == null) return;
-            if (spriteRenderer != null && NpcData.npcSprite != null)
-                spriteRenderer.sprite = NpcData.npcSprite;
+            // AppearanceはゲームオブジェクトにSpriteRendererが設定されているので不要
         }
         
         #region INpc実装

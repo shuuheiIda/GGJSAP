@@ -12,7 +12,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// カードの数 ※変える時は偶数で
         /// </summary>
-        private const int CardNum = 16;
+        private const int CardNum = 14;
 
         /// <summary>
         /// コントローラーを使用しているか
@@ -81,6 +81,8 @@ namespace GGJ.InGame.MiniGames {
             }
 
             inputActions.Enable();
+            // Pause入力のイベントを購読
+            inputActions.MiniGameConcentration.Pause.performed += OnPausePerformed;
         }
 
         private void OnDisable() {
@@ -96,11 +98,15 @@ namespace GGJ.InGame.MiniGames {
             // カーソルの削除
             Destroy(cursor);
 
+            // Pause入力のイベント購読解除
+            inputActions.MiniGameConcentration.Pause.performed -= OnPausePerformed;
             inputActions.Disable();
             CTS.Cancel();
         }
 
-        private void Awake() {
+        protected override void Awake() {
+            base.Awake();
+            
             if (CardNum % 2 != 0) {
                 // Debug.LogWarning("カードの数が偶数ではありません。");
             }
@@ -116,6 +122,17 @@ namespace GGJ.InGame.MiniGames {
             }
             catch {
                 return;
+            }
+        }
+        
+        /// <summary>
+        /// Pause入力があった時の処理
+        /// </summary>
+        private void OnPausePerformed(UnityEngine.InputSystem.InputAction.CallbackContext context)
+        {
+            if (Manager.InGameManager.I != null)
+            {
+                Manager.InGameManager.I.PauseGame();
             }
         }
 
