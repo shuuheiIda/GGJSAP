@@ -7,6 +7,7 @@ namespace GGJ.Core
 {
     /// <summary>
     /// ビルド後のデバッグ用ログ出力システム
+    /// RuntimeInitializeOnLoadMethodで自動的に生成される
     /// </summary>
     public class DebugLogger : MonoBehaviour
     {
@@ -17,6 +18,8 @@ namespace GGJ.Core
         [DllImport("kernel32.dll")]
         private static extern bool FreeConsole();
         
+        private static DebugLogger instance;
+        
         [Header("ログ設定")]
         [SerializeField] private bool enableLogging = true;
         
@@ -25,6 +28,20 @@ namespace GGJ.Core
         
         private string logFilePath;
         private StreamWriter logWriter;
+
+        /// <summary>
+        /// ゲーム起動時に自動的にDebugLoggerを生成
+        /// </summary>
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+        private static void Initialize()
+        {
+            if (instance == null)
+            {
+                GameObject go = new GameObject("DebugLogger");
+                instance = go.AddComponent<DebugLogger>();
+                DontDestroyOnLoad(go);
+            }
+        }
 
         private void Start()
         {
@@ -47,8 +64,21 @@ namespace GGJ.Core
             if (!enableLogging) return;
             
             // ログファイルのパスを設定
-            logFilePath = Path.Combine(Application.persistentDataPath, "debug_log.txt");
+            logFilePath = @"C:\Unity\2D\GGJ\Assets\GGJ\Scenes\WorkScenes\Wine5\debug_log.txt";
             Debug.Log($"[DebugLogger] ログファイル: {logFilePath}");
+            
+            // 既存のファイルを削除（ロックされている可能性があるため）
+            try
+            {
+                if (File.Exists(logFilePath))
+                {
+                    File.Delete(logFilePath);
+                }
+            }
+            catch (Exception e)
+            {
+                Debug.LogWarning($"[DebugLogger] 既存ログファイル削除失敗（無視します）: {e.Message}");
+            }
             
             // ファイルを開く（共有アクセスを許可）
             try
@@ -70,8 +100,7 @@ namespace GGJ.Core
             catch (Exception e)
             {
                 Debug.LogError($"[DebugLogger] ログファイル作成エラー: {e.Message}");
-                // エラーが発生してもアプリケーションは続行
-                enableLogging = false;
+                // ファイル書き込みは失敗してもコンソール出力は継続
             }
         }
         

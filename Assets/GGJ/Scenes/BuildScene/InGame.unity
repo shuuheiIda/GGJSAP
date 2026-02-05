@@ -210,6 +210,10 @@ PrefabInstance:
       propertyPath: m_Enabled
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 3949464293258277588, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+      propertyPath: showConsoleWindow
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4088841175705426470, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
