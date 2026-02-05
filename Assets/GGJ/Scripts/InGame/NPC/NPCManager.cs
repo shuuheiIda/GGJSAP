@@ -21,6 +21,7 @@ namespace GGJ.InGame.NPC
         [SerializeField] private bool showDebugLog = false; // 犯人のデバッグログを表示するか
         
         private Dictionary<INpc, int> npcDialogueIndices = new Dictionary<INpc, int>();
+        private Dictionary<INpc, int> npcHintIndices = new Dictionary<INpc, int>(); // ヒント用のindex（固定）
         
         protected override bool UseDontDestroyOnLoad => true;
         
@@ -28,6 +29,7 @@ namespace GGJ.InGame.NPC
         {
             allNpcs.Clear();
             npcDialogueIndices.Clear();
+            npcHintIndices.Clear();
             GameEvents.OnGameStart += OnGameStart;
         }
         
@@ -100,6 +102,21 @@ namespace GGJ.InGame.NPC
             
             int npcIndex = npcDialogueIndices.ContainsKey(npc) ? npcDialogueIndices[npc] : 0;
             
+            // ヒント用のindexを取得または生成（一度決まったら固定）
+            int hintIndex = -1;
+            if (hasHint)
+            {
+                if (!npcHintIndices.ContainsKey(npc))
+                {
+                    // まだヒントindexが決まっていない場合は生成（DialogueDataで決定される）
+                    hintIndex = -1;
+                }
+                else
+                {
+                    hintIndex = npcHintIndices[npc];
+                }
+            }
+            
             var criminal = GetCriminal();
             if (criminal == null)
             {
@@ -110,7 +127,13 @@ namespace GGJ.InGame.NPC
             NpcAppearance criminalAppearance = criminal.GetNpcData()?.appearance;
             Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Woman;
             
-            string dialogue = dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
+            string dialogue = dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, hintIndex, criminalAppearance, npcGender, out int actualHintIndex);
+            
+            // ヒント用indexが新しく決まった場合は保存（次回から固定）
+            if (hasHint && !npcHintIndices.ContainsKey(npc))
+            {
+                npcHintIndices[npc] = actualHintIndex;
+            }
             
             return dialogue;
         }
