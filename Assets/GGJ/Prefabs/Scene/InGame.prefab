@@ -183,9 +183,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   miniGameObjects:
-  - {fileID: 5181828881080054287}
   - {fileID: 9052910908223701375}
-  - {fileID: 2217879696706987817}
   mainGameUI: {fileID: 7727658971105748129}
   mainCamera: {fileID: 8545638067296051319}
   miniCamera: {fileID: 4978061059307556384}
@@ -801,6 +799,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseUI: {fileID: 2254455669311334655}
+  dialoguePanel: {fileID: 7424889735592944610}
 --- !u!114 &3949464293258277588
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6408,6 +6407,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 6195254207852448655}
+  clearScore: 10
   feedParent: {fileID: 2442926223584001937}
   feedPrefab: {fileID: 2491262758205395486, guid: fc3a9c4e43de5bd498fd3acce695fd62, type: 3}
   snakeParent: {fileID: 3182795986629098829}
@@ -6873,11 +6873,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 59b777452e714684dba1fed89dcc09c0, type: 3}
---- !u!1 &2217879696706987817 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3715563679603843225, guid: 59b777452e714684dba1fed89dcc09c0, type: 3}
-  m_PrefabInstance: {fileID: 3267124784011675568}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4262197931878560148 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1617204314783266340, guid: 59b777452e714684dba1fed89dcc09c0, type: 3}
