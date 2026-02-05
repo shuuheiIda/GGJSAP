@@ -33,23 +33,20 @@ namespace GGJ.InGame.Manager
             PlayerInputManager.OnPauseRequested += TogglePause;
         }
 
+        private void Start()
+        {
+            if (GameManager.I != null)
+                GameManager.I.StartGame();
+            else
+                Debug.LogError("[InGameManager] GameManager.I is null!");
+        }
+
         protected override void OnDestroy()
         {
             base.OnDestroy();
             
             // 静的イベントの購読解除
             PlayerInputManager.OnPauseRequested -= TogglePause;
-        }
-
-        private void Start()
-        {
-            // GameManagerにゲーム開始を委譲
-            if (GameManager.I != null)
-                GameManager.I.StartGame();
-            else
-            {
-                Debug.LogError("[InGameManager] GameManager.I is null!");
-            }
         }
 
         /// <summary>

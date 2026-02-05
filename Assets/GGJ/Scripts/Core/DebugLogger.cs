@@ -40,32 +40,29 @@ namespace GGJ.Core
                 GameObject go = new GameObject("DebugLogger");
                 instance = go.AddComponent<DebugLogger>();
                 DontDestroyOnLoad(go);
+                
+                // ログキャプチャを即座に開始
+                Application.logMessageReceived += instance.HandleLog;
             }
+        }
+
+        private void Awake()
+        {
+            // ファイル初期化はAwakeで行う
+            InitializeLogFile();
         }
 
         private void Start()
         {
-            // Windowsビルドの場合、コンソールウィンドウを表示
-#if !UNITY_EDITOR
-            // if (showConsoleWindow)
-            // {
-            //     AllocConsole();
-            //     Console.WriteLine("===========================================");
-            //     Console.WriteLine("   Unity Game Debug Console");
-            //     Console.WriteLine("   ログをコピー可能です");
-            //     Console.WriteLine("===========================================");
-            //     Console.WriteLine();
-            // }
-#endif
-            
-            // Debug.Logのキャプチャを開始
-            Application.logMessageReceived += HandleLog;
-            
+            // Start()では何もしない（Awakeで初期化済み）
+        }
+        
+        private void InitializeLogFile()
+        {
             if (!enableLogging) return;
             
             // ログファイルのパスを設定
             logFilePath = @"C:\Unity\2D\GGJ\Assets\GGJ\Scenes\WorkScenes\Wine5\debug_log.txt";
-            Debug.Log($"[DebugLogger] ログファイル: {logFilePath}");
             
             // 既存のファイルを削除（ロックされている可能性があるため）
             try
@@ -91,11 +88,7 @@ namespace GGJ.Core
                 );
                 logWriter = new StreamWriter(fileStream);
                 logWriter.AutoFlush = true;
-                WriteLog("=== デバッグログ開始 ===");
-                WriteLog($"時刻: {DateTime.Now}");
-                WriteLog($"プラットフォーム: {Application.platform}");
-                WriteLog($"解像度: {Screen.width}x{Screen.height}");
-                WriteLog("");
+                // サイレントモード：ファイルヘッダーなし
             }
             catch (Exception e)
             {

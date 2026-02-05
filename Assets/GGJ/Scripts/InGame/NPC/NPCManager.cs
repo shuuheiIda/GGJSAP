@@ -75,10 +75,7 @@ namespace GGJ.InGame.NPC
             }
             
             if (allNpcs.Contains(npc))
-            {
-                Debug.LogWarning($"[NPCManager] NPC already registered");
                 return;
-            }
             
             allNpcs.Add(npc);
             
