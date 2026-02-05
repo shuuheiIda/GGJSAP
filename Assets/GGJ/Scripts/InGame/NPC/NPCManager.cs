@@ -17,6 +17,9 @@ namespace GGJ.InGame.NPC
         [Header("セリフデータ")]
         [SerializeField] private DialogueData dialogueData;
         
+        [Header("デバッグ")]
+        [SerializeField] private bool showDebugLog = false; // 犯人のデバッグログを表示するか
+        
         private Dictionary<INpc, int> npcDialogueIndices = new Dictionary<INpc, int>();
         
         protected override bool UseDontDestroyOnLoad => true;
@@ -45,6 +48,12 @@ namespace GGJ.InGame.NPC
             
             int randomIndex = Random.Range(0, allNpcs.Count);
             allNpcs[randomIndex].SetCriminal(true);
+            
+            var criminalData = allNpcs[randomIndex].GetNpcData();
+            var criminalMonoBehaviour = allNpcs[randomIndex] as MonoBehaviour;
+            
+            if (showDebugLog && criminalData != null && criminalMonoBehaviour != null)
+                Debug.Log($"犯人は：{criminalMonoBehaviour.gameObject.name}（マスク色={criminalData.appearance.maskColor}、服色={criminalData.appearance.clothesColor}、性別={criminalData.appearance.gender}）");
         }
         
         /// <summary>
@@ -59,9 +68,6 @@ namespace GGJ.InGame.NPC
             
             if (!npcDialogueIndices.ContainsKey(npc))
                 npcDialogueIndices[npc] = allNpcs.Count - 1;
-            
-            if (GetCriminal() == null && allNpcs.Count > 0)
-                RandomizeCriminal();
         }
         
         /// <summary>

@@ -53,8 +53,9 @@ namespace GGJ.InGame.MiniGames.MaskFinder
         private float stickInputDelay = 0.2f; // スティック入力の遅延時間
         private float lastStickInputTime = 0f; // 最後のスティック入力時刻
         
-        private void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             inputActions = new PlayerInput();
             inputActions.UI.Enable();
         }

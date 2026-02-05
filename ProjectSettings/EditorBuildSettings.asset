@@ -5,9 +5,6 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/GGJ/Scenes/SampleScene.unity
-    guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/GGJ/Scenes/BuildScene/Title.unity
     guid: 7c9da6eda3b5f354d84fc116f45cca83
@@ -18,10 +15,10 @@ EditorBuildSettings:
     path: Assets/GGJ/Scenes/BuildScene/BadEnd.unity
     guid: 0f4635ea979ce9e41af9ab8081155394
   - enabled: 1
-    path: Assets/GGJ/Scenes/BuildScene/Result.unity
-    guid: 34e986a2bbf53b44788ddde8da0bd025
-  - enabled: 1
     path: Assets/GGJ/Scenes/BuildScene/Managers.unity
     guid: 3515236c990b99944a3f7b66b3094331
+  - enabled: 1
+    path: Assets/GGJ/Scenes/BuildScene/GoodEnd.unity
+    guid: 72cbecb3f96c3eb4e9e64be647193b98
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: e55789b41516d6d479b65af99aa833ef, type: 3}
