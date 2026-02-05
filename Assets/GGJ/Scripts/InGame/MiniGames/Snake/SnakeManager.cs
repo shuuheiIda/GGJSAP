@@ -111,15 +111,19 @@ namespace GGJ.InGame.MiniGames {
         }
 
         private void OnDisable() {
-            // 蛇の削除
+            // 蛇の削除（即座に削除）
             foreach (var snake in SnakeList) {
-                Destroy(snake.gameObject);
+                if (snake != null && snake.gameObject != null)
+                    DestroyImmediate(snake.gameObject);
             }
+            SnakeList.Clear();
 
-            // 餌の削除
+            // 餌の削除（即座に削除）
             foreach (var feed in feedList) {
-                Destroy(feed.gameObject);
+                if (feed != null && feed.gameObject != null)
+                    DestroyImmediate(feed.gameObject);
             }
+            feedList.Clear();
 
             inputActions.Disable();
         }
@@ -146,32 +150,8 @@ namespace GGJ.InGame.MiniGames {
         /// ゲームのリスタート
         /// </summary>
         private void ReStart() {
-            // 蛇の削除
-            foreach (var snake in SnakeList) {
-                Destroy(snake.gameObject);
-            }
-
-            // 餌の削除
-            foreach (var feed in feedList) {
-                Destroy(feed.gameObject);
-            }
-
-            // 初期化
-            moveDirection = MoveDirection.Up;
-            SnakeList = new List<SnakeController>();
-            feedList = new List<FeedController>();
-            moveCd = 0.6f;
-            moveCdTimer = 0;
-            score = 0;
-            scoreText.text = $"{score}/{CrearScore}";
-
-            // 蛇を作成しフィールドに保持
-            GameObject snakeHead = Instantiate(snakeHeadPrefab, cellList[9, 5], Quaternion.identity, snakeParent);
-            SnakeController snakeController = snakeHead.GetComponent<SnakeController>();
-            snakeController.SetUp();
-            SnakeList.Add(snakeController);
-
-            CreateFeet();
+            gameObject.SetActive(false);
+            gameObject.SetActive(true);
         }
 
         /// <summary>
