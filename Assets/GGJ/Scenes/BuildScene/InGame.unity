@@ -174,11 +174,24 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+      propertyPath: miniGameObjects.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3029208349136447261, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+      propertyPath: miniGameObjects.Array.data[0]
+      value: 
+      objectReference: {fileID: 1300177391}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+--- !u!1 &1300177391 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9052910908223701375, guid: 52f6ce4bfb13dc144a2ee9267804421f, type: 3}
+  m_PrefabInstance: {fileID: 1300177390}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
