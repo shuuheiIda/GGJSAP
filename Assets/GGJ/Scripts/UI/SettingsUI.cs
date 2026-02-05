@@ -32,10 +32,10 @@ namespace GGJ.UI
         [Header("音量設定のパネル")]
         [SerializeField] private GameObject audioPanel;
         
-        [Header("コントローラーナビゲーション")]
-        [SerializeField] private GameObject firstSelected; // パネルを開いた時に最初に選択されるUI要素
-        
-        private GameObject lastSelectedBeforeOpen; // パネルを開く前に選択されていた要素
+        [Header("AudioPanelを開いたときに最初に選択されるボタン")]
+        [SerializeField] private GameObject firstSelectedOnOpen;
+        [Header("AudioPanelを閉じたときに最初に選択されるボタン")]
+        [SerializeField] private GameObject firstSelectedOnClose;
 
         private void Start()
         {
@@ -156,9 +156,11 @@ namespace GGJ.UI
             if (AudioManager.I != null)
                 AudioManager.I.PlaySE(SEType.ButtonClick);
             
-            lastSelectedBeforeOpen = EventSystem.current?.currentSelectedGameObject;
             audioPanel.SetActive(true);
-            UIHelper.SetFirstSelected(firstSelected);
+            
+            // AudioPanel内の最初の要素を選択
+            if (firstSelectedOnOpen != null)
+                UIHelper.SetFirstSelected(firstSelectedOnOpen);
         }
 
         /// <summary>
@@ -173,8 +175,9 @@ namespace GGJ.UI
             
             audioPanel.SetActive(false);
             
-            if (lastSelectedBeforeOpen != null && EventSystem.current != null)
-                EventSystem.current.SetSelectedGameObject(lastSelectedBeforeOpen);
+            // 指定されたボタンに戻す
+            if (firstSelectedOnClose != null)
+                UIHelper.SetFirstSelected(firstSelectedOnClose);
         }
 
         private void OnDestroy()
