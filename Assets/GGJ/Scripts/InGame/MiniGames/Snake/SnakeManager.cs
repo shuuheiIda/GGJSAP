@@ -113,6 +113,8 @@ namespace GGJ.InGame.MiniGames {
             CreateFeet();
 
             inputActions.Enable();
+            // Pause入力のイベントを購読
+            inputActions.MiniGameSnake.Pause.performed += OnPausePerformed;
         }
 
         private void OnDisable() {
@@ -130,10 +132,12 @@ namespace GGJ.InGame.MiniGames {
             }
             feedList.Clear();
 
+            // Pause入力のイベント購読解除
+            inputActions.MiniGameSnake.Pause.performed -= OnPausePerformed;
             inputActions.Disable();
         }
 
-        private void Awake() {
+        protected override void Awake() {
             inputActions = new PlayerInput();
 
             for (int i = 0; i < 18; i++) {
@@ -149,6 +153,15 @@ namespace GGJ.InGame.MiniGames {
             GetInputDevice();
             MoveSnake();
             EatFeed();
+        }
+        
+        /// <summary>
+        /// Pause入力があった時の処理
+        /// </summary>
+        private void OnPausePerformed(UnityEngine.InputSystem.InputAction.CallbackContext context)
+        {
+            if (Manager.InGameManager.I != null)
+                Manager.InGameManager.I.PauseGame();
         }
 
         /// <summary>

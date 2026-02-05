@@ -34,6 +34,11 @@ namespace GGJ.InGame.MiniGames
         /// クリア時のコールバック
         /// </summary>
         protected Action onClearCallback;
+        
+        protected virtual void Awake()
+        {
+            // 子クラスでオーバーライド可能
+        }
 
         protected virtual void Update()
         {

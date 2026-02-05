@@ -293,6 +293,15 @@
                     "initialStateCheck": true
                 },
                 {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "dca23578-85f3-4d26-86fa-157283a3e332",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "Select",
                     "type": "Button",
                     "id": "e67c2a85-3134-412f-8e79-bb463016496c",
@@ -327,6 +336,28 @@
                 },
                 {
                     "name": "",
+                    "id": "c66a4c53-47f3-4ac4-aabf-3864fc4d5c70",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "01f736b0-befd-47ea-ad23-8941d94f6cbd",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
                     "id": "6f95ec6f-60ba-482e-9a5b-5be7b8b2c9b5",
                     "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
@@ -340,6 +371,17 @@
                     "name": "",
                     "id": "996f079b-9e35-4b9f-87da-d43ed3a56997",
                     "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Select",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4c0cfeb0-0d62-4068-91d7-7584d5a914a4",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -361,6 +403,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "cdd8b94e-4c64-4d2f-9710-7a0ee9e7dad8",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -429,6 +480,28 @@
                     "action": "Move",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "2235c614-9f88-4fd4-891d-06298eef8071",
+                    "path": "<Gamepad>/start",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b47b42d6-8f76-40f3-b52f-8a73a6f43dc9",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         },
@@ -727,17 +800,6 @@
                     "processors": "",
                     "groups": "",
                     "action": "Submit",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "7bfa00f2-f07d-4238-994f-8f520f866034",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
