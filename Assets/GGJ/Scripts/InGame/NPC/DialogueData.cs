@@ -83,16 +83,28 @@ namespace GGJ.InGame.NPC
         /// <summary>
         /// セリフを取得（背景情報で挿入）
         /// </summary>
-        public string GetDialogue(bool isCriminal, bool hasReceivedHint, bool isAccused, int index, NpcAppearance criminalAppearance, Gender npcGender)
+        /// <param name="isCriminal">犯人かどうか</param>
+        /// <param name="hasReceivedHint">ヒントを受け取ったかどうか</param>
+        /// <param name="isAccused">告発されたかどうか</param>
+        /// <param name="dialogueIndex">セリフ前のindex（話しかける前のセリフ用）</param>
+        /// <param name="hintIndex">ヒント用のindex（-1の場合は新しく生成）</param>
+        /// <param name="criminalAppearance">犯人の外見</param>
+        /// <param name="npcGender">NPCの性別</param>
+        /// <param name="actualHintIndex">実際に使用されたヒントのindex（out）</param>
+        public string GetDialogue(bool isCriminal, bool hasReceivedHint, bool isAccused, int dialogueIndex, int hintIndex, NpcAppearance criminalAppearance, Gender npcGender, out int actualHintIndex)
         {
             List<string> targetList;
+            bool isHintDialogue = false; // ヒント用のセリフかどうか
             
             if (isCriminal)
             {
                 if (isAccused)
                     targetList = npcGender == Gender.Woman ? criminalAccusedResponsesFemale : criminalAccusedResponsesMale;
                 else if (hasReceivedHint)
+                {
                     targetList = npcGender == Gender.Woman ? criminalHintsFemale : criminalHintsMale;
+                    isHintDialogue = true;
+                }
                 else
                     targetList = npcGender == Gender.Woman ? criminalInquiryResponsesFemale : criminalInquiryResponsesMale;
             }
@@ -101,18 +113,46 @@ namespace GGJ.InGame.NPC
                 if (isAccused)
                     targetList = npcGender == Gender.Woman ? innocentAccusedResponsesFemale : innocentAccusedResponsesMale;
                 else if (hasReceivedHint)
+                {
                     targetList = npcGender == Gender.Woman ? innocentHintsFemale : innocentHintsMale;
+                    isHintDialogue = true;
+                }
                 else
                     targetList = npcGender == Gender.Woman ? innocentInquiryResponsesFemale : innocentInquiryResponsesMale;
             }
             
             if (targetList == null || targetList.Count == 0)
+            {
+                actualHintIndex = -1;
                 return GetDefaultDialogue(isCriminal, isAccused, hasReceivedHint);
+            }
             
-            if (index < 0 || index >= targetList.Count)
-                index = Random.Range(0, targetList.Count);
+            int selectedIndex;
+            if (isHintDialogue)
+            {
+                // ヒント用のセリフの場合
+                if (hintIndex >= 0 && hintIndex < targetList.Count)
+                {
+                    // すでにヒントindexが決まっている場合はそれを使用
+                    selectedIndex = hintIndex;
+                }
+                else
+                {
+                    // 新しくランダムで決定
+                    selectedIndex = Random.Range(0, targetList.Count);
+                }
+                actualHintIndex = selectedIndex;
+            }
+            else
+            {
+                // ヒント前のセリフの場合は従来通りdialogueIndexを使用
+                selectedIndex = dialogueIndex;
+                if (selectedIndex < 0 || selectedIndex >= targetList.Count)
+                    selectedIndex = Random.Range(0, targetList.Count);
+                actualHintIndex = -1; // ヒント用ではないので-1
+            }
             
-            string dialogue = targetList[index];
+            string dialogue = targetList[selectedIndex];
             
             if (criminalAppearance != null)
                 dialogue = ReplacePlaceholders(dialogue, criminalAppearance);
