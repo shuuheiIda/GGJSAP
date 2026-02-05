@@ -13,6 +13,9 @@ namespace GGJ.InGame.Manager
     {
         [Header("ポーズUI")]
         [SerializeField] private GameObject pauseUI;
+        
+        [Header("UI参照")]
+        [SerializeField] private GGJ.InGame.UI.DialoguePanel dialoguePanel;
 
         /// <summary>ゲームがポーズ中かどうか</summary>
         public bool IsPaused { get; private set; }
@@ -66,6 +69,10 @@ namespace GGJ.InGame.Manager
             IsPaused = true;
             Time.timeScale = 0f;
             
+            // 会話中のボタンを無効化（確認ダイアログが表示されている場合）
+            if (dialoguePanel != null)
+                dialoguePanel.DisableButtonsForPause();
+            
             if (pauseUI != null)
                 pauseUI.SetActive(true);
         }
@@ -82,6 +89,10 @@ namespace GGJ.InGame.Manager
             
             if (pauseUI != null)
                 pauseUI.SetActive(false);
+            
+            // 会話中だった場合、フォーカスを再設定
+            if (dialoguePanel != null)
+                dialoguePanel.RestoreFocusAfterPause();
         }
 
         /// <summary>

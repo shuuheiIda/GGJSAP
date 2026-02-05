@@ -197,6 +197,44 @@ namespace GGJ.InGame.UI
             panel.SetActive(false);
             UIHelper.ClearSelected();
         }
+        
+        /// <summary>
+        /// ポーズから復帰した際にフォーカスを再設定する
+        /// </summary>
+        public void RestoreFocusAfterPause()
+        {
+            // 会話パネルが表示されていない場合は何もしない
+            if (panel == null || !panel.activeSelf) return;
+            
+            // 確認ダイアログが表示されている場合
+            if (confirmDialogPanel != null && confirmDialogPanel.activeSelf)
+            {
+                // ボタンを再度有効化
+                if (confirmYesButton != null) confirmYesButton.interactable = true;
+                if (confirmNoButton != null) confirmNoButton.interactable = true;
+                
+                UIHelper.SetFirstSelected(confirmNoButton);
+            }
+            // 通常の会話パネルの場合
+            else
+                UIHelper.SetFirstSelected(closeButton);
+        }
+        
+        /// <summary>
+        /// ポーズ時にボタンを無効化する
+        /// </summary>
+        public void DisableButtonsForPause()
+        {
+            // 会話パネルが表示されていない場合は何もしない
+            if (panel == null || !panel.activeSelf) return;
+            
+            // 確認ダイアログが表示されている場合、そのボタンを無効化
+            if (confirmDialogPanel != null && confirmDialogPanel.activeSelf)
+            {
+                if (confirmYesButton != null) confirmYesButton.interactable = false;
+                if (confirmNoButton != null) confirmNoButton.interactable = false;
+            }
+        }
 
         private void OnCloseButtonClicked()
         {
