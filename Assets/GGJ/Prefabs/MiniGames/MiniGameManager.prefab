@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   scoreText: {fileID: 3978898264203282582}
-  clearScore: 10
+  clearScore: 8
   feedParent: {fileID: 4839417374555683976}
   feedPrefab: {fileID: 2491262758205395486, guid: fc3a9c4e43de5bd498fd3acce695fd62, type: 3}
   snakeParent: {fileID: 5685095330834267732}
