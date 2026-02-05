@@ -23,7 +23,7 @@ namespace GGJ.InGame.MiniGames {
         /// <summary>
         /// セルのリスト
         /// </summary>
-        private Vector2[,] cellList = new Vector2[18, 10];
+        private Vector2[,] cellList = new Vector2[16, 10];
 
         
         /// <summary>
@@ -140,10 +140,10 @@ namespace GGJ.InGame.MiniGames {
         protected override void Awake() {
             inputActions = new PlayerInput();
 
-            for (int i = 0; i < 18; i++) {
+            for (int i = 0; i < 16; i++) {
                 for (int j = 0; j < 10; j++) {
-                    // Instantiate(feetPrefab, new Vector2((-9 + i) + 0.5f, (5 - j) - 0.5f), Quaternion.identity);
-                    cellList[i,j] = new Vector2((-9 + i) + 0.5f, (5 - j) - 0.5f);
+                    // Instantiate(feetPrefab, new Vector2((-8 + i) + 0.5f, (5 - j) - 0.5f), Quaternion.identity);
+                    cellList[i,j] = new Vector2((-8 + i) + 0.5f, (5 - j) - 0.5f);
                 }
             }
         }
@@ -180,8 +180,9 @@ namespace GGJ.InGame.MiniGames {
             int posY;
 
             while (true) {
-                posX = UnityEngine.Random.Range(0, 18);
-                posY = UnityEngine.Random.Range(0, 10);
+                // 画面内に確実に収まるように範囲を狭める（端から1セル内側）
+                posX = UnityEngine.Random.Range(1, 15);
+                posY = UnityEngine.Random.Range(1, 9);
 
                 if (!IsCellOverlapped(posX, posY)) {
                     break;
@@ -356,7 +357,7 @@ namespace GGJ.InGame.MiniGames {
         private bool IsDestinationWall(int cellX, int cellY) {
             // Debug.Log(cellX + " : " + cellY);
 
-            if ((0 <= cellX && cellX < 18) &&
+            if ((0 <= cellX && cellX < 16) &&
                 (0 <= cellY && cellY < 10)) {
                 return false;
             }
