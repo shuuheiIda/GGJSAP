@@ -171,7 +171,11 @@ namespace GGJ.InGame.UI
         /// </summary>
         private void DisplayNpcInfo(INpc npc)
         {
-            if (dialogueText == null) return;
+            if (dialogueText == null)
+            {
+                Debug.LogError("[DialoguePanel] dialogueText is null!");
+                return;
+            }
             
             string dialogue = npc.GetCurrentDialogue();
             
@@ -196,7 +200,9 @@ namespace GGJ.InGame.UI
             }
             else
             {
+                Debug.Log("[DialoguePanel] Setting text directly (no typewriter)");
                 dialogueText.text = dialogue;
+                Debug.Log($"[DialoguePanel] After setting, dialogueText.text = {dialogueText.text}");
             }
         }
 

@@ -37,11 +37,18 @@ namespace GGJ.InGame.NPC
             GameEvents.OnGameStart -= OnGameStart;
         }
         
-        private void OnGameStart() => RandomizeCriminal();
+        private void OnGameStart()
+        {
+            RandomizeCriminal();
+        }
         
         private void RandomizeCriminal()
         {
-            if (allNpcs.Count == 0) return;
+            if (allNpcs.Count == 0)
+            {
+                Debug.LogError("[NPCManager] allNpcs is empty! No NPCs registered.");
+                return;
+            }
             
             foreach (var npc in allNpcs)
                 npc.SetCriminal(false);
@@ -61,8 +68,17 @@ namespace GGJ.InGame.NPC
         /// </summary>
         public void RegisterNpc(INpc npc)
         {
-            if (npc == null) return;
-            if (allNpcs.Contains(npc)) return;
+            if (npc == null)
+            {
+                Debug.LogError("[NPCManager] RegisterNpc called with null NPC");
+                return;
+            }
+            
+            if (allNpcs.Contains(npc))
+            {
+                Debug.LogWarning($"[NPCManager] NPC already registered");
+                return;
+            }
             
             allNpcs.Add(npc);
             
@@ -76,7 +92,10 @@ namespace GGJ.InGame.NPC
         public string GetDialogueForNpc(INpc npc)
         {
             if (dialogueData == null)
+            {
+                Debug.LogError("[NPCManager] DialogueData is null!");
                 throw new System.Exception("[NpcManager] DialogueDataがnullです。InspectorでDialogueDataを割り当ててください");
+            }
             
             bool isCriminal = npc.IsCriminal();
             bool hasHint = npc.HasReceivedHint();
@@ -86,12 +105,17 @@ namespace GGJ.InGame.NPC
             
             var criminal = GetCriminal();
             if (criminal == null)
+            {
+                Debug.LogError("[NPCManager] Criminal not found!");
                 throw new System.Exception("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
+            }
             
             NpcAppearance criminalAppearance = criminal.GetNpcData()?.appearance;
             Gender npcGender = npc.GetNpcData()?.appearance.gender ?? Gender.Woman;
             
-            return dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
+            string dialogue = dialogueData.GetDialogue(isCriminal, hasHint, isAccused, npcIndex, criminalAppearance, npcGender);
+            
+            return dialogue;
         }
         
         private INpc GetCriminal() => allNpcs.FirstOrDefault(npc => npc.IsCriminal());

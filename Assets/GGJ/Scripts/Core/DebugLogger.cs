@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System;
+using System.Runtime.InteropServices;
 
 namespace GGJ.Core
 {
@@ -9,31 +10,56 @@ namespace GGJ.Core
     /// </summary>
     public class DebugLogger : MonoBehaviour
     {
+        // Windows APIでコンソールを表示
+        [DllImport("kernel32.dll")]
+        private static extern bool AllocConsole();
+        
+        [DllImport("kernel32.dll")]
+        private static extern bool FreeConsole();
+        
         [Header("ログ設定")]
         [SerializeField] private bool enableLogging = true;
-        [SerializeField] private float logInterval = 1f;
         
-        [Header("監視オブジェクト")]
-        [SerializeField] private GameObject background;
-        [SerializeField] private GameObject player;
-        [SerializeField] private Camera mainCamera;
+        [Header("コンソール設定")]
+        [SerializeField] private bool showConsoleWindow = true;
         
-        private float timer = 0f;
         private string logFilePath;
         private StreamWriter logWriter;
 
         private void Start()
         {
+            // Windowsビルドの場合、コンソールウィンドウを表示
+#if !UNITY_EDITOR
+            // if (showConsoleWindow)
+            // {
+            //     AllocConsole();
+            //     Console.WriteLine("===========================================");
+            //     Console.WriteLine("   Unity Game Debug Console");
+            //     Console.WriteLine("   ログをコピー可能です");
+            //     Console.WriteLine("===========================================");
+            //     Console.WriteLine();
+            // }
+#endif
+            
+            // Debug.Logのキャプチャを開始
+            Application.logMessageReceived += HandleLog;
+            
             if (!enableLogging) return;
             
             // ログファイルのパスを設定
             logFilePath = Path.Combine(Application.persistentDataPath, "debug_log.txt");
             Debug.Log($"[DebugLogger] ログファイル: {logFilePath}");
             
-            // ファイルを開く
+            // ファイルを開く（共有アクセスを許可）
             try
             {
-                logWriter = new StreamWriter(logFilePath, false);
+                FileStream fileStream = new FileStream(
+                    logFilePath, 
+                    FileMode.Create, 
+                    FileAccess.Write, 
+                    FileShare.ReadWrite
+                );
+                logWriter = new StreamWriter(fileStream);
                 logWriter.AutoFlush = true;
                 WriteLog("=== デバッグログ開始 ===");
                 WriteLog($"時刻: {DateTime.Now}");
@@ -44,122 +70,74 @@ namespace GGJ.Core
             catch (Exception e)
             {
                 Debug.LogError($"[DebugLogger] ログファイル作成エラー: {e.Message}");
-            }
-            
-            // 自動検出
-            if (background == null)
-            {
-                background = GameObject.Find("InGameBG");
-                if (background != null)
-                    WriteLog($"背景を自動検出: {background.name}");
-            }
-            
-            if (player == null)
-            {
-                player = GameObject.Find("Player");
-                if (player != null)
-                    WriteLog($"Playerを自動検出: {player.name}");
-            }
-            
-            if (mainCamera == null)
-            {
-                mainCamera = Camera.main;
-                if (mainCamera != null)
-                    WriteLog($"カメラを自動検出: {mainCamera.name}");
-            }
-            
-            // 初期状態をログ
-            LogCurrentState();
-        }
-
-        private void Update()
-        {
-            if (!enableLogging) return;
-            
-            timer += Time.deltaTime;
-            if (timer >= logInterval)
-            {
-                timer = 0f;
-                LogCurrentState();
+                // エラーが発生してもアプリケーションは続行
+                enableLogging = false;
             }
         }
-
-        private void LogCurrentState()
+        
+        /// <summary>
+        /// Unity Consoleのログをキャプチャ
+        /// </summary>
+        private void HandleLog(string logString, string stackTrace, LogType type)
         {
-            WriteLog($"--- フレーム {Time.frameCount} ---");
-            
-            if (background != null)
+            string consolePrefix = "";
+            switch (type)
             {
-                var spriteRenderer = background.GetComponent<SpriteRenderer>();
-                var image = background.GetComponent<UnityEngine.UI.Image>();
-                
-                WriteLog($"[背景] 位置: {background.transform.position}");
-                WriteLog($"[背景] アクティブ: {background.activeSelf}");
-                
-                if (spriteRenderer != null)
-                {
-                    WriteLog($"[背景] SpriteRenderer - Enabled: {spriteRenderer.enabled}");
-                    WriteLog($"[背景] Sprite: {(spriteRenderer.sprite != null ? spriteRenderer.sprite.name : "null")}");
-                    WriteLog($"[背景] Color: {spriteRenderer.color}");
-                    WriteLog($"[背景] Material: {(spriteRenderer.material != null ? spriteRenderer.material.name : "null")}");
-                    WriteLog($"[背景] Sorting Layer: {spriteRenderer.sortingLayerName}");
-                    WriteLog($"[背景] Order in Layer: {spriteRenderer.sortingOrder}");
-                }
-                
-                if (image != null)
-                {
-                    WriteLog($"[背景] UI Image - Enabled: {image.enabled}");
-                    WriteLog($"[背景] Sprite: {(image.sprite != null ? image.sprite.name : "null")}");
-                    WriteLog($"[背景] Color: {image.color}");
-                }
-            }
-            else
-            {
-                WriteLog("[背景] オブジェクトが見つかりません！");
+                case LogType.Error:
+                case LogType.Exception:
+                    consolePrefix = "[ERROR] ";
+                    break;
+                case LogType.Warning:
+                    consolePrefix = "[WARNING] ";
+                    break;
+                default:
+                    consolePrefix = "";
+                    break;
             }
             
-            if (player != null)
+            // コンソールウィンドウとファイルに出力
+#if !UNITY_EDITOR
+            if (showConsoleWindow)
             {
-                WriteLog($"[Player] 位置: {player.transform.position}");
-                WriteLog($"[Player] アクティブ: {player.activeSelf}");
-                
-                var spriteRenderer = player.GetComponent<SpriteRenderer>();
-                if (spriteRenderer != null)
-                {
-                    WriteLog($"[Player] SpriteRenderer - Enabled: {spriteRenderer.enabled}");
-                    WriteLog($"[Player] Sorting Layer: {spriteRenderer.sortingLayerName}");
-                    WriteLog($"[Player] Order in Layer: {spriteRenderer.sortingOrder}");
-                }
+                Console.WriteLine(consolePrefix + logString);
             }
-            else
-            {
-                WriteLog("[Player] オブジェクトが見つかりません！");
-            }
+#endif
             
-            if (mainCamera != null)
-            {
-                WriteLog($"[Camera] 位置: {mainCamera.transform.position}");
-                WriteLog($"[Camera] Orthographic Size: {mainCamera.orthographicSize}");
-                WriteLog($"[Camera] Culling Mask: {LayerMask.LayerToName(mainCamera.cullingMask)}");
-            }
-            
-            WriteLog("");
+            logWriter?.WriteLine(consolePrefix + logString);
         }
 
         private void WriteLog(string message)
         {
             Debug.Log(message);
             logWriter?.WriteLine(message);
+            
+            // コンソールウィンドウにも出力（ビルド時のみ）
+#if !UNITY_EDITOR
+            if (showConsoleWindow)
+            {
+                Console.WriteLine(message);
+            }
+#endif
         }
 
         private void OnDestroy()
         {
+            Application.logMessageReceived -= HandleLog;
+            
             if (logWriter != null)
             {
                 WriteLog("=== デバッグログ終了 ===");
                 logWriter.Close();
                 logWriter = null;
             }
+            
+            // コンソールウィンドウを閉じる
+#if !UNITY_EDITOR
+            if (showConsoleWindow)
+            {
+                FreeConsole();
+            }
+#endif
         }
 
         private void OnApplicationQuit()
@@ -170,6 +148,14 @@ namespace GGJ.Core
                 logWriter.Close();
                 logWriter = null;
             }
+            
+            // コンソールウィンドウを閉じる
+#if !UNITY_EDITOR
+            if (showConsoleWindow)
+            {
+                FreeConsole();
+            }
+#endif
         }
     }
 }

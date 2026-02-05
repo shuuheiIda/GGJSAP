@@ -46,6 +46,10 @@ namespace GGJ.InGame.Manager
             // GameManagerにゲーム開始を委譲
             if (GameManager.I != null)
                 GameManager.I.StartGame();
+            else
+            {
+                Debug.LogError("[InGameManager] GameManager.I is null!");
+            }
         }
 
         /// <summary>
