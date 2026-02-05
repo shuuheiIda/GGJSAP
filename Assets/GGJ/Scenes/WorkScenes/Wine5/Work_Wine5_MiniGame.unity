@@ -430,7 +430,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2264310617494356582, guid: b4ec85c3563baeb4b903e55ed3375094, type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4326590231123525446, guid: b4ec85c3563baeb4b903e55ed3375094, type: 3}
       propertyPath: m_LocalPosition.x
@@ -492,10 +492,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: -44
       objectReference: {fileID: 0}
-    - target: {fileID: 7013908063525790487, guid: b4ec85c3563baeb4b903e55ed3375094, type: 3}
-      propertyPath: clearScore
-      value: 8
-      objectReference: {fileID: 0}
     - target: {fileID: 7059255845151504065, guid: b4ec85c3563baeb4b903e55ed3375094, type: 3}
       propertyPath: m_Name
       value: MiniGameManager
@@ -515,7 +511,7 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1677600191 stripped
 GameObject:
-  m_CorrespondingSourceObject: {fileID: 2264310617494356582, guid: b4ec85c3563baeb4b903e55ed3375094, type: 3}
+  m_CorrespondingSourceObject: {fileID: 8937791305078940720, guid: b4ec85c3563baeb4b903e55ed3375094, type: 3}
   m_PrefabInstance: {fileID: 1677600189}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &1677600192
