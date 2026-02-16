@@ -36,9 +36,16 @@ namespace GGJ.InGame.Manager
         private void Start()
         {
             if (GameManager.I != null)
-                GameManager.I.StartGame();
+                StartCoroutine(StartGameDelayed());
             else
                 Debug.LogError("[InGameManager] GameManager.I is null!");
+        }
+
+        private System.Collections.IEnumerator StartGameDelayed()
+        {
+            // 全NPCの登録完了を待つため1フレーム待機
+            yield return null;
+            GameManager.I.StartGame();
         }
 
         protected override void OnDestroy()

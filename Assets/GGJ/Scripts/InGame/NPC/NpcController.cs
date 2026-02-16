@@ -19,8 +19,8 @@ namespace GGJ.InGame.NPC
         private SpriteRenderer spriteRenderer;
         private NpcOutlineController outlineController;
         
-        // InGameManaagerより早く初期化を行いNpcを登録したいためAwakeにしている
-        private void Awake()
+        // InGameManagerより早くNpcを登録するためStartで行う
+        private void Start()
         {
             InitializeNpc();
             

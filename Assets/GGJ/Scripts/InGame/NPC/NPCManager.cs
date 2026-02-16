@@ -2,7 +2,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using GGJ.Core;
-using GGJ.InGame.Events;
 
 namespace GGJ.InGame.NPC
 {
@@ -30,21 +29,14 @@ namespace GGJ.InGame.NPC
             allNpcs.Clear();
             npcDialogueIndices.Clear();
             npcHintIndices.Clear();
-            GameEvents.OnGameStart += OnGameStart;
         }
         
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            GameEvents.OnGameStart -= OnGameStart;
         }
         
-        private void OnGameStart()
-        {
-            RandomizeCriminal();
-        }
-        
-        private void RandomizeCriminal()
+        public void RandomizeCriminal()
         {
             if (allNpcs.Count == 0)
             {
@@ -121,7 +113,7 @@ namespace GGJ.InGame.NPC
             if (criminal == null)
             {
                 Debug.LogError("[NPCManager] Criminal not found!");
-                throw new System.Exception("[NpcManager] 犯人が設定されていません！GameEvents.RaiseGameStart()を呼んでください");
+                throw new System.Exception("[NpcManager] 犯人が設定されていません！GameManager.StartGame()を呼んでください");
             }
             
             NpcAppearance criminalAppearance = criminal.GetNpcData()?.appearance;

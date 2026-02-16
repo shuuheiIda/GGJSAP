@@ -150,8 +150,10 @@ namespace GGJ.Manager
             // InGameBGMを再生
             if (AudioManager.I != null)
                 AudioManager.I.PlayBGM(BGMType.InGame, true);
-                
-            GameEvents.RaiseGameStart();
+            
+            // 犯人をランダム化
+            if (GGJ.InGame.NPC.NpcManager.I != null)
+                GGJ.InGame.NPC.NpcManager.I.RandomizeCriminal();
         }
 
         /// <summary>
